@@ -170,6 +170,15 @@ h1, h2, h3, h4 {
   color: white;
   letter-spacing: -0.01em;
 }
+.nav-logo-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: var(--shadow-gold);
+  border: 2px solid rgba(255,255,255,0.25);
+  background: var(--g-dark);
+}
 .nav-logo-leaf {
   width: 36px;
   height: 36px;
@@ -432,6 +441,7 @@ h1, h2, h3, h4 {
   box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
   border: 2px solid rgba(255,255,255,0.1);
   object-fit: cover;
+  object-position: center center;
   aspect-ratio: 4/3;
   background: rgba(255,255,255,0.05);
 }
@@ -630,6 +640,7 @@ h1, h2, h3, h4 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
   transition: transform 0.6s ease;
 }
 .product-card:hover .product-img { transform: scale(1.06); }
@@ -1489,8 +1500,8 @@ h1, h2, h3, h4 {
   box-shadow: 0 6px 24px rgba(37,211,102,0.45);
   transition: all var(--transition);
   cursor: pointer;
-  font-size: 1.7rem;
 }
+.whatsapp-float svg { display: block; }
 .whatsapp-float:hover {
   transform: scale(1.1);
   box-shadow: 0 10px 32px rgba(37,211,102,0.55);
@@ -1667,3 +1678,38 @@ h1, h2, h3, h4 {
   .batch-divider { display: none; }
   .batch-bar { gap: 0.5rem; }
 }
+
+/* ── SCROLL FLOAT BUTTON ── */
+.scroll-float {
+  position: fixed;
+  bottom: 6.5rem;
+  right: 2rem;
+  z-index: 900;
+  width: 46px;
+  height: 46px;
+  background: var(--g-dark);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  cursor: pointer;
+  color: white;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s;
+  pointer-events: none;
+}
+.scroll-float.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.scroll-float:hover {
+  background: var(--g-light);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+}
+.scroll-arrow { display: none; transition: opacity 0.2s; }
+.scroll-float.at-top .scroll-arrow-down { display: block; }
+.scroll-float:not(.at-top) .scroll-arrow-up { display: block; }
