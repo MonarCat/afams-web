@@ -518,4 +518,36 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.5 });
   const hero = document.querySelector('.hero');
   if (hero) heroObserver.observe(hero);
+
+  // Scroll float button
+  const scrollBtn = document.getElementById('scroll-float');
+  function getScrollState() {
+    const scrolled = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    return {
+      scrolled,
+      atTop: scrolled < 120,
+      atBottom: maxScroll > 0 && scrolled >= maxScroll - 60
+    };
+  }
+  function updateScrollFloat() {
+    if (!scrollBtn) return;
+    const { scrolled, atTop, atBottom } = getScrollState();
+    scrollBtn.classList.toggle('visible', scrolled >= 120);
+    scrollBtn.classList.toggle('at-top', atTop);
+    scrollBtn.classList.toggle('at-bottom', atBottom);
+  }
+  window.addEventListener('scroll', updateScrollFloat, { passive: true });
+  updateScrollFloat();
 });
+
+function handleScrollFloat() {
+  const scrolled = window.scrollY;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const atBottom = maxScroll > 0 && scrolled >= maxScroll - 60;
+  if (atBottom) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+  }
+}
