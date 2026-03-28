@@ -8,6 +8,16 @@ const AFAMS = {
   currency: 'KES',
   deliveryDays: 3,
   fulfillmentNote: 'Pre-orders are fulfilled within 3 business days of campaign close.',
+  // Preorder batch settings — update these per batch
+  batchStock: 25,        // Total units available this batch
+  batchEndDate: (() => {
+    // Default: 14 days from the first time the config is read
+    const stored = localStorage.getItem('afams_batch_end');
+    if (stored) return new Date(stored);
+    const d = new Date(); d.setDate(d.getDate() + 14);
+    localStorage.setItem('afams_batch_end', d.toISOString());
+    return d;
+  })(),
 };
 
 // ── PRODUCTS DATA ─────────────────────────────────────────────────
@@ -245,12 +255,13 @@ function renderOrderSummary() {
 }
 
 // ── PAYSTACK PAYMENT ──────────────────────────────────────────────
-function initiatePayment() {
-  const name = document.getElementById('f-name').value.trim();
-  const email = document.getElementById('f-email').value.trim();
-  const phone = document.getElementById('f-phone').value.trim();
-  const county = document.getElementById('f-county').value.trim();
+async function initiatePayment() {
+  const name    = document.getElementById('f-name').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  const phone   = document.getElementById('f-phone').value.trim();
+  const county  = document.getElementById('f-county').value.trim();
   const address = document.getElementById('f-address').value.trim();
+  const notes   = document.getElementById('f-notes').value.trim();
 
   if (!name || !email || !phone || !address) {
     showToast('⚠️ Please fill all required fields');
@@ -261,27 +272,60 @@ function initiatePayment() {
     return;
   }
 
-  const amount = cartTotal() * 100; // Paystack uses kobo/cents
-  const ref = 'AFAMS-' + Date.now() + '-' + Math.random().toString(36).slice(2,8).toUpperCase();
+  const amountKobo = cartTotal() * 100; // Paystack uses kobo/cents
+
+  // Disable button and show loading state
+  const payBtn = document.querySelector('.btn-pay');
+  const origText = payBtn.innerHTML;
+  payBtn.disabled = true;
+  payBtn.innerHTML = '<span>Processing…</span>';
+
+  let reference = 'AFAMS-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+  try {
+    // Create a pending order in the backend before opening the popup.
+    // Falls back gracefully if the backend is unavailable (e.g. local development).
+    const res = await fetch('/api/paystack/initialize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        amount: amountKobo,
+        customer: { name, phone, county, location: county, address, notes },
+        items: cart.map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.priceKES })),
+      }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.reference) reference = data.reference;
+    }
+  } catch (err) {
+    // Backend unavailable — continue with client-generated reference
+    console.warn('[initiatePayment] Backend unreachable, using client reference:', err.message);
+  } finally {
+    payBtn.disabled = false;
+    payBtn.innerHTML = origText;
+  }
 
   const metadata = {
     custom_fields: [
-      { display_name: 'Customer Name', variable_name: 'customer_name', value: name },
-      { display_name: 'Phone', variable_name: 'phone', value: phone },
-      { display_name: 'Delivery County', variable_name: 'county', value: county },
-      { display_name: 'Delivery Address', variable_name: 'address', value: address },
-      { display_name: 'Order Items', variable_name: 'items', value: cart.map(i => `${i.name} x${i.qty}`).join(', ') },
-      { display_name: 'Order Type', variable_name: 'order_type', value: 'PRE-ORDER' },
-    ]
+      { display_name: 'Customer Name',    variable_name: 'customer_name', value: name    },
+      { display_name: 'Phone',            variable_name: 'phone',         value: phone   },
+      { display_name: 'Delivery County',  variable_name: 'county',        value: county  },
+      { display_name: 'Delivery Address', variable_name: 'address',       value: address },
+      { display_name: 'Order Items',      variable_name: 'items',         value: cart.map(i => `${i.name} x${i.qty}`).join(', ') },
+      { display_name: 'Order Type',       variable_name: 'order_type',    value: 'PRE-ORDER' },
+    ],
   };
 
   const handler = PaystackPop.setup({
-    key: AFAMS.paystackKey,
-    email: email,
-    amount: amount,
+    key:      AFAMS.paystackKey,
+    email,
+    amount:   amountKobo,
     currency: 'KES',
-    ref: ref,
-    metadata: metadata,
+    ref:      reference,
+    metadata,
     label: 'Afams FarmBag Pre-Order',
     onClose: () => {
       showToast('Payment cancelled — your cart is saved');
@@ -289,12 +333,12 @@ function initiatePayment() {
     callback: (response) => {
       if (response.status === 'success') {
         closeCheckout();
-        showSuccessModal(ref, name, email);
+        showSuccessModal(reference, name, email);
         cart = [];
         saveCart();
         updateCartUI();
       }
-    }
+    },
   });
   handler.openIframe();
 }
@@ -393,11 +437,52 @@ function animateCounters() {
   });
 }
 
+// ── PREORDER SCARCITY & COUNTDOWN ────────────────────────────────────
+function initCountdown() {
+  const el = document.getElementById('batch-countdown');
+  if (!el) return;
+
+  function tick() {
+    const now  = new Date();
+    const end  = AFAMS.batchEndDate;
+    const diff = end - now;
+
+    if (diff <= 0) {
+      el.textContent = 'Batch closed';
+      return;
+    }
+
+    const days    = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours   = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    el.innerHTML =
+      `<span class="cd-unit">${String(days).padStart(2,'0')}<em>d</em></span>` +
+      `<span class="cd-sep">:</span>` +
+      `<span class="cd-unit">${String(hours).padStart(2,'0')}<em>h</em></span>` +
+      `<span class="cd-sep">:</span>` +
+      `<span class="cd-unit">${String(minutes).padStart(2,'0')}<em>m</em></span>` +
+      `<span class="cd-sep">:</span>` +
+      `<span class="cd-unit">${String(seconds).padStart(2,'0')}<em>s</em></span>`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+}
+
+function initStockBadge() {
+  const el = document.getElementById('batch-stock-count');
+  if (el) el.textContent = AFAMS.batchStock;
+}
+
 // ── INIT ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
   initAnimations();
   updateCartUI();
+  initCountdown();
+  initStockBadge();
 
   // Cart overlay click to close
   document.getElementById('cart-overlay')?.addEventListener('click', closeCart);
