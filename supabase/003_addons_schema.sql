@@ -122,7 +122,7 @@ VALUES (
   'Afams ProSoil 25kg',
   'prosoil-25kg',
   'Pre-mixed, pH-balanced, sterilised growing medium. Topsoil + compost + perlite + slow-release fertiliser. Pour into your FarmBag, water and start planting immediately. No weed seeds. Ready to plant. pH 6.2–6.8. 25kg bag.',
-  39900,
+  59900,
   'growing-medium',
   TRUE,
   '["prosoil-both.jpg", "prosoil-front.jpg", "prosoil-back.jpg"]',
@@ -137,7 +137,7 @@ ALTER TABLE orders
   ADD COLUMN IF NOT EXISTS extra_seeds_count  INTEGER DEFAULT 0,
   ADD COLUMN IF NOT EXISTS extra_seeds_total  INTEGER DEFAULT 0,
   ADD COLUMN IF NOT EXISTS prosoil_qty        INTEGER DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS prosoil_unit_price INTEGER DEFAULT 39900,
+  ADD COLUMN IF NOT EXISTS prosoil_unit_price INTEGER DEFAULT 59900,
   ADD COLUMN IF NOT EXISTS prosoil_total      INTEGER DEFAULT 0,
   ADD COLUMN IF NOT EXISTS prosoil_promo_bag  BOOLEAN DEFAULT FALSE,
   ADD COLUMN IF NOT EXISTS addons_total       INTEGER DEFAULT 0;
