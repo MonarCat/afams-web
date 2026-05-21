@@ -64,7 +64,7 @@ const PRODUCTS = [
     emoji: '🪴',
     desc: 'Pre-mixed, pH-balanced, sterilised growing medium. Topsoil + compost + perlite + slow-release fertiliser. Pour in, water and plant immediately.',
     features: ['pH 6.2–6.8', 'Sterilised', 'Ready to plant', 'Made in Kenya'],
-    priceKES: 399,
+    priceKES: 599,
     priceGBP: 3,
     image: 'assets/images/prosoil-front.jpg',
     type: 'prosoil',

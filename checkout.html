@@ -605,7 +605,7 @@
               <span id="prosoil-qty">0</span>
               <button type="button" onclick="changeProsoilQty(1)">+</button>
             </div>
-            <span class="unit-price-label">KES 399 / bag</span>
+            <span class="unit-price-label">KES 599 / bag</span>
           </div>
           <div id="prosoil-calc" class="prosoil-calc hidden">
             <div class="calc-row">
@@ -653,7 +653,7 @@
 <script>
 // ── Checkout logic — reads cart from sessionStorage via cart.js ────────────────
 
-const PROSOIL_PRICE_CHECKOUT = 399;
+const PROSOIL_PRICE_CHECKOUT = 599;
 
 const FREE_DELIVERY_MIN_KES = 2499;
 const CHECKOUT_LOCK_KEY = 'afams_checkout_lock';
@@ -736,7 +736,7 @@ function clearCheckoutLock() {
 const CHECKOUT_PRODUCTS = {
   'FB-CLS-01': { name: 'FarmBag Classic',         unit_price:  7500, image: 'assets/images/farmbag-classic.jpg',  type: 'farmbag' },
   'FB-GRW-01': { name: 'FarmBag Vertical',         unit_price:  8500, image: 'assets/images/farmbag-vertical.jpg', type: 'farmbag' },
-  'PS-25KG':   { name: 'Afams ProSoil 25kg',       unit_price:   399, image: 'assets/images/prosoil-front.jpg',    type: 'prosoil' },
+  'PS-25KG':   { name: 'Afams ProSoil 25kg',       unit_price:   599, image: 'assets/images/prosoil-front.jpg',    type: 'prosoil' },
   'FB-HYD-01': { name: 'FarmBag Hydro',            unit_price:  8999, image: '',                                   type: 'farmbag' },
   'FB-HYP-01': { name: 'FarmBag Hydro Pro',        unit_price: 11999, image: '',                                   type: 'farmbag' },
   'FB-AQA-01': { name: 'FarmBag Aqua',             unit_price: 14999, image: '',                                   type: 'farmbag' },

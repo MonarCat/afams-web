@@ -94,7 +94,7 @@ function getCartTotals(cart) {
   cart = cart || getCart();
   var itemsTotal      = cart.items.reduce(function(sum, i) { return sum + (i.unit_price * i.qty); }, 0);
   var promoQty        = cart.prosoilPromoBags || computeProsoilPromo(cart);
-  var promoSaving     = promoQty * 399; // free bags value in KES
+  var promoSaving     = promoQty * 599; // free bags value in KES
   var grandTotal      = itemsTotal;
   return { itemsTotal: itemsTotal, promoSaving: promoSaving, promoQty: promoQty, grandTotal: grandTotal };
 }
