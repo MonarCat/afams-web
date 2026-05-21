@@ -563,7 +563,8 @@ async function fetchOrder(paystackRef, retries = 6, waitMs = 2500) {
   // Determine which URL to use (test join viability on first attempt)
   let useJoin = true;
 
-  for (let i = 0; i < retries; i++) {
+  let attempt = 0;
+  while (attempt < retries) {
     try {
       const url = useJoin ? urlWithJoin : urlPlain;
       const res = await fetch(url, { headers });
@@ -575,7 +576,6 @@ async function fetchOrder(paystackRef, retries = 6, waitMs = 2500) {
           console.warn('[confirm] order_items join unavailable (HTTP 400) — switching to plain query');
           useJoin = false;
           // Retry immediately without counting this as a "row not found" wait
-          i--;
           continue;
         }
         throw new Error('HTTP ' + res.status);
@@ -583,18 +583,19 @@ async function fetchOrder(paystackRef, retries = 6, waitMs = 2500) {
 
       const rows = await res.json();
       if (rows && rows.length > 0) {
-        console.log('[confirm] Order found on attempt', i + 1,
+        console.log('[confirm] Order found on attempt', attempt + 1,
           useJoin ? '(with join)' : '(plain)');
         return rows[0];
       }
 
       // Row not inserted yet — wait and retry
-      console.log('[confirm] Order row not found yet, attempt', i + 1, '— retrying in', waitMs, 'ms…');
+      console.log('[confirm] Order row not found yet, attempt', attempt + 1, '— retrying in', waitMs, 'ms…');
     } catch (e) {
-      console.warn('[confirm] Attempt', i + 1, 'failed:', e.message);
+      console.warn('[confirm] Attempt', attempt + 1, 'failed:', e.message);
     }
 
-    if (i < retries - 1) {
+    attempt++;
+    if (attempt < retries) {
       await new Promise(r => setTimeout(r, waitMs));
     }
   }
