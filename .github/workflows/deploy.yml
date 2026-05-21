@@ -100,27 +100,41 @@ jobs:
             exit 1
           fi
 
-          # Confirm the hostname resolves before attempting to connect.
-          echo "Resolving host: $FTP_SERVER …"
-          if ! getent hosts "$FTP_SERVER" > /dev/null 2>&1; then
-            echo "::error::DNS lookup failed for '$FTP_SERVER'."
-            echo "::error::Possible causes:"
-            echo "::error::  • Typo in the FTP_SERVER secret"
-            echo "::error::  • Domain DNS not yet propagated"
-            echo "::error::  • Use the bare server hostname or Shared IP from cPanel instead"
+          # Normalise FTP_SERVER in case it was pasted as a URL.
+          FTP_SERVER_CLEAN="${FTP_SERVER#ftp://}"
+          FTP_SERVER_CLEAN="${FTP_SERVER_CLEAN#ftps://}"
+          FTP_SERVER_CLEAN="${FTP_SERVER_CLEAN%%/*}"
+          FTP_SERVER_CLEAN="${FTP_SERVER_CLEAN%:21}"
+          if [ -z "$FTP_SERVER_CLEAN" ]; then
+            echo "::error::FTP_SERVER secret is invalid after normalisation."
+            echo "::error::Use only the bare server hostname or Shared IP from cPanel."
             exit 1
           fi
-          RESOLVED=$(getent hosts "$FTP_SERVER" | awk '{ print $1 }')
-          echo "✅  $FTP_SERVER resolved to $RESOLVED"
+          echo "::add-mask::$FTP_SERVER_CLEAN"
+          echo "FTP_SERVER_CLEAN=$FTP_SERVER_CLEAN" >> "$GITHUB_ENV"
+
+          # Confirm the hostname resolves before attempting to connect.
+          echo "Resolving host: $FTP_SERVER_CLEAN …"
+          if ! getent hosts "$FTP_SERVER_CLEAN" > /dev/null 2>&1; then
+            echo "::warning::DNS lookup failed for FTP_SERVER."
+            echo "::warning::Possible causes:"
+            echo "::warning::  • Typo in the FTP_SERVER secret"
+            echo "::warning::  • Domain DNS not yet propagated"
+            echo "::warning::  • Use the bare server hostname or Shared IP from cPanel instead"
+            echo "::warning::Continuing so deploy step can report the definitive FTPS error."
+          else
+            RESOLVED=$(getent hosts "$FTP_SERVER_CLEAN" | awk '{ print $1 }')
+            echo "✅  FTP server resolved to $RESOLVED"
+          fi
 
           # Confirm port 21 is reachable (5-second timeout).
-          echo "Testing FTP port 21 on $FTP_SERVER …"
-          if ! nc -z -w 5 "$FTP_SERVER" 21 2>/dev/null; then
-            echo "::warning::Port 21 is not reachable on $FTP_SERVER."
+          echo "Testing FTP port 21 on $FTP_SERVER_CLEAN …"
+          if ! nc -z -w 5 "$FTP_SERVER_CLEAN" 21 2>/dev/null; then
+            echo "::warning::Port 21 is not reachable on FTP_SERVER."
             echo "::warning::The deploy will still proceed — if it fails, contact"
             echo "::warning::Truehost support to confirm your protocol and port."
           else
-            echo "✅  Port 21 is open on $FTP_SERVER"
+            echo "✅  Port 21 is open on FTP_SERVER"
           fi
 
       # ── 4. Deploy ────────────────────────────────────────────────────────
@@ -129,7 +143,7 @@ jobs:
         with:
           # Protocol: ftps = FTP over explicit TLS (Truehost default, port 21).
           # Change to "ftp" only if Truehost support confirms plain FTP.
-          server:     ${{ secrets.FTP_SERVER }}
+          server:     ${{ env.FTP_SERVER_CLEAN }}
           username:   ${{ secrets.FTP_USERNAME }}
           password:   ${{ secrets.FTP_PASSWORD }}
           port:       21
