@@ -629,7 +629,7 @@ function renderItems(order) {
     const up       = Number(item.unit_price ?? item.price ?? 0);
     const sub      = Number(item.subtotal  ?? (qty * up));
     const isFree   = Boolean(item.is_free);
-    const pName    = String(item.product_name ?? item.name ?? item.sku ?? 'Product');
+    const pName    = String(item.product_name ?? item.name ?? item.product_sku ?? item.sku ?? 'Product');
     const freeTag  = isFree
       ? ' <span style="color:#0d683a;font-weight:700;font-size:0.72rem;">(FREE)</span>'
       : '';
