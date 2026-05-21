@@ -106,8 +106,13 @@ jobs:
           FTP_SERVER_CLEAN="${FTP_SERVER_CLEAN#ftpes://}"
           FTP_SERVER_CLEAN="${FTP_SERVER_CLEAN%%/*}"
           FTP_SERVER_CLEAN="$(echo "$FTP_SERVER_CLEAN" | sed -E 's/:[0-9]+$//')"
+          if [[ "$FTP_SERVER_CLEAN" =~ [[:space:]] ]]; then
+            echo "::error::FTP_SERVER contains whitespace after normalization."
+            echo "::error::Use only a bare hostname or Shared IP from cPanel."
+            exit 1
+          fi
           if [ -z "$FTP_SERVER_CLEAN" ]; then
-            echo "::error::FTP_SERVER secret is invalid after normalisation."
+            echo "::error::FTP_SERVER secret is invalid after normalization."
             echo "::error::Use only the bare server hostname or Shared IP from cPanel."
             exit 1
           fi
