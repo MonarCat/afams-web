@@ -100,12 +100,12 @@ jobs:
             exit 1
           fi
 
-          # Normalise FTP_SERVER in case it was pasted as a URL.
+          # Normalize FTP_SERVER in case it was pasted as a URL.
           FTP_SERVER_CLEAN="${FTP_SERVER#ftp://}"
           FTP_SERVER_CLEAN="${FTP_SERVER_CLEAN#ftps://}"
           FTP_SERVER_CLEAN="${FTP_SERVER_CLEAN#ftpes://}"
           FTP_SERVER_CLEAN="${FTP_SERVER_CLEAN%%/*}"
-          FTP_SERVER_CLEAN="${FTP_SERVER_CLEAN%:21}"
+          FTP_SERVER_CLEAN="$(echo "$FTP_SERVER_CLEAN" | sed -E 's/:[0-9]+$//')"
           if [ -z "$FTP_SERVER_CLEAN" ]; then
             echo "::error::FTP_SERVER secret is invalid after normalisation."
             echo "::error::Use only the bare server hostname or Shared IP from cPanel."
