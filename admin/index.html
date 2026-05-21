@@ -1692,7 +1692,13 @@ function getOrderProductSummary(order) {
   } else if (Array.isArray(order && order.items)) {
     storedItems = order.items;
   }
-  if (storedItems.length > 0) return 'See order items';
+  if (storedItems.length > 0) {
+    return storedItems.map(function(item) {
+      var name = item.product_name || item.name || item.product_sku || item.sku || 'Product';
+      var qty  = item.quantity || item.qty || 1;
+      return String(name) + ' ×' + qty;
+    }).join(', ');
+  }
   return String(order.product_name || order.product_sku || '—');
 }
 
@@ -1897,7 +1903,10 @@ function renderOrders(orders) {
   tbody.innerHTML = orders.map(function (o) {
     var name     = escapeHtml(o.customer_name || '—');
     var email    = escapeHtml(o.customer_email || '');
-    var product  = escapeHtml(getOrderProductSummary(o));
+    var productLines = getOrderProductLines(o);
+    var product = productLines.length
+      ? escapeHtml(productLines.join(', '))
+      : escapeHtml(o.product_name || o.product_sku || '—');
     var ref      = escapeHtml(o.order_number || (o.id ? o.id.slice(0, 8) : '—'));
     var amount   = (o.total_amount || 0).toLocaleString();
     var status   = o.status || 'pending';
