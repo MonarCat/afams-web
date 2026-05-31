@@ -1,5 +1,5 @@
 -- ============================================================
--- Afams FarmBag — Add unified line items column on orders
+-- Afams SuChai — Add unified line items column on orders
 -- Migration: 008_add_order_items_jsonb.sql
 -- ============================================================
 

@@ -5,8 +5,8 @@
 
 ## 0. Mission Statement
 
-Transform the `afams-web` repo from a FarmBag agricultural products store into a
-**SuChai** premium Kenyan tea e-commerce site. Every FarmBag reference is removed.
+Transform the `afams-web` repo from a SuChai agricultural products store into a
+**SuChai** premium Kenyan tea e-commerce site. Every SuChai reference is removed.
 The entire product catalogue, UI, copy, and data schema is replaced with SuChai.
 **The existing tech stack is unchanged.** Only the product and presentation layer changes.
 
@@ -65,7 +65,7 @@ afams-web/
 └── package.json
 ```
 
-**Delete on this branch:** All FarmBag-specific HTML, JS, CSS, and image files.
+**Delete on this branch:** All SuChai-specific HTML, JS, CSS, and image files.
 
 ---
 
@@ -1320,7 +1320,7 @@ window.__SUPABASE_ANON_KEY   = 'eyJ...';        // anon key, not service role
 ## 13. Implementation Checklist
 
 ### Phase 1 — Core UI
-- [ ] Delete all FarmBag HTML, CSS, JS, and images
+- [ ] Delete all SuChai HTML, CSS, JS, and images
 - [ ] Implement new `assets/css/main.css` with design tokens (Section 3)
 - [ ] Build `index.html` per sections 5.1–5.3
 - [ ] Build `assets/js/products.js` (catalogue, cart, render, events)

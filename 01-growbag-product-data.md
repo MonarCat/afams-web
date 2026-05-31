@@ -1,6 +1,6 @@
 # Copilot Prompt — 01: Add GrowBag to Existing Product Data
 # Scope: Add GrowBag entries to the existing products array/object in the site JS.
-# Rule: Do NOT touch FarmBag Classic, FarmBag Vertical, or ProSoil entries.
+# Rule: Do NOT touch SuChai Classic, SuChai Vertical, or ProSoil entries.
 #       Do NOT change cart logic, checkout, or Paystack integration.
 #       Only ADD new entries. Follow the exact same data structure already in use.
 
@@ -10,7 +10,7 @@
 
 The site at afams.co.ke has a products array in its main JavaScript file (likely `js/main.js`,
 `js/products.js`, `js/app.js`, or inline in `index.html` — find it by searching for
-`'FarmBag Classic'` or `farmbag-classic` in the codebase).
+`'SuChai Classic'` or `suchai-classic` in the codebase).
 
 The existing products follow a consistent data structure. Identify that structure exactly —
 field names, property types, SKU format, price format — and replicate it precisely for
@@ -20,12 +20,12 @@ the new GrowBag entries below.
 
 ## New Product: Afams GrowBag
 
-The GrowBag is a new, simpler product line being added below the existing FarmBags.
+The GrowBag is a new, simpler product line being added below the existing SuChais.
 It comes in **5 sizes × 2 shape variants = 10 SKUs total**.
 
 ### Shape variants
 - **Wide** — standard cylindrical shape, broad and squat. Similar footprint to the existing
-  FarmBag Classic. Best for balconies, rooftops, and patios where floor space is available.
+  SuChai Classic. Best for balconies, rooftops, and patios where floor space is available.
 - **Compact** — narrower and taller profile. Best for small balconies, tight corners,
   and spaces where width is limited.
 
@@ -74,8 +74,8 @@ XL:       ['Tomatoes', 'Sweet potato', 'Multi-plant', 'Large crops']
 
 ## Implementation instructions
 
-1. **Find** the existing products array/object in the codebase. Search for `'FarmBag Classic'`
-   or `farmbag-classic` to locate it.
+1. **Find** the existing products array/object in the codebase. Search for `'SuChai Classic'`
+   or `suchai-classic` to locate it.
 
 2. **Inspect** the exact data structure of one existing product entry — every field name,
    value type, and pattern.
@@ -103,7 +103,7 @@ XL:       ['Tomatoes', 'Sweet potato', 'Multi-plant', 'Large crops']
 
 ## Checklist after implementation
 - [ ] Exactly 10 new GrowBag entries added to products array
-- [ ] Existing 3 products (FarmBag Classic, FarmBag Vertical, ProSoil) untouched
+- [ ] Existing 3 products (SuChai Classic, SuChai Vertical, ProSoil) untouched
 - [ ] All 10 entries follow the exact same field structure as existing products
 - [ ] `size`, `variant`, `volume` fields present on all 10 GrowBag entries
 - [ ] SKU codes match the matrix exactly (GB-MINI-W, GB-MINI-C, etc.)

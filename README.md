@@ -38,8 +38,8 @@ Replace with your actual WhatsApp business number including country code.
 
 ### 3. Add your product images
 Place your product images in `assets/images/` with these exact filenames:
-- `farmbag-classic.jpg` — FarmBag Classic rooftop photo
-- `farmbag-vertical.jpg` — FarmBag Vertical with Grow Cube photo
+- `suchai-classic.jpg` — SuChai Classic rooftop photo
+- `suchai-vertical.jpg` — SuChai Vertical with Grow Cube photo
 
 
 Images gracefully fallback to emoji placeholders if not found.

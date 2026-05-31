@@ -1,5 +1,5 @@
 -- ============================================================
--- Afams FarmBag — Seed Products Catalog & Product Metadata
+-- Afams SuChai — Seed Products Catalog & Product Metadata
 -- Migration: 009_seed_products_catalog.sql
 -- ============================================================
 -- Adds seed-focused metadata columns to products and registers
@@ -17,7 +17,7 @@ SET product_category = COALESCE(product_category,
   CASE
     WHEN product_line = 'prosoil' THEN 'Growing Medium'
     WHEN product_line LIKE 'growbag%' THEN 'GrowBag'
-    WHEN product_line LIKE 'farmbag%' THEN 'FarmBag'
+    WHEN product_line LIKE 'suchai%' THEN 'SuChai'
     ELSE 'General' END),
     product_type = COALESCE(product_type, 'product'),
     unit_label = COALESCE(unit_label, 'item')

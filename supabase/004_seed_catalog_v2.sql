@@ -1,5 +1,5 @@
 -- ============================================================
--- Afams FarmBag — Seed Catalog v2 Migration
+-- Afams SuChai — Seed Catalog v2 Migration
 -- Run in Supabase SQL Editor on project dvquyzzqsnlcassvgdzz
 --
 -- Migrates seed_catalog from the old group-based schema

@@ -1,4 +1,4 @@
--- ── AFAMS LTD · FarmBag Store · Supabase Schema v2 ──────────────────────────
+-- ── AFAMS LTD · SuChai Store · Supabase Schema v2 ──────────────────────────
 -- Run this once in the Supabase SQL Editor for your project.
 -- Project URL: https://dvquyzzqsnlcassvgdzz.supabase.co
 
@@ -45,8 +45,8 @@ CREATE TABLE IF NOT EXISTS public.products (
 -- Seed the product catalogue (idempotent — update on conflict)
 INSERT INTO public.products (sku, name, description, unit_price, active)
 VALUES
-  ('FB-CLS-01', 'FarmBag Classic',  '3-zone urban farming system. Compost zone, Grow Zone, and Seedbed in one sealed canvas bag.', 7500, true),
-  ('FB-VRT-01', 'FarmBag Vertical', 'Space-saving vertical urban farming system. Grow more in less floor space.',                    8500, true)
+  ('FB-CLS-01', 'SuChai Classic',  '3-zone urban farming system. Compost zone, Grow Zone, and Seedbed in one sealed canvas bag.', 7500, true),
+  ('FB-VRT-01', 'SuChai Vertical', 'Space-saving vertical urban farming system. Grow more in less floor space.',                    8500, true)
 ON CONFLICT (sku) DO UPDATE
   SET name = EXCLUDED.name,
       description = EXCLUDED.description,

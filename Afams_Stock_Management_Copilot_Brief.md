@@ -226,7 +226,7 @@ Some items in your cart are no longer available. Please review your cart.
 or more specific:
 
 ```txt
-FarmBag Classic is currently out of stock.
+SuChai Classic is currently out of stock.
 ```
 
 4. On the server/Edge Function side, call the RPC function for the actual stock deduction (see Section 9).

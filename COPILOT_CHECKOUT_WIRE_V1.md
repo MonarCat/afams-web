@@ -24,7 +24,7 @@ ProSoil add-on, no per-product add-ons, wrong field layout.
    saving the cart to `sessionStorage`.
 
 2. **`checkout.html`** — read the cart from `sessionStorage` on load and render it properly,
-   supporting **multiple line items** (e.g. FarmBag Classic + FarmBag Vertical in the same
+   supporting **multiple line items** (e.g. SuChai Classic + SuChai Vertical in the same
    order). Fall back gracefully to URL params or a default product if storage is empty.
 
 Do **not** touch any other page. Do not touch `order-confirm.html`, `products.html`,
@@ -41,10 +41,10 @@ Ensure the in-memory cart array uses this exact shape. Each item is an object:
 ```js
 {
   sku:   'FB-CLS-01',          // string — product identifier
-  name:  'FarmBag Classic',    // string — display name
+  name:  'SuChai Classic',    // string — display name
   price: 7500,                 // number — unit price in KES
   emoji: '🌿',                 // string — fallback thumbnail
-  image: 'assets/images/farmbag-classic.jpg', // string — image path
+  image: 'assets/images/suchai-classic.jpg', // string — image path
   qty:   1                     // number — quantity, min 1
 }
 ```
@@ -53,8 +53,8 @@ The full product catalogue (for reference, already in `index.html`):
 
 ```js
 const PRODUCTS = [
-  { sku: 'FB-CLS-01', name: 'FarmBag Classic',    price: 7500, emoji: '🌿', image: 'assets/images/farmbag-classic.jpg' },
-  { sku: 'FB-GRW-01', name: 'FarmBag Vertical',   price: 8500, emoji: '🌱', image: 'assets/images/farmbag-vertical.jpg' },
+  { sku: 'FB-CLS-01', name: 'SuChai Classic',    price: 7500, emoji: '🌿', image: 'assets/images/suchai-classic.jpg' },
+  { sku: 'FB-GRW-01', name: 'SuChai Vertical',   price: 8500, emoji: '🌱', image: 'assets/images/suchai-vertical.jpg' },
   { sku: 'PS-25KG',   name: 'Afams ProSoil 25kg', price: 399,  emoji: '🪴', image: 'assets/images/prosoil-front.jpg'   },
 ];
 ```
@@ -189,12 +189,12 @@ Call `renderCartItems()` inside the `isCartMode()` branch of `updateSummary()`.
 3. **Hide the qty stepper** (`#qty` input and its +/- buttons) — qty is already set per item in
    the cart. Set the wrapper `div.qty-control` to `display:none`.
 
-4. **Show/hide FarmBag add-ons correctly.** In cart mode, show the seed selector and ProSoil
-   add-on if **any item in `CART_ITEMS` is a FarmBag** (sku starts with `'FB-'`):
+4. **Show/hide SuChai add-ons correctly.** In cart mode, show the seed selector and ProSoil
+   add-on if **any item in `CART_ITEMS` is a SuChai** (sku starts with `'FB-'`):
 
 ```js
-const hasFarmBag = CART_ITEMS.some(item => item.sku.startsWith('FB-'));
-document.getElementById('farmbag-addons').style.display = hasFarmBag ? '' : 'none';
+const hasSuChai = CART_ITEMS.some(item => item.sku.startsWith('FB-'));
+document.getElementById('suchai-addons').style.display = hasSuChai ? '' : 'none';
 ```
 
 5. **Unit price / qty display lines** in the summary — hide these when in cart mode; replace with
@@ -220,7 +220,7 @@ function updateOrderTotals() {
 
   const hasFB      = isCartMode()
     ? CART_ITEMS.some(i => i.sku.startsWith('FB-'))
-    : isFarmBag(selectedProduct());
+    : isSuChai(selectedProduct());
 
   const seedsTotal   = hasFB ? (window.seedState?.extraTotal   || 0) : 0;
   const prosoilTotal = hasFB ? (window.prosoilState?.total     || 0) : 0;
@@ -257,10 +257,10 @@ In `launchPaystack()`, replace the single-product metadata block with a branch:
 let productSku, productName, unitPrice, orderQty, baseTotal;
 const seedsAddon   = isCartMode()
   ? (CART_ITEMS.some(i => i.sku.startsWith('FB-')) ? (window.seedState.extraTotal   || 0) : 0)
-  : (isFarmBag(selectedProduct()) ? (window.seedState.extraTotal   || 0) : 0);
+  : (isSuChai(selectedProduct()) ? (window.seedState.extraTotal   || 0) : 0);
 const prosoilAddon = isCartMode()
   ? (CART_ITEMS.some(i => i.sku.startsWith('FB-')) ? (window.prosoilState.total     || 0) : 0)
-  : (isFarmBag(selectedProduct()) ? (window.prosoilState.total     || 0) : 0);
+  : (isSuChai(selectedProduct()) ? (window.prosoilState.total     || 0) : 0);
 
 if (isCartMode()) {
   baseTotal   = CART_ITEMS.reduce((s, i) => s + i.price * i.qty, 0);
@@ -282,7 +282,7 @@ const addonTotal = seedsAddon + prosoilAddon;
 const grandTotal = baseTotal + addonTotal;
 const prosoilQty = isCartMode()
   ? (CART_ITEMS.some(i => i.sku.startsWith('FB-')) ? (window.prosoilState.qty || 0) : 0)
-  : (isFarmBag(selectedProduct()) ? (window.prosoilState.qty || 0) : 0);
+  : (isSuChai(selectedProduct()) ? (window.prosoilState.qty || 0) : 0);
 ```
 
 Then use `productSku`, `productName`, `unitPrice`, `orderQty`, `grandTotal` in the
@@ -300,7 +300,7 @@ function updateSummary() {
     renderCartItems();
 
     const hasFB = CART_ITEMS.some(i => i.sku.startsWith('FB-'));
-    document.getElementById('farmbag-addons').style.display = hasFB ? '' : 'none';
+    document.getElementById('suchai-addons').style.display = hasFB ? '' : 'none';
     document.getElementById('prosoil-promo-notice').classList.add('hidden');
 
     // Hide single-product UI elements
@@ -372,7 +372,7 @@ Before considering the task done, verify every item below:
       `checkout.html` — no inline modal appears in `index.html`.
 - [ ] `checkout.html` loads in cart mode when `afams_cart` is set. The product selector dropdown
       is hidden. All cart items are displayed with names, qtys, and line totals.
-- [ ] If the cart contains a FarmBag item, the seed selector and ProSoil add-on are visible.
+- [ ] If the cart contains a SuChai item, the seed selector and ProSoil add-on are visible.
 - [ ] If the cart contains only ProSoil, seed selector and ProSoil add-on section are hidden.
 - [ ] The grand total on `checkout.html` equals sum of all line items + extra seeds + ProSoil.
 - [ ] The Paystack popup opens with the correct `amount` (grand total × 100 kobo).

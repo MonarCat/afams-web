@@ -10,7 +10,7 @@
 ## Context
 
 The site has a products section (id="products") in index.html that currently shows
-three product cards: FarmBag Classic, FarmBag Vertical, and ProSoil.
+three product cards: SuChai Classic, SuChai Vertical, and ProSoil.
 
 Each card follows an existing HTML pattern — find it by inspecting the existing cards.
 The GrowBag card must look like it belongs in the same section, using the same card
@@ -25,7 +25,7 @@ price, SKU, volume, and "Add to Cart" button dynamically.
 ## Step 1 — Add a section divider before GrowBag
 
 Before the GrowBag card, add a subtle divider with a label inside the existing
-products grid/section. This visually separates the GrowBag from the FarmBag range
+products grid/section. This visually separates the GrowBag from the SuChai range
 without breaking the existing layout:
 
 ```html
@@ -338,7 +338,7 @@ function addGrowBagToCart() {
   // Pattern C: addToCart(sku, qty) — price resolved internally from products array
   // addToCart(current.sku, 1);
 
-  // → Find the existing addToCart call on the FarmBag Classic "Add to Cart" button
+  // → Find the existing addToCart call on the SuChai Classic "Add to Cart" button
   //   and replicate the exact same call pattern here for the GrowBag.
 }
 
@@ -374,8 +374,8 @@ needed — BUT confirm the following:
 
 Find the footer section of index.html. It currently lists:
 ```
-FarmBag Classic
-FarmBag Vertical
+SuChai Classic
+SuChai Vertical
 ```
 Add GrowBag below these two without removing them:
 ```html

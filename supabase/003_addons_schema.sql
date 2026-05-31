@@ -1,5 +1,5 @@
 -- ============================================================
--- Afams FarmBag — Add-ons & ProSoil Schema
+-- Afams SuChai — Add-ons & ProSoil Schema
 -- Run in Supabase SQL Editor on project dvquyzzqsnlcassvgdzz
 -- ============================================================
 
@@ -121,7 +121,7 @@ INSERT INTO products (name, slug, description, price, category, in_stock, images
 VALUES (
   'Afams ProSoil 25kg',
   'prosoil-25kg',
-  'Pre-mixed, pH-balanced, sterilised growing medium. Topsoil + compost + perlite + slow-release fertiliser. Pour into your FarmBag, water and start planting immediately. No weed seeds. Ready to plant. pH 6.2–6.8. 25kg bag.',
+  'Pre-mixed, pH-balanced, sterilised growing medium. Topsoil + compost + perlite + slow-release fertiliser. Pour into your SuChai, water and start planting immediately. No weed seeds. Ready to plant. pH 6.2–6.8. 25kg bag.',
   59900,
   'growing-medium',
   TRUE,
