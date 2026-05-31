@@ -50,7 +50,7 @@ async function handleSuccess(ref, email, phone) {
       closeCart();
       showToast('✓ Order confirmed! Check your email.');
     } else {
-      showToast('Payment captured. We are confirming your order.');
+      showToast(`Payment processed, but confirmation failed. Reference: ${ref}`);
     }
   } catch {
     showToast("Order received. We'll confirm via email shortly.");

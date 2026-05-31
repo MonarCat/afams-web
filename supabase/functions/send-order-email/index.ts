@@ -26,5 +26,9 @@ serve(async (req) => {
     }),
   });
 
-  return new Response(JSON.stringify({ sent: res.ok }), { headers: { 'Content-Type': 'application/json' } });
+  const error = res.ok ? null : await res.text();
+  return new Response(
+    JSON.stringify({ sent: res.ok, status: res.status, error }),
+    { headers: { 'Content-Type': 'application/json' } },
+  );
 });
