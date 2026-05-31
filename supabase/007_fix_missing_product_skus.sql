@@ -6,9 +6,9 @@
 --
 -- ROOT CAUSE:
 --   orders.product_sku has a FOREIGN KEY → products(sku).
---   The frontend has always used 'FB-GRW-01' for SuChai Vertical
+--   The frontend has always used 'FB-GRW-01' for Vertical Grow Bag
 --   and 'PS-25KG' for ProSoil, but neither SKU existed in the
---   products table. Every order for SuChai Vertical or a
+--   products table. Every order for Vertical Grow Bag or a
 --   ProSoil-only cart triggered a FK violation → the insert failed
 --   → the order was never saved to the database.
 --
@@ -17,7 +17,7 @@
 --   so that insert was a no-op or errored silently.
 --
 -- FIX:
---   1. Add FB-GRW-01 (SuChai Vertical) to products.
+--   1. Add FB-GRW-01 (Vertical Grow Bag) to products.
 --   2. Add PS-25KG  (Afams ProSoil 25kg) to products.
 --   3. Add the prosoil_promo_qty column to orders (it is referenced
 --      by the webhook but was never added by a prior migration).
@@ -35,13 +35,13 @@ ALTER TABLE public.products
   ADD COLUMN IF NOT EXISTS size_label    text,
   ADD COLUMN IF NOT EXISTS volume_litres numeric;
 
--- ── 1. SuChai Vertical (FB-GRW-01) ─────────────────────────────────────────
+-- ── 1. Vertical Grow Bag (FB-GRW-01) ───────────────────────────────────────
 --   This is the SKU used everywhere in the frontend for the Vertical bag.
 --   The old 001_orders_schema.sql seeded FB-VRT-01 instead, which is wrong.
 INSERT INTO public.products (sku, name, description, unit_price, active, product_line)
 VALUES (
   'FB-GRW-01',
-  'SuChai Vertical',
+  'Vertical Grow Bag',
   'Space-saving vertical urban farming system. Grow more in less floor space.',
   8500,
   true,
@@ -61,7 +61,7 @@ INSERT INTO public.products (sku, name, description, unit_price, active, product
 VALUES (
   'PS-25KG',
   'Afams ProSoil 25kg',
-  'Pre-mixed, pH-balanced, sterilised growing medium. Topsoil + compost + perlite + slow-release fertiliser. Pour into your SuChai, water and start planting immediately. No weed seeds. Ready to plant. pH 6.2–6.8. 25kg bag.',
+  'Pre-mixed, pH-balanced, sterilised growing medium. Topsoil + compost + perlite + slow-release fertiliser. Pour into your grow bag, water and start planting immediately. No weed seeds. Ready to plant. pH 6.2–6.8. 25kg bag.',
   599,
   true,
   'prosoil'

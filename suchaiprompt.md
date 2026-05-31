@@ -65,7 +65,7 @@ afams-web/
 └── package.json
 ```
 
-**Delete on this branch:** All legacy-brand-specific HTML, JS, CSS, and image files.
+**Delete on this branch:** All legacy-brand HTML, JS, CSS, and image files.
 
 ---
 
