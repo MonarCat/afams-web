@@ -1,8 +1,11 @@
 {
   "name": "afams-web",
   "version": "1.0.0",
-  "description": "Afams Ltd — FarmBag Store (Netlify Functions)",
+  "description": "Afams Ltd — SuChai storefront and checkout",
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.1"
   }

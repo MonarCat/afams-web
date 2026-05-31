@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>SuChai QR Generator</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #F4EDD6; color: #0B1E12; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 1.2rem; }
+    .card { background: #fff; border-radius: 14px; padding: 1rem; border: 1px solid rgba(11,30,18,.1); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .6rem; }
+    label { font-size: 12px; font-weight: 600; display: grid; gap: .35rem; }
+    select, input, textarea, button { font: inherit; border-radius: 10px; border: 1px solid rgba(11,30,18,.2); padding: .5rem .6rem; }
+    button { background: #0B1E12; color: #fff; border: 0; cursor: pointer; }
+    .actions { margin-top: .8rem; display: flex; gap: .6rem; flex-wrap: wrap; }
+    #qr-canvas { border: 1px dashed rgba(11,30,18,.25); border-radius: 10px; background: #fff; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>SuChai QR Generator</h1>
+    <div class="card">
+      <div class="grid">
+        <label>Variety
+          <select id="sel-variety"><option value="rtd">Ready to Drink</option><option value="ordinary">Ordinary</option></select>
+        </label>
+        <label>Flavour
+          <select id="sel-flavor"><option value="plain">Plain</option><option value="ginger">Ginger</option><option value="lemon">Lemon</option></select>
+        </label>
+        <label>Size
+          <select id="sel-size"><option>50g</option><option selected>100g</option><option>150g</option><option>200g</option><option>250g</option></select>
+        </label>
+        <label>Batch
+          <input id="inp-batch" placeholder="SC-001">
+        </label>
+        <label>Best Before
+          <input id="inp-exp" placeholder="Dec 2026">
+        </label>
+        <label>Manufactured
+          <input id="inp-mfg" placeholder="Jan 2026">
+        </label>
+      </div>
+
+      <div class="actions">
+        <button type="button" onclick="generateQR()">Generate QR</button>
+        <button type="button" onclick="downloadQR()">Download PNG</button>
+      </div>
+
+      <p style="margin:.8rem 0 .4rem;font-size:12px;font-weight:600">Encoded URL</p>
+      <textarea id="encoded-url" rows="2" readonly style="width:100%"></textarea>
+
+      <p style="margin:.8rem 0 .4rem;font-size:12px;font-weight:600">Preview</p>
+      <div id="preview-url" style="font-size:13px;word-break:break-word"></div>
+
+      <p style="margin:.8rem 0 .4rem;font-size:12px;font-weight:600">QR Canvas</p>
+      <canvas id="qr-canvas" width="200" height="200"></canvas>
+    </div>
+  </div>
+
+  <script>
+    function buildUrl() {
+      const v = document.getElementById('sel-variety').value;
+      const f = document.getElementById('sel-flavor').value;
+      const s = document.getElementById('sel-size').value;
+      const b = document.getElementById('inp-batch').value || 'SC-001';
+      const exp = document.getElementById('inp-exp').value || 'Dec 2026';
+      const mfg = document.getElementById('inp-mfg').value || 'Jan 2026';
+      return `https://afams.co.ke/product.html?v=${v}&f=${f}&s=${s}` +
+        `&b=${encodeURIComponent(b)}&exp=${encodeURIComponent(exp)}&mfg=${encodeURIComponent(mfg)}`;
+    }
+
+    async function generateQR() {
+      const url = buildUrl();
+      document.getElementById('encoded-url').value = url;
+      document.getElementById('preview-url').textContent = url;
+      const canvas = document.getElementById('qr-canvas');
+      await QRCode.toCanvas(canvas, url, {
+        width: 200,
+        margin: 2,
+        errorCorrectionLevel: 'M',
+        color: { dark: '#0B1E12', light: '#FFFFFF' },
+      });
+    }
+
+    function downloadQR() {
+      const canvas = document.getElementById('qr-canvas');
+      const v = document.getElementById('sel-variety').value;
+      const f = document.getElementById('sel-flavor').value;
+      const s = document.getElementById('sel-size').value;
+      const b = document.getElementById('inp-batch').value || 'SC-001';
+      const link = document.createElement('a');
+      link.download = `suchai-qr-${v}-${f}-${s}-${b}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    ['sel-variety', 'sel-flavor', 'sel-size', 'inp-batch', 'inp-exp', 'inp-mfg'].forEach((id) => {
+      document.getElementById(id).addEventListener('input', () => {
+        document.getElementById('preview-url').textContent = buildUrl();
+      });
+    });
+
+    document.getElementById('preview-url').textContent = buildUrl();
+  </script>
+</body>
+</html>

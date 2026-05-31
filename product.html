@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>SuChai Product Verification</title>
+  <meta name="robots" content="index,follow">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    body { background: #0B1E12; margin: 0; }
+    .p-wrap { max-width: 430px; margin: 0 auto; min-height: 100vh; }
+    .p-hero { padding: 1.5rem 1rem 1rem; text-align: center; color: #fff; }
+    .p-logo { font-family: Georgia, 'Times New Roman', serif; font-size: 52px; }
+    .p-logo em { color: #C9A020; font-style: normal; }
+    .verified { display: inline-block; border: 1px solid #C9A020; color: #C9A020; border-radius: 999px; padding: .35rem .65rem; font-size: 12px; }
+    .p-badges { margin-top: .8rem; display: flex; justify-content: center; gap: .4rem; flex-wrap: wrap; }
+    .p-badge { border-radius: 999px; padding: .28rem .58rem; font-size: 12px; border: 1px solid rgba(255,255,255,.2); color: #fff; }
+    .p-body { background: #F4EDD6; border-radius: 24px 24px 0 0; padding: 1rem; }
+    .card { background: #fff; border-radius: 14px; padding: .9rem; margin-bottom: .7rem; border: 1px solid rgba(11, 30, 18, 0.1); }
+    .fresh { background: #0B1E12; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+    .fresh-date { font-size: 18px; color: #C9A020; font-weight: 700; }
+    .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+    .row { display: flex; justify-content: space-between; gap: .6rem; font-size: 13px; padding: .2rem 0; }
+    .steps { margin: 0; padding: 0; list-style: none; display: grid; gap: .5rem; }
+    .steps li { display: flex; gap: .5rem; font-size: 13px; }
+    .num { width: 24px; height: 24px; border-radius: 50%; background: #0B1E12; color: #C9A020; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+    .p-foot { padding: 1rem; text-align: center; color: #fff; }
+    .p-btns { display: flex; gap: .5rem; justify-content: center; margin-bottom: .5rem; }
+    .p-btn { border: 1px solid #C9A020; color: #C9A020; border-radius: 999px; padding: .4rem .75rem; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="p-wrap">
+    <section class="p-hero">
+      <div class="p-logo">Su<em>Chai</em></div>
+      <div class="verified">✓ Verified Product · Afams Limited</div>
+      <div class="p-badges">
+        <span class="p-badge" id="badge-variety">Ready to Drink</span>
+        <span class="p-badge" id="badge-flavor">Plain</span>
+        <span class="p-badge" id="badge-size">100g</span>
+      </div>
+    </section>
+
+    <section class="p-body">
+      <div class="card fresh">
+        <div><div style="font-size:12px;opacity:.75">Best Before</div><div class="fresh-date" id="val-exp">Dec 2026</div></div>
+        <div id="fresh-status"><span class="dot" id="fresh-dot" style="background:#34C759"></span><span id="fresh-text">Good to use</span></div>
+      </div>
+
+      <div class="card"><strong>Batch &amp; Traceability</strong>
+        <div class="row"><span>Batch Number</span><span id="val-batch">SC-001</span></div>
+        <div class="row"><span>Manufactured</span><span id="val-mfg">Jan 2026</span></div>
+        <div class="row"><span>Best Before</span><span id="val-exp2">Dec 2026</span></div>
+        <div class="row"><span>Country</span><span>🇰🇪 Kenya</span></div>
+      </div>
+
+      <div class="card"><strong>Product Specifications</strong>
+        <div class="row"><span>Product</span><span>SuChai Tea</span></div>
+        <div class="row"><span>Variety</span><span id="val-variety">Ready to Drink</span></div>
+        <div class="row"><span>Flavour</span><span id="val-flavor">Plain</span></div>
+        <div class="row"><span>Net Weight</span><span id="val-size">100g</span></div>
+        <div class="row"><span>Sieving Required</span><span>✓ None</span></div>
+      </div>
+
+      <div class="card"><strong>Ingredients</strong><p id="val-ingredients" style="font-size:13px;margin:.5rem 0 0"></p></div>
+
+      <div class="card"><strong>How to Brew</strong><ol class="steps" id="brew-steps"></ol></div>
+
+      <div class="card"><strong>Storage</strong>
+        <p style="font-size:13px;margin:.5rem 0 0">Store in cool, dry place · Reseal after opening · Avoid moisture &amp; direct sunlight</p>
+      </div>
+
+      <div class="card"><strong>Manufactured By</strong>
+        <div class="row"><span>Company</span><span>Afams Limited</span></div>
+        <div class="row"><span>Location</span><span>Nairobi, Kenya</span></div>
+        <div class="row"><span>Email</span><span>orders@afams.co.ke</span></div>
+        <div class="row"><span>Website</span><span>afams.co.ke</span></div>
+      </div>
+    </section>
+
+    <footer class="p-foot">
+      <div class="p-logo" style="font-size:28px">Su<em>Chai</em></div>
+      <div class="p-btns"><a class="p-btn" href="/">Shop Online</a><a class="p-btn" href="mailto:orders@afams.co.ke">Contact</a></div>
+      <div style="font-size:12px;opacity:.8">© 2025 Afams Limited</div>
+    </footer>
+  </div>
+
+  <script src="assets/js/product-page.js"></script>
+</body>
+</html>
