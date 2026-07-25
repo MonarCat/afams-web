@@ -119,13 +119,16 @@ Deno.serve(async (req: Request) => {
   }
 
   // Step 7: Extract items array from metadata
-  // checkout.html sends metadata.items as a full array — that is the source of truth.
-  // Fall back through cart → cart_items strings if needed.
+  // checkout.html sends metadata.items_json (preferred) or metadata.cart as JSON.
+  // Fall back through legacy metadata.items → cart_items strings if needed.
   // Final fallback: build single-item array from flat metadata fields.
   type RawItem = Record<string, unknown>;
   let rawItems: RawItem[] = [];
 
-  if (Array.isArray(meta.items) && (meta.items as RawItem[]).length > 0) {
+  if (typeof meta.items_json === 'string' && meta.items_json.length > 2) {
+    try { rawItems = JSON.parse(meta.items_json); } catch { /* ignore */ }
+    console.log('[webhook] Parsed metadata.items_json — count:', rawItems.length);
+  } else if (Array.isArray(meta.items) && (meta.items as RawItem[]).length > 0) {
     rawItems = meta.items as RawItem[];
     console.log('[webhook] Using metadata.items — count:', rawItems.length);
   } else if (typeof meta.cart === 'string' && meta.cart.length > 2) {
