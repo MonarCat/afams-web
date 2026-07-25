@@ -4,7 +4,6 @@
 
 const CART_KEY        = 'afams_cart';
 const PROSOIL_SKU     = 'PS-25KG';
-const FARMBAG_SKUS    = ['FB-CLS-01', 'FB-GRW-01', 'FB-HYD-01', 'FB-HYP-01', 'FB-AQA-01', 'FB-AHP-01'];
 
 // ── Cart shape ────────────────────────────────────────────────────────────────
 // {
@@ -18,7 +17,7 @@ const FARMBAG_SKUS    = ['FB-CLS-01', 'FB-GRW-01', 'FB-HYD-01', 'FB-HYP-01', 'FB
 //       type: 'farmbag' | 'prosoil' | 'product'
 //     }
 //   ],
-//   prosoilPromoBags: 0,                  // computed: floor(prosoilQty / 3) when FarmBag present
+//   prosoilPromoBags: 0,
 // }
 
 function getCart() {
@@ -78,15 +77,10 @@ function clearCart() {
   updateCartBadge();
 }
 
-// ── ProSoil Promo Logic ───────────────────────────────────────────────────────
-// Rule: for every 3 ProSoil bags purchased, +1 free
-// ONLY if at least one FarmBag product is also in the cart
 function computeProsoilPromo(cart) {
-  var hasFarmBag = cart.items.some(function(i) { return FARMBAG_SKUS.includes(i.sku); });
-  if (!hasFarmBag) return 0;
   var prosoilItem = cart.items.find(function(i) { return i.sku === PROSOIL_SKU; });
   if (!prosoilItem) return 0;
-  return Math.min(3, Math.floor(prosoilItem.qty / 3)); // 3 bought → 1 free, cap at 3 free bags
+  return 0;
 }
 
 // ── Cart Totals ───────────────────────────────────────────────────────────────
@@ -94,7 +88,7 @@ function getCartTotals(cart) {
   cart = cart || getCart();
   var itemsTotal      = cart.items.reduce(function(sum, i) { return sum + (i.unit_price * i.qty); }, 0);
   var promoQty        = cart.prosoilPromoBags || computeProsoilPromo(cart);
-  var promoSaving     = promoQty * 599; // free bags value in KES
+  var promoSaving     = 0;
   var grandTotal      = itemsTotal;
   return { itemsTotal: itemsTotal, promoSaving: promoSaving, promoQty: promoQty, grandTotal: grandTotal };
 }

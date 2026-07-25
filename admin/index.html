@@ -2055,20 +2055,12 @@ function openOrderModal(id) {
     }
 
     if (hasProsoil) {
-      var prosoilPromoQty = o.prosoil_promo_qty || 0;
-      var dispatchQty     = prosoilQty + prosoilPromoQty;
       addonsHtml += '<div class="addons-subsection">'
         + '<div class="addons-subsection-title">🪴 Afams ProSoil 25kg</div>'
         + '<div style="font-size:0.88rem;color:var(--text-primary)">'
-        + prosoilQty + ' bag' + (prosoilQty > 1 ? 's' : '') + ' ordered × KES 599 = <strong>KES '
+        + prosoilQty + ' bag' + (prosoilQty > 1 ? 's' : '') + ' ordered × KES 799 = <strong>KES '
         + prosoilTot.toLocaleString() + '</strong>'
         + '</div>';
-      if (o.prosoil_promo_bag) {
-        addonsHtml += '<div class="prosoil-dispatch-notice">'
-          + '⚠️ DISPATCH NOTE: Pack <strong>' + dispatchQty + ' ProSoil bag' + (dispatchQty > 1 ? 's' : '') + '</strong> total'
-          + ' — ' + prosoilQty + ' purchased + ' + prosoilPromoQty + ' FREE (every 3 bags, 1 free promo)'
-          + '</div>';
-      }
       addonsHtml += '</div>';
     }
 
@@ -2538,7 +2530,12 @@ function buildReceiptHTML(order) {
   var notesBlock    = o.notes
     ? '<div class="delivery-notes">Customer note: ' + escapeHtml(o.notes) + '</div>'
     : '';
-  var deliveryLabel = Number(total || 0) >= 2499 ? 'FREE (Order ≥ KES 2,499)' : 'Charged (Order < KES 2,499)';
+  var metroCounties = ['Nairobi', 'Kiambu', 'Machakos', 'Kajiado'];
+  var orderCounty = String(o.county || '').trim();
+  var isMetroOrder = metroCounties.indexOf(orderCounty) !== -1;
+  var deliveryLabel = (isMetroOrder && Number(total || 0) >= 2499)
+    ? 'FREE (Nairobi Metro order ≥ KES 2,499)'
+    : 'Standard applicable delivery rate';
 
   return '<!DOCTYPE html>\n'
     + '<html lang="en">\n'
@@ -2776,14 +2773,8 @@ function getDispatchProductLines(order) {
   if (extraSeeds) lines.push('Certified Seeds (Extra): ' + extraSeeds);
 
   var prosoilQty = Number(order.prosoil_qty || 0);
-  var prosoilPromoQty = Number(order.prosoil_promo_qty || 0);
-  var prosoilDispatchQty = prosoilQty + prosoilPromoQty;
-  if (prosoilDispatchQty > 0 && !hasProsoilLine) {
-    var prosoilLine = 'Afams ProSoil 25kg ×' + prosoilDispatchQty;
-    if (prosoilPromoQty > 0) {
-      prosoilLine += ' (' + prosoilQty + ' paid + ' + prosoilPromoQty + ' free)';
-    }
-    lines.push(prosoilLine);
+  if (prosoilQty > 0 && !hasProsoilLine) {
+    lines.push('Afams ProSoil 25kg ×' + prosoilQty);
   }
 
   return lines;

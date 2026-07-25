@@ -62,7 +62,7 @@ VALUES (
   'PS-25KG',
   'Afams ProSoil 25kg',
   'Pre-mixed, pH-balanced, sterilised growing medium. Topsoil + compost + perlite + slow-release fertiliser. Pour into your FarmBag, water and start planting immediately. No weed seeds. Ready to plant. pH 6.2–6.8. 25kg bag.',
-  599,
+  799,
   true,
   'prosoil'
 )

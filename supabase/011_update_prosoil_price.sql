@@ -1,5 +1,5 @@
--- ── 011: Update Afams ProSoil 25kg price from KES 399 to KES 599 ─────────────
+-- ── 011: Update Afams ProSoil 25kg price to KES 799 ───────────────────────────
 
 UPDATE public.products
-SET unit_price = 599
+SET unit_price = 799
 WHERE sku = 'PS-25KG';
