@@ -5,6 +5,23 @@
 const CART_KEY        = 'afams_cart';
 const PROSOIL_SKU     = 'PS-25KG';
 
+function parseCartNumber(value) {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : NaN;
+  }
+  if (typeof value === 'string') {
+    var trimmed = value.trim();
+    if (!trimmed) return NaN;
+    var normalized = trimmed.replace(/[^0-9.-]/g, '');
+    if (!normalized || normalized === '-' || normalized === '.' || normalized === '-.') {
+      return NaN;
+    }
+    var parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : NaN;
+  }
+  return NaN;
+}
+
 // ── Cart shape ────────────────────────────────────────────────────────────────
 // {
 //   items: [
@@ -86,11 +103,37 @@ function computeProsoilPromo(cart) {
 // ── Cart Totals ───────────────────────────────────────────────────────────────
 function getCartTotals(cart) {
   cart = cart || getCart();
-  var itemsTotal      = cart.items.reduce(function(sum, i) { return sum + (i.unit_price * i.qty); }, 0);
+  var invalidItems    = [];
+  var itemsTotal      = (cart.items || []).reduce(function(sum, i, index) {
+    var price = parseCartNumber(i && i.unit_price);
+    var qtyRaw = parseCartNumber(i && i.qty);
+    var qty = Number.isFinite(qtyRaw) ? Math.floor(qtyRaw) : NaN;
+
+    if (!Number.isFinite(price) || !Number.isFinite(qty) || price < 0 || qty <= 0) {
+      invalidItems.push({
+        index: index,
+        sku: i && i.sku ? i.sku : '',
+        unit_price: i && i.unit_price,
+        qty: i && i.qty
+      });
+      return sum;
+    }
+    return sum + (price * qty);
+  }, 0);
+  if (invalidItems.length > 0) {
+    console.error('[Afams] Invalid cart item(s) excluded from total:', invalidItems);
+  }
   var promoQty        = cart.prosoilPromoBags || computeProsoilPromo(cart);
   var promoSaving     = 0;
   var grandTotal      = itemsTotal;
-  return { itemsTotal: itemsTotal, promoSaving: promoSaving, promoQty: promoQty, grandTotal: grandTotal };
+  return {
+    itemsTotal: itemsTotal,
+    promoSaving: promoSaving,
+    promoQty: promoQty,
+    grandTotal: grandTotal,
+    hasInvalidItems: invalidItems.length > 0,
+    invalidItems: invalidItems
+  };
 }
 
 // ── UI Helpers ────────────────────────────────────────────────────────────────

@@ -1048,6 +1048,13 @@ function launchPaystack() {
   const grandTotal   = totals.grandTotal;
   const amountInKobo = Math.round(Number(grandTotal) * 100);
   if (!Number.isFinite(amountInKobo) || amountInKobo <= 0) {
+    console.error('[Afams] Blocked checkout: invalid amountInKobo', {
+      amountInKobo: amountInKobo,
+      grandTotal: grandTotal,
+      hasInvalidItems: !!totals.hasInvalidItems,
+      invalidItems: totals.invalidItems || [],
+      cartItems: cart.items || []
+    });
     return showError('Unable to calculate your payment amount. Please refresh and try again.');
   }
 
