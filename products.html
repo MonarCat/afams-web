@@ -758,7 +758,7 @@ function renderGrowBagCard(grid) {
     const active = isSkuActive(cur.sku);
     const el = id => document.getElementById(id);
     if (el('pg-name'))    el('pg-name').textContent = `GrowBag ${gbSize} \u2014 ${gbVariant}`;
-    if (el('pg-volume'))  el('pg-volume').textContent = `${cur.volume} · Standard breathable woven fabric · Heavy Duty PP Woven Gunia option available`;
+    if (el('pg-volume'))  el('pg-volume').textContent = `${cur.volume} · White/Forest Green Heavy Duty PP Woven`;
     if (el('pg-price'))   el('pg-price').textContent = `KES ${cur.price.toLocaleString()}`;
     if (el('growbag-products-card')) el('growbag-products-card').classList.toggle('product-card-disabled', !active);
     if (el('pg-add-btn')) {
@@ -834,7 +834,7 @@ function renderGrowBagCard(grid) {
     <div class="product-body">
       <div class="product-category">GrowBag · Basic Range</div>
       <h2 class="product-name" id="pg-name">GrowBag Standard — Wide</h2>
-      <p class="product-desc" style="font-size:0.82rem;color:#718096;margin-bottom:0.75rem" id="pg-volume">50 L · Standard breathable woven fabric · Heavy Duty PP Woven Gunia option available</p>
+      <p class="product-desc" style="font-size:0.82rem;color:#718096;margin-bottom:0.75rem" id="pg-volume">50 L · White/Forest Green Heavy Duty PP Woven</p>
 
       <div style="margin-bottom:10px">
         <p style="font-size:11px;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 6px">Size</p>
