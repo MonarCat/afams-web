@@ -627,7 +627,7 @@
 </div>
 
 <!-- Paystack Inline JS -->
-<script src="https://js.paystack.co/v1/inline.js"></script>
+<script src="https://js.paystack.co/v2/inline.js"></script>
 <script src="assets/js/paystack-config.js"></script>
 <script src="js/cart.js"></script>
 <script>
@@ -1002,7 +1002,7 @@ function launchPaystack() {
     return showError('Your payment request is already being processed. Please wait a few seconds.');
   }
 
-  if (typeof PaystackPop === 'undefined' || !PaystackPop || typeof PaystackPop.setup !== 'function') {
+  if (typeof PaystackPop === 'undefined' || typeof PaystackPop !== 'function') {
     return showError('Payment system failed to load. Please refresh the page and try again.');
   }
 
@@ -1080,7 +1080,11 @@ function launchPaystack() {
   };
 
   try {
-    const handler = PaystackPop.setup({
+    const popup = new PaystackPop();
+    if (!popup || typeof popup.newTransaction !== 'function') {
+      throw new Error('Invalid Paystack Popup V2 instance');
+    }
+    popup.newTransaction({
     key:      paystackKey,
     email:    email,
     amount:   grandTotal * 100,
@@ -1115,16 +1119,21 @@ function launchPaystack() {
         { display_name: 'Order Type',       variable_name: 'order_type',       value: 'PRE-ORDER' },
       ],
     },
-    callback: function(response) {
+    onSuccess: function(transaction) {
       releaseCheckoutState();
       clearCart();
-      window.location.href = 'order-confirm.html?ref=' + encodeURIComponent(response.reference)
+      window.location.href = 'order-confirm.html?ref=' + encodeURIComponent(transaction.reference)
         + '&name=' + encodeURIComponent(name)
         + '&email=' + encodeURIComponent(email)
         + '&amount=' + grandTotal;
     },
-    onClose: function() {
+    onCancel: function() {
       releaseCheckoutState();
+    },
+    onError: function(error) {
+      console.error('[Afams] Paystack popup error:', error);
+      releaseCheckoutState();
+      showError('Unable to start payment right now. Please check your connection and try again.');
     },
   });
 
@@ -1132,7 +1141,6 @@ function launchPaystack() {
     paystackLaunchWatchdog = setTimeout(function() {
       releaseCheckoutState();
     }, CHECKOUT_WATCHDOG_TIMEOUT_MS);
-    handler.openIframe();
   } catch (err) {
     console.error('[Afams] Paystack setup error:', err);
     releaseCheckoutState();
