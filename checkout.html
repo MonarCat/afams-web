@@ -1046,8 +1046,17 @@ function launchPaystack() {
 
   const totals       = getCartTotals(cart);
   const grandTotal   = totals.grandTotal;
+  const amountInKobo = Math.round(Number(grandTotal) * 100);
+  if (!Number.isFinite(amountInKobo) || amountInKobo <= 0) {
+    return showError('Unable to calculate your payment amount. Please refresh and try again.');
+  }
 
   const unifiedOrderItems = buildUnifiedOrderItems(cart);
+  const serializedItems = JSON.stringify(unifiedOrderItems);
+  const cartItemSummary = cart.items
+    .map(function(i) { return i.name + ' ×' + i.qty; })
+    .join(', ')
+    .slice(0, 500);
   const prosoilItem    = cart.items.find(function(i) { return i.sku === 'PS-25KG'; });
   const prosoilQty     = prosoilItem ? prosoilItem.qty : 0;
   const prosoilTotal   = prosoilQty * PROSOIL_PRICE_CHECKOUT;
@@ -1087,7 +1096,7 @@ function launchPaystack() {
     popup.newTransaction({
     key:      paystackKey,
     email:    email,
-    amount:   grandTotal * 100,
+    amount:   amountInKobo,
     currency: 'KES',
     ref:      'AFAMS-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase(),
     metadata: {
@@ -1101,9 +1110,9 @@ function launchPaystack() {
       delivery_address: address,
       county:           county,
       country:          country,
-      items:            unifiedOrderItems,
-      cart:             JSON.stringify(unifiedOrderItems),
-      cart_items:       JSON.stringify(cart.items),
+      items_json:       serializedItems,
+      cart:             serializedItems,
+      cart_items:       cartItemSummary,
       prosoil_qty:      prosoilQty,
       prosoil_total:    prosoilTotal,
       prosoil_promo_bag: prosoilPromo,
@@ -1115,7 +1124,7 @@ function launchPaystack() {
         { display_name: 'Delivery County',  variable_name: 'county',           value: county  },
         { display_name: 'Country',          variable_name: 'country',          value: country },
         { display_name: 'Delivery Address', variable_name: 'delivery_address', value: address },
-        { display_name: 'Cart Items',       variable_name: 'cart_items',       value: cart.items.map(function(i) { return i.name + ' ×' + i.qty; }).join(', ') },
+        { display_name: 'Cart Items',       variable_name: 'cart_items',       value: cartItemSummary },
         { display_name: 'Order Type',       variable_name: 'order_type',       value: 'PRE-ORDER' },
       ],
     },
