@@ -270,7 +270,7 @@
 
 <!-- ANNOUNCE BAR -->
 <div class="announce">
-  🌿 Pre-orders now open — ships within 3–5 days · Free delivery on orders KES 2,499+ ·
+  🌿 Pre-orders now open — ships within 3–5 days · Free delivery on orders KES 2,499+ within Nairobi Metropolitan Area ·
   <a href="checkout.html">Order yours →</a>
 </div>
 
@@ -351,8 +351,7 @@ const MAIN_PRODUCTS = [
     type: 'farmbag', link: null },
   { sku: 'PS-25KG',   name: 'Afams ProSoil 25kg', category: 'Growing Medium',  badge: 'prosoil',  emoji: '🪴',
     desc: 'Pre-mixed, pH-balanced, sterilised growing medium. Topsoil + compost + perlite + slow-release fertiliser. Pour in, water and plant immediately.',
-    features: ['pH 6.2–6.8','Sterilised','Ready to plant','Made in Kenya'], priceKES: 599, image: 'assets/images/prosoil-front.jpg',
-    promoBadge: '🎁 Every 3 bags, 1 free (max 3) — first-time customers',
+    features: ['pH 6.2–6.8','Sterilised','Ready to plant','Made in Kenya'], priceKES: 799, image: 'assets/images/prosoil-front.jpg',
     type: 'prosoil', link: null, detailsLink: 'prosoil.html' },
 ];
 
@@ -528,7 +527,7 @@ function renderProductCard(p) {
         <div class="product-footer">
           <div>
             <div class="product-price">KES ${unitPrice.toLocaleString()}</div>
-            <div class="product-price-sub">${p.sku === 'PS-25KG' ? 'Per bag · Free delivery on orders KES 2,499+' : p.category === 'Seeds' ? 'Per packet · Ships in 3–5 days' : 'Pre-order · Ships in 3–5 days'}</div>
+            <div class="product-price-sub">${p.sku === 'PS-25KG' ? 'Per bag · Free delivery on orders KES 2,499+ within Nairobi Metropolitan Area' : p.category === 'Seeds' ? 'Per packet · Ships same day' : 'Pre-order · Ships in 3–5 days'}</div>
             ${p.promoBadge ? `<span class="product-promo-badge">${p.promoBadge}</span>` : ''}
           </div>
           ${actionHtml}
@@ -554,7 +553,7 @@ function renderProducts(products) {
   const seedHeader = `
     <div id="seed-catalog-section" style="grid-column:1/-1;padding:28px 0 8px;border-top:1px solid rgba(0,0,0,0.07);margin-top:8px">
       <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#155D27;font-weight:700;margin:0">${SEEDS_CATEGORY_LABEL}</p>
-      <p style="font-size:13px;color:#718096;margin:4px 0 0;font-weight:400">Choose high-quality seed packets for your kitchen garden and container setup.</p>
+      <p style="font-size:13px;color:#718096;margin:4px 0 0;font-weight:400">Choose high-quality seed packets for your kitchen garden and container setup. Ships same day.</p>
       <div class="seed-filter-wrap">
         <label class="seed-filter-label" for="seed-subcategory-filter">Subcategory</label>
         <select id="seed-subcategory-filter" class="seed-filter-select">
@@ -725,22 +724,22 @@ function onAddToCart(product) {
 
 function renderGrowBagCard(grid) {
   const GB_DATA = {
-    Mini:     { wide: { sku: 'GB-MINI-W', price: 99,   volume: '8 L'  },
-                compact: { sku: 'GB-MINI-C', price: 59,   volume: '6 L'  },
+    Mini:     { wide: { sku: 'GB-MINI-W', price: 259,   volume: '10 L'  },
+                compact: { sku: 'GB-MINI-C', price: 129,   volume: '5 L'  },
                 crops: ['Herbs', 'Chillies', 'Spring onions', 'Microgreens'], defaultQty: 5 },
-    Medium:   { wide: { sku: 'GB-MED-W',  price: 199,  volume: '17 L' },
-                compact: { sku: 'GB-MED-C',  price: 159,  volume: '14 L' },
+    Medium:   { wide: { sku: 'GB-MED-W',  price: 629,  volume: '25 L' },
+                compact: { sku: 'GB-MED-C',  price: 499,  volume: '20 L' },
                 crops: ['Spinach', 'Sukuma wiki', 'Capsicum', 'Lettuce'], defaultQty: 5 },
-    Standard: { wide: { sku: 'GB-STD-W',  price: 299,  volume: '32 L' },
-                compact: { sku: 'GB-STD-C',  price: 259,  volume: '28 L' },
+    Standard: { wide: { sku: 'GB-STD-W',  price: 1290,  volume: '50 L' },
+                compact: { sku: 'GB-STD-C',  price: 999,  volume: '40 L' },
                 crops: ['Kale', 'Beans', 'Capsicum', 'Coriander', 'Spinach'], defaultQty: 5 },
-    Large:    { wide: { sku: 'GB-LRG-W',  price: 699,  volume: '50 L' },
-                compact: { sku: 'GB-LRG-C',  price: 659,  volume: '44 L' },
-                vertical: { sku: 'GB-LRG-V',  price: 799,  volume: '50 L' },
+    Large:    { wide: { sku: 'GB-LRG-W',  price: 1800,  volume: '70 L' },
+                compact: { sku: 'GB-LRG-C',  price: 1679,  volume: '65 L' },
+                vertical: { sku: 'GB-LRG-V',  price: 1999,  volume: '65 L' },
                 crops: ['Tomatoes', 'Aubergine', 'Large kale', 'Capsicum'], defaultQty: 3 },
-    XL:       { wide: { sku: 'GB-XL-W',   price: 1099, volume: '70 L' },
-                compact: { sku: 'GB-XL-C',   price: 999,  volume: '62 L' },
-                vertical: { sku: 'GB-XL-V',   price: 1399, volume: '70 L' },
+    XL:       { wide: { sku: 'GB-XL-W',   price: 2300, volume: '90 L' },
+                compact: { sku: 'GB-XL-C',   price: 2099,  volume: '85 L' },
+                vertical: { sku: 'GB-XL-V',   price: 2699, volume: '85 L' },
                 crops: ['Tomatoes', 'Sweet potato', 'Multi-plant', 'Large crops'], defaultQty: 2 },
   };
   const VERTICAL_SIZES = new Set(['Large', 'XL']);
@@ -759,7 +758,7 @@ function renderGrowBagCard(grid) {
     const active = isSkuActive(cur.sku);
     const el = id => document.getElementById(id);
     if (el('pg-name'))    el('pg-name').textContent = `GrowBag ${gbSize} \u2014 ${gbVariant}`;
-    if (el('pg-volume'))  el('pg-volume').textContent = `${cur.volume} · PP geotextile · Bonded liner`;
+    if (el('pg-volume'))  el('pg-volume').textContent = `${cur.volume} · Standard breathable woven fabric · Heavy Duty PP Woven Gunia option available`;
     if (el('pg-price'))   el('pg-price').textContent = `KES ${cur.price.toLocaleString()}`;
     if (el('growbag-products-card')) el('growbag-products-card').classList.toggle('product-card-disabled', !active);
     if (el('pg-add-btn')) {
@@ -835,7 +834,7 @@ function renderGrowBagCard(grid) {
     <div class="product-body">
       <div class="product-category">GrowBag · Basic Range</div>
       <h2 class="product-name" id="pg-name">GrowBag Standard — Wide</h2>
-      <p class="product-desc" style="font-size:0.82rem;color:#718096;margin-bottom:0.75rem" id="pg-volume">32 L · PP geotextile · Bonded liner</p>
+      <p class="product-desc" style="font-size:0.82rem;color:#718096;margin-bottom:0.75rem" id="pg-volume">50 L · Standard breathable woven fabric · Heavy Duty PP Woven Gunia option available</p>
 
       <div style="margin-bottom:10px">
         <p style="font-size:11px;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 6px">Size</p>
@@ -865,7 +864,7 @@ function renderGrowBagCard(grid) {
 
       <div class="product-footer">
         <div>
-          <div class="product-price" id="pg-price">KES 1,050</div>
+          <div class="product-price" id="pg-price">KES 1,290</div>
           <div class="product-price-sub">Basic range · Ships in 3–5 days</div>
         </div>
         <button class="btn-order" id="pg-add-btn" onclick="pgAddToCart()">Add to Cart</button>
@@ -921,7 +920,7 @@ function renderPremiumRange(grid) {
   const divider = document.createElement('div');
   divider.style.cssText = 'grid-column:1/-1;padding:28px 0 8px;border-top:1px solid rgba(0,0,0,0.07);margin-top:8px';
   divider.innerHTML = '<p style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#7B1FA2;font-weight:700;margin:0">The FarmBag System · Premium Range</p>'
-    + '<p style="font-size:13px;color:#718096;margin:4px 0 0;font-weight:400">Exciting Innovations Coming — Pre-order now. First delivery: 1 September 2026.</p>';
+    + '<p style="font-size:13px;color:#718096;margin:4px 0 0;font-weight:400">Exciting Innovations Coming — Pre-order now. First delivery: 11 January 2027.</p>';
   grid.appendChild(divider);
 
   PREMIUM.forEach(function(p) {
@@ -933,7 +932,7 @@ function renderPremiumRange(grid) {
       <div class="product-image" style="${p.bgStyle};display:flex;align-items:center;justify-content:center;">
         <span class="product-badge-pill badge-premium" style="position:absolute;top:0.85rem;left:0.85rem;">Premium</span>
         <span style="color:rgba(255,255,255,0.82);font-size:0.75rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">Official reveal coming soon</span>
-        <span style="position:absolute;left:0.6rem;right:0.6rem;bottom:0.6rem;background:rgba(0,0,0,0.6);color:#fff;font-size:0.72rem;font-weight:700;text-align:center;padding:0.38rem 0.45rem;border-radius:8px;line-height:1.3;">Awaiting Official Launch-September 1st 2026</span>
+        <span style="position:absolute;left:0.6rem;right:0.6rem;bottom:0.6rem;background:rgba(0,0,0,0.6);color:#fff;font-size:0.72rem;font-weight:700;text-align:center;padding:0.38rem 0.45rem;border-radius:8px;line-height:1.3;">Awaiting Official Launch — January 11th 2027</span>
       </div>
       <div class="product-body">
         <div class="product-category">${p.category}</div>
@@ -942,7 +941,7 @@ function renderPremiumRange(grid) {
         <div class="product-footer">
           <div>
             <div class="product-price">KES ${p.price.toLocaleString()}</div>
-            <div class="product-price-sub">Pre-order · First delivery 1 Sep 2026</div>
+            <div class="product-price-sub">Pre-order · First delivery 11 Jan 2027</div>
           </div>
           <button class="btn-order btn-add-to-cart ${isActive ? '' : 'btn-order-disabled'}" ${isActive ? '' : 'disabled'} style="background:${isActive ? '#7B1FA2' : ''};white-space:nowrap;">${isActive ? 'Pre-Order' : 'Unavailable'}</button>
         </div>

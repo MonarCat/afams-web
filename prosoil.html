@@ -8,7 +8,7 @@
   <meta name="author" content="Afams Limited"/>
   <link rel="canonical" href="https://afams.co.ke/prosoil.html"/>
   <meta property="og:title" content="Afams ProSoil 25kg — Premium Growing Medium"/>
-  <meta property="og:description" content="Pre-mixed, pH-balanced, sterilised growing medium. Ready to use straight from the bag. Every 3 bags, get 1 free — for FarmBag customers."/>
+  <meta property="og:description" content="Pre-mixed, pH-balanced, sterilised growing medium. Ready to use straight from the bag."/>
   <meta property="og:type" content="product"/>
   <meta property="og:url" content="https://afams.co.ke/prosoil.html"/>
   <meta property="og:image" content="https://afams.co.ke/assets/images/prosoil-both.jpg"/>
@@ -18,7 +18,7 @@
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:site" content="@afams"/>
   <meta name="twitter:title" content="Afams ProSoil 25kg — Premium Growing Medium"/>
-  <meta name="twitter:description" content="Pre-mixed, pH-balanced, sterilised growing medium. Every 3 bags, get 1 free for FarmBag customers."/>
+  <meta name="twitter:description" content="Pre-mixed, pH-balanced, sterilised growing medium. Ready to use straight from the bag."/>
   <meta name="twitter:image" content="https://afams.co.ke/assets/images/prosoil-both.jpg"/>
   <title>Afams ProSoil 25kg — Premium Growing Medium</title>
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/afams_favicon_32.png"/>
@@ -48,7 +48,7 @@
       "@type": "Offer",
       "url": "https://afams.co.ke/prosoil.html",
       "priceCurrency": "KES",
-      "price": "599",
+      "price": "799",
       "availability": "https://schema.org/InStock",
       "seller": {
         "@type": "Organization",
@@ -356,7 +356,7 @@
 
 <!-- ANNOUNCE BAR -->
 <div class="announce">
-  🪴 ProSoil now available — free delivery in Nairobi ·
+  🪴 ProSoil now available — free delivery on orders KES 2,499+ within Nairobi Metropolitan Area ·
   <a href="products.html">Shop all products →</a>
 </div>
 
@@ -419,18 +419,16 @@
     <p class="product-tagline">"Pour. Water. Plant. Done."</p>
 
     <div class="price-row">
-      <span class="price-main">KES 599</span>
+      <span class="price-main">KES 799</span>
       <span class="price-sub">/ bag</span>
     </div>
     <span class="badge-made-in">🇰🇪 Made in Kenya — Packed in Kiambu</span>
 
-    <!-- Promo Strip -->
-    <div class="promo-strip" id="promo-strip">
-      <span class="promo-strip-icon">🎁</span>
-      <div class="promo-strip-text" id="promo-strip-text">
-        <strong id="promo-strip-headline">Add a FarmBag to unlock: every 3 bags, 1 free</strong>
-        <span id="promo-strip-body">Add a FarmBag to your cart to unlock the promo.</span>
-        <a href="products.html" class="btn-browse-farmbag" id="promo-browse-btn">Browse FarmBags →</a>
+    <div class="promo-strip muted" id="delivery-strip">
+      <span class="promo-strip-icon">🚚</span>
+      <div class="promo-strip-text" id="delivery-strip-text">
+        <strong id="delivery-strip-headline">Delivery policy update</strong>
+        <span id="delivery-strip-body">Free delivery on orders KES 2,499+ within Nairobi Metropolitan Area. Outside Nairobi Metro, standard applicable delivery rates apply.</span>
       </div>
     </div>
 
@@ -467,23 +465,15 @@
           <span class="qty-val-display" id="qty-display">1</span>
           <button type="button" onclick="changeQty(1)" aria-label="Increase quantity">+</button>
         </div>
-        <span class="unit-badge">KES 599 / bag</span>
+        <span class="unit-badge">KES 799 / bag</span>
       </div>
       <div id="prosoil-calc" class="prosoil-calc">
         <div class="calc-row">
-          <span id="calc-bags-label">1 bag × KES 599</span>
-          <span id="calc-bags-cost">KES 599</span>
-        </div>
-        <div class="calc-row promo" id="calc-promo-row" style="display:none">
-          <span id="calc-promo-label">🎁 Every 3 bags, 1 free → +1 free bag</span>
-          <span id="calc-promo-val">FREE</span>
-        </div>
-        <div class="calc-row" id="calc-nudge-row" style="display:none">
-          <span id="calc-nudge-text" class="promo-nudge"></span>
-          <span></span>
+          <span id="calc-bags-label">1 bag × KES 799</span>
+          <span id="calc-bags-cost">KES 799</span>
         </div>
         <div class="calc-row total">
-          <span>You receive</span>
+          <span>Total bags</span>
           <span id="calc-total-bags">1 bag total</span>
         </div>
       </div>
@@ -492,11 +482,11 @@
     <!-- Add to Cart Button -->
     <button id="btn-buy" class="btn-buy" onclick="handleAddToCart()">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      <span id="btn-buy-text">Add to Cart — KES 599</span>
+      <span id="btn-buy-text">Add to Cart — KES 799</span>
     </button>
     <p class="secure-note">
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      Secured by Paystack · Free delivery in Nairobi
+      Secured by Paystack · Free delivery on orders KES 2,499+ within Nairobi Metropolitan Area
     </p>
 
     <!-- Cross-sell -->
@@ -559,36 +549,10 @@
 
 <script>
 var qty   = 1;
-var PRICE = 599;
-
-// ── Promo state — updated from cart ──────────────────────────────────────────
-var hasFarmBagInCart = false;
-
-function renderProsoilPromo(hasFarmBag) {
-  hasFarmBagInCart = hasFarmBag;
-  var strip     = document.getElementById('promo-strip');
-  var headline  = document.getElementById('promo-strip-headline');
-  var body      = document.getElementById('promo-strip-body');
-  var browseBtn = document.getElementById('promo-browse-btn');
-  if (!strip) return;
-
-  if (hasFarmBag) {
-    strip.classList.remove('muted');
-    headline.textContent  = 'Every 3 bags, get 1 FREE — FarmBag customers only';
-    body.textContent      = 'FarmBag is in your cart. Add 3+ ProSoil bags to unlock a free bag!';
-    browseBtn.style.display = 'none';
-  } else {
-    strip.classList.add('muted');
-    headline.textContent  = 'Add a FarmBag to unlock: every 3 bags, 1 free';
-    body.textContent      = 'Exclusive promo for FarmBag customers.';
-    browseBtn.style.display = 'inline-block';
-  }
-  updateCalc();
-}
+var PRICE = 799;
 
 function updateCalc() {
-  var promoBags  = hasFarmBagInCart ? Math.floor(qty / 3) : 0;
-  var totalBags  = qty + promoBags;
+  var totalBags  = qty;
   var totalCost  = qty * PRICE;
 
   document.getElementById('calc-bags-label').textContent  = qty + ' bag' + (qty > 1 ? 's' : '') + ' × KES ' + PRICE;
@@ -596,23 +560,6 @@ function updateCalc() {
   document.getElementById('calc-total-bags').textContent  = totalBags + ' bag' + (totalBags > 1 ? 's' : '') + ' total';
   document.getElementById('qty-display').textContent      = qty;
   document.getElementById('btn-buy-text').textContent     = 'Add to Cart — KES ' + totalCost.toLocaleString();
-
-  var promoRow  = document.getElementById('calc-promo-row');
-  var nudgeRow  = document.getElementById('calc-nudge-row');
-  var nudgeText = document.getElementById('calc-nudge-text');
-
-  if (promoBags > 0) {
-    promoRow.style.display = '';
-    document.getElementById('calc-promo-label').textContent = '🎁 Every 3 bags, 1 free → +' + promoBags + ' free bag' + (promoBags > 1 ? 's' : '');
-    nudgeRow.style.display = 'none';
-  } else if (hasFarmBagInCart && qty < 3) {
-    promoRow.style.display = 'none';
-    nudgeRow.style.display = '';
-    nudgeText.textContent  = 'Add ' + (3 - qty) + ' more bag' + ((3 - qty) > 1 ? 's' : '') + ' to unlock your free bag 🎁';
-  } else {
-    promoRow.style.display = 'none';
-    nudgeRow.style.display = 'none';
-  }
 }
 
 function changeQty(delta) {
@@ -643,17 +590,8 @@ function switchImage(src, alt, thumb) {
   thumb.classList.add('active');
 }
 
-// ── Initialise promo from cart on load ───────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
-  var cart        = getCart();
-  var hasFarmBag  = cart.items.some(function(i) { return ['FB-CLS-01','FB-GRW-01'].includes(i.sku); });
-  renderProsoilPromo(hasFarmBag);
-});
-
-// Re-render whenever cart changes (e.g. cross-sell add)
-window.addEventListener('afams:cart-updated', function(e) {
-  var hasFarmBag = e.detail.items.some(function(i) { return ['FB-CLS-01','FB-GRW-01'].includes(i.sku); });
-  renderProsoilPromo(hasFarmBag);
+  updateCalc();
 });
 </script>
 

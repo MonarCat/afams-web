@@ -6,7 +6,7 @@
 --
 -- Adds the four pre-order premium FarmBag products to the
 -- products table. These products are available for pre-order
--- with first delivery on 1 September 2026.
+-- with first delivery on 11 January 2027.
 --
 -- SKUs and prices:
 --   FB-HYD-01   FarmBag Hydro             KES  8,999
@@ -29,25 +29,25 @@ VALUES
   (
     'FB-HYD-01',
     'FarmBag Hydro',
-    'Advanced hydroponic urban farming system. Pre-order product — first delivery 1 September 2026. Full product details revealed at official launch.',
+    'Advanced hydroponic urban farming system. Pre-order product — first delivery 11 January 2027. Full product details revealed at official launch.',
     8999, true, 'farmbag-premium'
   ),
   (
     'FB-HYP-01',
     'FarmBag Hydro Pro',
-    'Professional-grade hydroponic system for serious urban growers. Pre-order product — first delivery 1 September 2026. Full product details revealed at official launch.',
+    'Professional-grade hydroponic system for serious urban growers. Pre-order product — first delivery 11 January 2027. Full product details revealed at official launch.',
     11999, true, 'farmbag-premium'
   ),
   (
     'FB-AQA-01',
     'FarmBag Aqua',
-    'Aquaponic urban farming innovation. Pre-order product — first delivery 1 September 2026. Full product details revealed at official launch.',
+    'Aquaponic urban farming innovation. Pre-order product — first delivery 11 January 2027. Full product details revealed at official launch.',
     14999, true, 'farmbag-premium'
   ),
   (
     'FB-AHP-01',
     'FarmBag Aqua-Hydro Pro',
-    'The ultimate combined aquaponic-hydroponic urban farming system. Pre-order product — first delivery 1 September 2026. Full product details revealed at official launch.',
+    'The ultimate combined aquaponic-hydroponic urban farming system. Pre-order product — first delivery 11 January 2027. Full product details revealed at official launch.',
     39999, true, 'farmbag-premium'
   )
 

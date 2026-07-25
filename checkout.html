@@ -530,7 +530,7 @@
 
       <div class="delivery-badge">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-        Free delivery for orders Above KES 2,499 · 3–5 business days
+        Free delivery on orders KES 2,499+ within Nairobi Metropolitan Area · Standard applicable delivery rate outside Nairobi Metro
       </div>
 
       <button class="btn-pay" id="pay-btn" type="submit">
@@ -569,11 +569,6 @@
         <a href="products.html" style="color:var(--green);font-weight:600;text-decoration:underline;">Browse products →</a>
       </div>
 
-      <!-- ProSoil standalone promo notice (shown when only ProSoil in cart) -->
-      <div id="prosoil-promo-notice" class="prosoil-checkout-promo hidden">
-        🎁 <strong>Every 3 bags, 1 free (max 3 free bags)</strong> — Add a FarmBag to your order to activate this promo. <em style="font-size:0.78rem;color:#a05000">First-time customers only.</em>
-      </div>
-
       <!-- Add-ons — FarmBag orders only (ProSoil) -->
       <div id="farmbag-addons" style="display:none">
 
@@ -587,13 +582,6 @@
               <strong>Recommended: 3 bags per FarmBag.</strong>
             </p>
           </div>
-          <div class="prosoil-promo-banner">
-            <span class="promo-icon">🎁</span>
-            <div class="promo-text">
-              <strong>Every 3 bags, get 1 FREE (max 3 free bags)</strong>
-              <span id="prosoil-promo-banner-text">Exclusive for FarmBag customers — first-time customers only.</span>
-            </div>
-          </div>
           <p class="prosoil-desc">
             Topsoil · Compost · Perlite · Slow-Release Fertiliser<br>
             <small>Sterilised · pH 6.2–6.8 · 25kg · Made in Kenya</small>
@@ -605,19 +593,15 @@
               <span id="prosoil-qty">0</span>
               <button type="button" onclick="changeProsoilQty(1)">+</button>
             </div>
-            <span class="unit-price-label">KES 599 / bag</span>
+            <span class="unit-price-label">KES 799 / bag</span>
           </div>
           <div id="prosoil-calc" class="prosoil-calc hidden">
             <div class="calc-row">
               <span id="prosoil-bags-label"></span>
               <span id="prosoil-bags-cost"></span>
             </div>
-            <div class="calc-row promo" id="prosoil-promo-calc-row" style="display:none">
-              <span id="prosoil-promo-calc-label">🎁 Every 3 bags, 1 free</span>
-              <span id="prosoil-promo-calc-val">FREE</span>
-            </div>
             <div class="calc-row total">
-              <span>You receive</span>
+              <span>Total bags</span>
               <span id="prosoil-total-bags"></span>
             </div>
           </div>
@@ -629,13 +613,9 @@
         <span class="label">ProSoil add-on</span>
         <span id="addon-prosoil-cost">KES 0</span>
       </div>
-      <div class="summary-line" id="promo-saving-line" style="display:none">
-        <span class="label" style="color:#2D6A4F">🎁 ProSoil promo saving</span>
-        <span id="promo-saving-val" style="color:#2D6A4F"></span>
-      </div>
       <div class="summary-line">
         <span class="label">Delivery</span>
-        <span id="delivery-display">Free (orders Above KES 2,499)</span>
+        <span id="delivery-display">Select county to confirm delivery rate</span>
       </div>
       <div class="summary-total">
         <span>Total</span>
@@ -653,20 +633,40 @@
 <script>
 // ── Checkout logic — reads cart from sessionStorage via cart.js ────────────────
 
-const PROSOIL_PRICE_CHECKOUT = 599;
+const PROSOIL_PRICE_CHECKOUT = 799;
 
 const FREE_DELIVERY_MIN_KES = 2499;
+const NAIROBI_METRO_COUNTIES = ['Nairobi', 'Kiambu', 'Machakos', 'Kajiado'];
 const CHECKOUT_LOCK_KEY = 'afams_checkout_lock';
 const CHECKOUT_LOCK_TTL_MS = 2 * 60 * 1000;
 const CHECKOUT_WATCHDOG_TIMEOUT_MS = 45000;
 let paystackLaunchInProgress = false;
 let paystackLaunchWatchdog = null;
 
-function getDeliveryLabel(total) {
+function isNairobiMetroCounty(county) {
+  return NAIROBI_METRO_COUNTIES.includes((county || '').trim());
+}
+
+function isDomesticOrder(county, country) {
+  var normalizedCountry = (country || 'Kenya').trim();
+  return normalizedCountry === 'Kenya' && (county || '').trim() !== 'Outside Kenya';
+}
+
+function getDeliveryLabel(total, county, country) {
   var threshold = FREE_DELIVERY_MIN_KES.toLocaleString('en-KE');
-  return total >= FREE_DELIVERY_MIN_KES
-    ? 'Free (orders KES ' + threshold + '+)'
-    : 'Charged (orders below KES ' + threshold + ')';
+  if (!isDomesticOrder(county, country)) {
+    return 'Standard applicable delivery rate (outside Kenya)';
+  }
+  if (!county) {
+    return 'Select county to confirm delivery rate';
+  }
+  if (isNairobiMetroCounty(county) && total >= FREE_DELIVERY_MIN_KES) {
+    return 'Free (Nairobi Metro orders KES ' + threshold + '+)';
+  }
+  if (!isNairobiMetroCounty(county)) {
+    return 'Standard applicable delivery rate (outside Nairobi Metro)';
+  }
+  return 'Standard applicable delivery rate (Nairobi Metro orders below KES ' + threshold + ')';
 }
 
 function syncLocationSelectors() {
@@ -697,6 +697,7 @@ function syncLocationSelectors() {
     countyGroup.style.display = '';
     countyEl.required = true;
   }
+  updateOrderTotals();
 }
 
 function createCheckoutAttemptId() {
@@ -736,7 +737,7 @@ function clearCheckoutLock() {
 const CHECKOUT_PRODUCTS = {
   'FB-CLS-01': { name: 'FarmBag Classic',         unit_price:  7500, image: 'assets/images/farmbag-classic.jpg',  type: 'farmbag' },
   'FB-GRW-01': { name: 'FarmBag Vertical',         unit_price:  8500, image: 'assets/images/farmbag-vertical.jpg', type: 'farmbag' },
-  'PS-25KG':   { name: 'Afams ProSoil 25kg',       unit_price:   599, image: 'assets/images/prosoil-front.jpg',    type: 'prosoil' },
+  'PS-25KG':   { name: 'Afams ProSoil 25kg',       unit_price:   799, image: 'assets/images/prosoil-front.jpg',    type: 'prosoil' },
   'FB-HYD-01': { name: 'FarmBag Hydro',            unit_price:  8999, image: '',                                   type: 'farmbag' },
   'FB-HYP-01': { name: 'FarmBag Hydro Pro',        unit_price: 11999, image: '',                                   type: 'farmbag' },
   'FB-AQA-01': { name: 'FarmBag Aqua',             unit_price: 14999, image: '',                                   type: 'farmbag' },
@@ -843,14 +844,11 @@ function renderCartItems() {
       + '</div>';
   }).join('');
 
-  // Show/hide add-ons and ProSoil promo notice
+  // Show/hide add-ons
   var farmBagAddons      = document.getElementById('farmbag-addons');
-  var prosoilPromoNotice = document.getElementById('prosoil-promo-notice');
   var hasFarmBag         = cartHasFarmBag();
-  var hasProsoilOnly     = !hasFarmBag && cart.items.some(function(i) { return i.sku === 'PS-25KG'; });
 
   if (farmBagAddons)      farmBagAddons.style.display       = hasFarmBag ? '' : 'none';
-  if (prosoilPromoNotice) prosoilPromoNotice.classList.toggle('hidden', !hasProsoilOnly);
 
   // Sync ProSoil add-on qty with cart
   var prosoilItemInCart = cart.items.find(function(i) { return i.sku === 'PS-25KG'; });
@@ -860,8 +858,7 @@ function renderCartItems() {
     qtyEl.textContent = cartProsoilQty;
     window.prosoilState = {
       qty: cartProsoilQty,
-      total: cartProsoilQty * PROSOIL_PRICE_CHECKOUT,
-      promoApplied: hasFarmBag && Math.min(3, Math.floor(cartProsoilQty / 3)) > 0
+      total: cartProsoilQty * PROSOIL_PRICE_CHECKOUT
     };
     refreshProsoilCalcUI();
   }
@@ -889,7 +886,6 @@ function changeProsoilQty(delta) {
     showError('Afams ProSoil is currently unavailable.');
     return;
   }
-  var hasFarmBag = cartHasFarmBag();
   var currentQty = window.prosoilState.qty;
   var newQty     = Math.max(0, currentQty + delta);
 
@@ -904,18 +900,11 @@ function changeProsoilQty(delta) {
     updateQty('PS-25KG', newQty);
     return; // updateQty fires cart-updated
   }
-
-  var promoBags = hasFarmBag ? Math.min(3, Math.floor(newQty / 3)) : 0;
-  window.prosoilState = { qty: newQty, total: newQty * PROSOIL_PRICE_CHECKOUT, promoApplied: promoBags > 0 };
-  refreshProsoilCalcUI();
-  updateOrderTotals();
 }
 
 function refreshProsoilCalcUI() {
   var newQty    = window.prosoilState.qty;
-  var hasFarmBag = cartHasFarmBag();
-  var promoBags = hasFarmBag ? Math.min(3, Math.floor(newQty / 3)) : 0;
-  var totalBags = newQty + promoBags;
+  var totalBags = newQty;
   var qtyEl     = document.getElementById('prosoil-qty');
   var calc      = document.getElementById('prosoil-calc');
   if (qtyEl) qtyEl.textContent = newQty;
@@ -927,30 +916,9 @@ function refreshProsoilCalcUI() {
       var label = document.getElementById('prosoil-bags-label');
       var cost  = document.getElementById('prosoil-bags-cost');
       var recv  = document.getElementById('prosoil-total-bags');
-      var promoRow = document.getElementById('prosoil-promo-calc-row');
       if (label) label.textContent = newQty + ' bag' + (newQty > 1 ? 's' : '') + ' × KES ' + PROSOIL_PRICE_CHECKOUT;
       if (cost)  cost.textContent  = 'KES ' + window.prosoilState.total.toLocaleString();
       if (recv)  recv.textContent  = totalBags + ' bag' + (totalBags > 1 ? 's' : '') + ' total';
-      if (promoRow) {
-        promoRow.style.display = promoBags > 0 ? '' : 'none';
-        var promoLabel = document.getElementById('prosoil-promo-calc-label');
-        if (promoLabel) promoLabel.textContent = '🎁 Every 3 bags, 1 free → +' + promoBags + ' free bag' + (promoBags > 1 ? 's' : '');
-      }
-    }
-  }
-  // Update promo banner text
-  var bannerText = document.getElementById('prosoil-promo-banner-text');
-  if (bannerText) {
-    if (!hasFarmBag) {
-      bannerText.textContent = 'Add a FarmBag to your order to activate this promo.';
-    } else if (newQty > 0 && promoBags === 0 && newQty < 3) {
-      bannerText.textContent = 'Add ' + (3 - newQty) + ' more bag' + ((3 - newQty) > 1 ? 's' : '') + ' to unlock a free bag. First-time customers only.';
-    } else if (promoBags >= 3) {
-      bannerText.textContent = '🎁 Maximum promo reached: 3 free bags unlocked! First-time customers only.';
-    } else if (promoBags > 0) {
-      bannerText.textContent = '🎁 You\'ve unlocked ' + promoBags + ' free bag' + (promoBags > 1 ? 's' : '') + '! First-time customers only.';
-    } else {
-      bannerText.textContent = 'Exclusive for FarmBag customers — first-time customers only.';
     }
   }
 }
@@ -964,8 +932,6 @@ function updateOrderTotals() {
   // Add-on line items
   var prosoilLine = document.getElementById('addon-prosoil-line');
   var prosoilCost = document.getElementById('addon-prosoil-cost');
-  var promoLine   = document.getElementById('promo-saving-line');
-  var promoVal    = document.getElementById('promo-saving-val');
 
 
   var prosoilItem = cart.items.find(function(i) { return i.sku === 'PS-25KG'; });
@@ -973,19 +939,14 @@ function updateOrderTotals() {
   if (prosoilLine) prosoilLine.style.display = prosoilCostAmt > 0 ? '' : 'none';
   if (prosoilCost) prosoilCost.textContent   = 'KES ' + prosoilCostAmt.toLocaleString();
 
-  if (promoLine && promoVal) {
-    if (totals.promoSaving > 0) {
-      promoLine.style.display = '';
-      promoVal.textContent    = '− KES ' + totals.promoSaving.toLocaleString() + ' (free bag' + (totals.promoQty > 1 ? 's' : '') + ')';
-    } else {
-      promoLine.style.display = 'none';
-    }
-  }
-
   // Grand total display
   document.getElementById('total-display').textContent = 'KES ' + grandTotal.toLocaleString();
   var deliveryDisplay = document.getElementById('delivery-display');
-  if (deliveryDisplay) deliveryDisplay.textContent = getDeliveryLabel(grandTotal);
+  var countyEl = document.getElementById('f-county');
+  var countryEl = document.getElementById('f-country');
+  var selectedCounty = countyEl ? countyEl.value.trim() : '';
+  var selectedCountry = countryEl ? countryEl.value.trim() : 'Kenya';
+  if (deliveryDisplay) deliveryDisplay.textContent = getDeliveryLabel(grandTotal, selectedCounty, selectedCountry);
 
   // Pay button
   var btn = document.getElementById('pay-btn');
@@ -1090,8 +1051,8 @@ function launchPaystack() {
   const prosoilItem    = cart.items.find(function(i) { return i.sku === 'PS-25KG'; });
   const prosoilQty     = prosoilItem ? prosoilItem.qty : 0;
   const prosoilTotal   = prosoilQty * PROSOIL_PRICE_CHECKOUT;
-  const prosoilPromoQty = totals.promoQty || 0;
-  const prosoilPromo   = prosoilPromoQty > 0;
+  const prosoilPromoQty = 0;
+  const prosoilPromo   = false;
 
   // Primary product for backward-compat fields (first FarmBag, or first item)
   const primaryItem    = cart.items.find(function(i) { return ['FB-CLS-01','FB-GRW-01'].includes(i.sku); }) || cart.items[0];
@@ -1195,8 +1156,14 @@ function initFromUrlParams() {
 }
 
 // Initial render
-document.getElementById('f-county').addEventListener('change', syncLocationSelectors);
-document.getElementById('f-country').addEventListener('change', syncLocationSelectors);
+document.getElementById('f-county').addEventListener('change', function() {
+  syncLocationSelectors();
+  updateOrderTotals();
+});
+document.getElementById('f-country').addEventListener('change', function() {
+  syncLocationSelectors();
+  updateOrderTotals();
+});
 syncLocationSelectors();
 async function initCheckoutPage() {
   await fetchCheckoutProductActivityMap();
