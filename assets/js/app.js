@@ -286,14 +286,11 @@ function addToCart(arg) {
     return;
   }
 
-  // Add to cart using cart.js data model (sessionStorage)
+  // Add to cart using cart.js's shared merge logic (single source of truth —
+  // do not re-implement the qty-merge/push logic here; call upsertCartItem
+  // from cart.js so this file and cart.js can't silently diverge).
   var cartData = getCart();
-  var existing = cartData.items.find(function(i) { return i.sku === cartItem.sku; });
-  if (existing) {
-    existing.qty += cartItem.qty;
-  } else {
-    cartData.items.push(cartItem);
-  }
+  upsertCartItem(cartData, cartItem);
   cartData.prosoilPromoBags = computeProsoilPromo(cartData);
   saveCart(cartData);
   showCartToast(cartItem.name);
