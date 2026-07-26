@@ -995,7 +995,40 @@ function buildUnifiedOrderItems(cart) {
   });
 }
 
-function launchPaystack() {
+// Writes the full order (all items, customer details) to Supabase BEFORE
+// opening the Paystack popup, so Paystack's metadata only needs to carry a
+// short reference instead of the entire cart. This avoids sending a large
+// JSON payload through Paystack's checkout API, which is the most likely
+// cause of the intermittent request_inline rejections on bigger/multi-item
+// carts (failed attempts never reached the Paystack transaction ledger at
+// all, meaning the request was being rejected before Paystack's backend
+// even logged it — consistent with an oversized/borderline payload, not an
+// account-level restriction).
+//
+// If this insert fails for any reason (network hiccup, RLS issue, etc.) we
+// deliberately do NOT block checkout — we fall back to sending the full
+// metadata directly to Paystack exactly as before, so this is additive and
+// cannot make checkout worse than it already was.
+async function persistPendingOrder(reference, orderPayload) {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/pending_orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify(Object.assign({ reference: reference }, orderPayload))
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn('[Afams] Could not persist pending order, falling back to full metadata:', err);
+    return false;
+  }
+}
+
+async function launchPaystack() {
   hideError();
   pruneInactiveCheckoutItems(true);
   if (paystackLaunchInProgress || getCheckoutLock()) {
@@ -1095,6 +1128,62 @@ function launchPaystack() {
     updateOrderTotals();
   };
 
+  const reference = 'AFAMS-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+  // Try the lean path first: persist full order details in Supabase, then
+  // send Paystack a minimal payload. Falls back to full metadata if this fails.
+  const persisted = await persistPendingOrder(reference, {
+    customer_name:    name,
+    customer_email:   email,
+    customer_phone:   phone,
+    delivery_address: address,
+    county:           county,
+    country:          country,
+    items_json:       serializedItems,
+    amount_kobo:      amountInKobo,
+    checkout_attempt_id: checkoutAttemptId,
+    status: 'pending'
+  });
+
+  const slimMetadata = {
+    order_ref:        reference,
+    customer_name:    name,
+    checkout_attempt_id: checkoutAttemptId,
+    custom_fields: [
+      { display_name: 'Customer Name',    variable_name: 'customer_name',    value: name    },
+      { display_name: 'Order Reference',  variable_name: 'order_ref',        value: reference },
+    ],
+  };
+
+  const fullMetadata = {
+    customer_name:    name,
+    customer_email:   email,
+    customer_phone:   phone,
+    product_sku:      primaryItem.sku,
+    product_name:     primaryItem.name,
+    quantity:         primaryItem.qty,
+    unit_price:       primaryItem.unit_price,
+    delivery_address: address,
+    county:           county,
+    country:          country,
+    items_json:       serializedItems,
+    cart_items:       cartItemSummary,
+    prosoil_qty:      prosoilQty,
+    prosoil_total:    prosoilTotal,
+    prosoil_promo_bag: prosoilPromo,
+    prosoil_promo_qty: prosoilPromoQty,
+    checkout_attempt_id: checkoutAttemptId,
+    custom_fields: [
+      { display_name: 'Customer Name',    variable_name: 'customer_name',    value: name    },
+      { display_name: 'Phone',            variable_name: 'customer_phone',   value: phone   },
+      { display_name: 'Delivery County',  variable_name: 'county',           value: county  },
+      { display_name: 'Country',          variable_name: 'country',          value: country },
+      { display_name: 'Delivery Address', variable_name: 'delivery_address', value: address },
+      { display_name: 'Cart Items',       variable_name: 'cart_items',       value: cartItemSummary },
+      { display_name: 'Order Type',       variable_name: 'order_type',       value: 'PRE-ORDER' },
+    ],
+  };
+
   try {
     const popup = new PaystackPop();
     if (!popup || typeof popup.newTransaction !== 'function') {
@@ -1105,35 +1194,8 @@ function launchPaystack() {
     email:    email,
     amount:   amountInKobo,
     currency: 'KES',
-    ref:      'AFAMS-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase(),
-    metadata: {
-      customer_name:    name,
-      customer_email:   email,
-      customer_phone:   phone,
-      product_sku:      primaryItem.sku,
-      product_name:     primaryItem.name,
-      quantity:         primaryItem.qty,
-      unit_price:       primaryItem.unit_price,
-      delivery_address: address,
-      county:           county,
-      country:          country,
-      items_json:       serializedItems,
-      cart_items:       cartItemSummary,
-      prosoil_qty:      prosoilQty,
-      prosoil_total:    prosoilTotal,
-      prosoil_promo_bag: prosoilPromo,
-      prosoil_promo_qty: prosoilPromoQty,
-      checkout_attempt_id: checkoutAttemptId,
-      custom_fields: [
-        { display_name: 'Customer Name',    variable_name: 'customer_name',    value: name    },
-        { display_name: 'Phone',            variable_name: 'customer_phone',   value: phone   },
-        { display_name: 'Delivery County',  variable_name: 'county',           value: county  },
-        { display_name: 'Country',          variable_name: 'country',          value: country },
-        { display_name: 'Delivery Address', variable_name: 'delivery_address', value: address },
-        { display_name: 'Cart Items',       variable_name: 'cart_items',       value: cartItemSummary },
-        { display_name: 'Order Type',       variable_name: 'order_type',       value: 'PRE-ORDER' },
-      ],
-    },
+    ref:      reference,
+    metadata: persisted ? slimMetadata : fullMetadata,
     onSuccess: function(transaction) {
       releaseCheckoutState();
       clearCart();
