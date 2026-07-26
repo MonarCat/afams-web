@@ -5,6 +5,14 @@
 const CART_KEY        = 'afams_cart';
 const PROSOIL_SKU     = 'PS-25KG';
 
+// ── Cart schema version ────────────────────────────────────────────────────────
+// Bump this whenever a catalog change could make an existing sessionStorage cart
+// stale/incompatible (e.g. bulk SKU/price restructuring). getCart() will discard
+// any cart stored under an older version instead of trying to carry it forward,
+// which prevents malformed legacy items (e.g. old string-formatted prices) from
+// silently corrupting totals after a catalog update.
+const CART_SCHEMA_VERSION = 2;
+
 function parseCartNumber(value) {
   if (typeof value === 'number') {
     return Number.isFinite(value) ? value : NaN;
@@ -39,7 +47,19 @@ function parseCartNumber(value) {
 
 function getCart() {
   try {
-    var data = JSON.parse(sessionStorage.getItem(CART_KEY)) || { items: [] };
+    var data = JSON.parse(sessionStorage.getItem(CART_KEY));
+    if (!data) return { items: [], _v: CART_SCHEMA_VERSION };
+
+    // Discard carts saved under an older schema version — safer than trying to
+    // migrate unknown legacy shapes forward. sessionStorage is short-lived by
+    // design, so this only ever affects a customer mid-session during/just
+    // after a deploy, never a returning customer.
+    if (data._v !== CART_SCHEMA_VERSION) {
+      console.warn('[Afams] Discarding stale cart (schema v' + data._v + ' vs current v' + CART_SCHEMA_VERSION + ')');
+      sessionStorage.removeItem(CART_KEY);
+      return { items: [], _v: CART_SCHEMA_VERSION };
+    }
+
     // Normalise legacy items that were stored with `price` instead of `unit_price`
     data.items = (data.items || []).map(function(item) {
       if (item.unit_price == null) {
@@ -49,25 +69,35 @@ function getCart() {
     });
     return data;
   } catch {
-    return { items: [] };
+    return { items: [], _v: CART_SCHEMA_VERSION };
   }
 }
 
 function saveCart(cart) {
+  cart._v = CART_SCHEMA_VERSION;
   sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
   updateCartBadge();
   dispatchCartEvent(cart);
 }
 
-function addToCart(item) {
-  // item: { sku, name, unit_price, qty, image, type }
-  const cart = getCart();
+// Shared upsert logic — the ONLY place an item is merged/pushed into the cart
+// array. Both cart.js's addToCart() and app.js's addToCart() call this instead
+// of each maintaining their own copy of the merge logic, so the two can never
+// silently diverge again.
+function upsertCartItem(cart, item) {
   const existing = cart.items.find(function(i) { return i.sku === item.sku; });
   if (existing) {
     existing.qty += (item.qty || 1);
   } else {
     cart.items.push(Object.assign({}, item, { qty: item.qty || 1 }));
   }
+  return cart;
+}
+
+function addToCart(item) {
+  // item: { sku, name, unit_price, qty, image, type }
+  const cart = getCart();
+  upsertCartItem(cart, item);
   cart.prosoilPromoBags = computeProsoilPromo(cart);
   saveCart(cart);
   showCartToast(item.name);
