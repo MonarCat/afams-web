@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Growing Guides | Afams — Farming into the Future</title>
+<meta name="description" content="Free growing guides for the Afams GrowBag range, ProSoil usage tips, and Eco Labs curriculum resources for Kenyan schools teaching CBC Integrated Science, Biology and Agriculture.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest-dark:#0B1E12;
+    --forest:#2D6A4F;
+    --gold:#C9A020;
+    --linen:#F5F0E8;
+    --kraft:#C9A876;
+    --forest-dark-rgb:11,30,18;
+    --forest-rgb:45,106,79;
+    --gold-rgb:201,160,32;
+    --ink: #16231A;
+    --paper:#FBF8F3;
+    --line: rgba(11,30,18,0.12);
+    --serif:'Playfair Display', Georgia, serif;
+    --sans:'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono:'DM Mono', 'SFMono-Regular', monospace;
+    --max: 1120px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{max-width:100%;display:block;}
+  a{color:inherit;}
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 24px;}
+
+  /* ---------- Header ---------- */
+  header.site{
+    position:sticky; top:0; z-index:50;
+    background:rgba(251,248,243,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px; max-width:var(--max); margin:0 auto;
+  }
+  .brand{display:flex; align-items:center; gap:10px; text-decoration:none;}
+  .brand-mark{width:30px;height:30px;flex-shrink:0;}
+  .brand-word{font-family:var(--serif); font-weight:700; font-size:1.3rem; color:var(--forest-dark); letter-spacing:0.01em;}
+  .nav-links{display:flex; gap:32px; list-style:none; margin:0; padding:0; font-size:0.95rem;}
+  .nav-links a{text-decoration:none; color:var(--forest-dark); opacity:0.72; transition:opacity .15s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-links a.current{opacity:1; font-weight:600; border-bottom:2px solid var(--gold); padding-bottom:4px;}
+  .nav-toggle{display:none; background:none; border:none; cursor:pointer; padding:6px;}
+  .nav-toggle span{display:block; width:22px; height:2px; background:var(--forest-dark); margin:5px 0;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:76px 24px 56px;
+    background:
+      radial-gradient(1100px 420px at 82% -10%, rgba(var(--gold-rgb),0.14), transparent 60%),
+      linear-gradient(180deg, var(--linen) 0%, var(--paper) 100%);
+    border-bottom:1px solid var(--line);
+  }
+  .hero-inner{max-width:var(--max); margin:0 auto; display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:end;}
+  .eyebrow{
+    font-family:var(--mono); text-transform:uppercase; letter-spacing:0.14em;
+    font-size:0.74rem; color:var(--forest); font-weight:500; margin:0 0 18px;
+  }
+  .eyebrow::before{content:"— "; color:var(--gold);}
+  h1.hero-title{
+    font-family:var(--serif); font-weight:600; color:var(--forest-dark);
+    font-size:clamp(2.2rem, 4.2vw, 3.3rem); line-height:1.08; margin:0 0 20px; letter-spacing:-0.01em;
+  }
+  .hero-title em{font-style:italic; color:var(--forest);}
+  .hero-lede{font-size:1.08rem; color:rgba(11,30,18,0.72); max-width:52ch; margin:0;}
+  .hero-side{border-left:1px solid var(--line); padding-left:32px;}
+  .hero-side p{font-size:0.92rem; color:rgba(11,30,18,0.65); margin:0 0 14px;}
+  .hero-side strong{color:var(--forest-dark); font-weight:600;}
+
+  /* ---------- Soil horizon divider (signature element) ---------- */
+  .horizon{width:100%; height:64px; display:block;}
+
+  /* ---------- TOC pillars ---------- */
+  .pillars{padding:0 24px 8px;}
+  .pillars-grid{
+    max-width:var(--max); margin:-38px auto 0; position:relative; z-index:5;
+    display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
+  }
+  .pillar-card{
+    background:var(--paper); border:1px solid var(--line); border-radius:2px;
+    padding:26px 24px 22px; text-decoration:none; color:inherit;
+    box-shadow:0 8px 28px rgba(11,30,18,0.06);
+    transition:transform .18s ease, box-shadow .18s ease;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .pillar-card:hover{transform:translateY(-3px); box-shadow:0 14px 34px rgba(11,30,18,0.1);}
+  .pillar-tag{font-family:var(--mono); font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);}
+  .pillar-card h3{font-family:var(--serif); font-size:1.28rem; margin:0; color:var(--forest-dark); font-weight:600;}
+  .pillar-card p{font-size:0.9rem; color:rgba(11,30,18,0.6); margin:0;}
+  .pillar-count{font-family:var(--mono); font-size:0.78rem; color:var(--forest); margin-top:4px;}
+
+  /* ---------- Section shells ---------- */
+  section.guide-section{padding:96px 24px 40px;}
+  .section-head{max-width:var(--max); margin:0 auto 44px;}
+  .section-num{font-family:var(--mono); font-size:0.78rem; color:var(--gold); letter-spacing:0.1em;}
+  .section-head h2{
+    font-family:var(--serif); font-weight:600; color:var(--forest-dark);
+    font-size:clamp(1.8rem, 3.2vw, 2.5rem); margin:8px 0 14px;
+  }
+  .section-head p{max-width:68ch; color:rgba(11,30,18,0.68); font-size:1.02rem; margin:0;}
+  .section-bg-dark{background:var(--forest-dark); color:var(--linen);}
+  .section-bg-dark .section-head h2{color:var(--linen);}
+  .section-bg-dark .section-head p{color:rgba(245,240,232,0.72);}
+  .section-bg-dark .section-num{color:var(--gold);}
+
+  .content-grid{max-width:var(--max); margin:0 auto;}
+
+  /* ---------- Guide article cards ---------- */
+  .guide-article{
+    border-top:1px solid var(--line); padding:36px 0;
+    display:grid; grid-template-columns:220px 1fr; gap:36px;
+  }
+  .guide-article:last-child{border-bottom:1px solid var(--line);}
+  .guide-meta{position:sticky; top:90px; align-self:start;}
+  .guide-meta h3{font-family:var(--serif); font-size:1.4rem; color:var(--forest-dark); margin:0 0 10px; font-weight:600; line-height:1.2;}
+  .guide-badge{
+    display:inline-block; font-family:var(--mono); font-size:0.7rem; letter-spacing:0.06em;
+    background:rgba(var(--forest-rgb),0.09); color:var(--forest); padding:4px 9px; border-radius:2px; margin-bottom:10px;
+  }
+  .guide-body p{margin:0 0 14px; font-size:0.98rem; color:rgba(11,30,18,0.82);}
+  .guide-body p:last-child{margin-bottom:0;}
+  .guide-body strong{color:var(--forest-dark);}
+  .mini-list{margin:14px 0; padding:0; list-style:none;}
+  .mini-list li{padding-left:20px; position:relative; margin-bottom:8px; font-size:0.95rem; color:rgba(11,30,18,0.8);}
+  .mini-list li::before{content:"·"; position:absolute; left:4px; color:var(--gold); font-weight:700; font-size:1.2rem; line-height:1;}
+  .stat-row{display:flex; gap:22px; flex-wrap:wrap; margin:14px 0 4px; font-family:var(--mono); font-size:0.78rem; color:var(--forest);}
+  .stat-row span b{display:block; font-family:var(--sans); font-size:0.95rem; color:var(--forest-dark); font-weight:600;}
+
+  .section-bg-dark .guide-article{border-color:rgba(245,240,232,0.14);}
+  .section-bg-dark .guide-meta h3{color:var(--linen);}
+  .section-bg-dark .guide-body p{color:rgba(245,240,232,0.82);}
+  .section-bg-dark .guide-body strong{color:var(--linen);}
+  .section-bg-dark .mini-list li{color:rgba(245,240,232,0.8);}
+  .section-bg-dark .guide-badge{background:rgba(245,240,232,0.1); color:var(--kraft);}
+
+  /* ---------- Feed schedule table ---------- */
+  .feed-table{width:100%; border-collapse:collapse; margin:18px 0; font-size:0.92rem;}
+  .feed-table th, .feed-table td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--line);}
+  .feed-table th{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--forest); font-weight:500;}
+  .feed-table td{color:rgba(11,30,18,0.82);}
+
+  /* ---------- Eco Labs curriculum table ---------- */
+  .curric-table{width:100%; border-collapse:collapse; margin:20px 0; font-size:0.9rem;}
+  .curric-table th, .curric-table td{padding:12px 14px; border:1px solid rgba(245,240,232,0.16); text-align:left; vertical-align:top;}
+  .curric-table th{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--gold); background:rgba(245,240,232,0.04);}
+  .curric-table td{color:rgba(245,240,232,0.85);}
+
+  .lesson-cards{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:28px;}
+  .lesson-card{background:rgba(245,240,232,0.05); border:1px solid rgba(245,240,232,0.14); border-radius:2px; padding:22px;}
+  .lesson-card .lesson-tag{font-family:var(--mono); font-size:0.68rem; color:var(--gold); letter-spacing:0.08em; text-transform:uppercase;}
+  .lesson-card h4{font-family:var(--serif); font-size:1.08rem; margin:8px 0 8px; color:var(--linen); font-weight:600;}
+  .lesson-card p{font-size:0.88rem; color:rgba(245,240,232,0.75); margin:0;}
+
+  .kraft-callout{
+    background:var(--kraft); color:var(--forest-dark); padding:26px 28px; border-radius:2px;
+    margin:32px 0; display:flex; gap:18px; align-items:flex-start;
+  }
+  .kraft-callout .icon{font-family:var(--serif); font-size:1.6rem; font-style:italic; line-height:1;}
+  .kraft-callout p{margin:0; font-size:0.95rem;}
+  .kraft-callout strong{display:block; margin-bottom:4px; font-family:var(--serif); font-size:1.05rem;}
+
+  /* ---------- CTA / footer ---------- */
+  .cta-band{
+    background:var(--forest); color:var(--linen); padding:64px 24px; text-align:center;
+  }
+  .cta-band h2{font-family:var(--serif); font-size:clamp(1.6rem,3vw,2.1rem); margin:0 0 12px; font-weight:600;}
+  .cta-band p{max-width:56ch; margin:0 auto 26px; color:rgba(245,240,232,0.85);}
+  .cta-buttons{display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
+  .btn{
+    display:inline-block; padding:13px 26px; border-radius:2px; text-decoration:none;
+    font-weight:600; font-size:0.92rem; letter-spacing:0.01em; transition:opacity .15s;
+  }
+  .btn-gold{background:var(--gold); color:var(--forest-dark);}
+  .btn-outline{border:1px solid rgba(245,240,232,0.4); color:var(--linen);}
+  .btn:hover{opacity:0.88;}
+
+  footer.site{background:var(--forest-dark); color:rgba(245,240,232,0.6); padding:40px 24px; font-size:0.85rem;}
+  .foot-inner{max-width:var(--max); margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;}
+  .foot-inner a{text-decoration:none; color:rgba(245,240,232,0.6);}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:900px){
+    .hero-inner{grid-template-columns:1fr; gap:24px;}
+    .hero-side{border-left:none; border-top:1px solid var(--line); padding-left:0; padding-top:20px;}
+    .pillars-grid{grid-template-columns:1fr; margin-top:24px;}
+    .guide-article{grid-template-columns:1fr; gap:14px;}
+    .guide-meta{position:static;}
+    .lesson-cards{grid-template-columns:1fr;}
+    .nav-links{
+      position:fixed; top:64px; left:0; right:0; background:var(--paper);
+      flex-direction:column; padding:20px 24px; border-bottom:1px solid var(--line);
+      display:none; gap:16px;
+    }
+    .nav-links.open{display:flex;}
+    .nav-toggle{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <a href="/index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 4C10 9 8 15 10 22C11.5 27 16 29 16 29C16 29 20.5 27 22 22C24 15 22 9 16 4Z" fill="#0B1E12"/>
+        <path d="M16 10C13.5 13 13 17 15 21" stroke="#C9A020" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M16 10C18.5 13 19 17 17 21" stroke="#C9A020" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-word">afams</span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/index.html">Shop</a></li>
+      <li><a href="/guides.html" class="current">Guides</a></li>
+      <li><a href="/eco-labs.html">Eco Labs</a></li>
+      <li><a href="/index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <p class="eyebrow">Guides &amp; Growing Knowledge</p>
+      <h1 class="hero-title">Everything we know about<br><em>growing well</em> in a bag.</h1>
+      <p class="hero-lede">Practical, field-tested guides for every GrowBag size, how to get the most out of ProSoil, and classroom-ready resources for schools running Eco Labs. Written in Nairobi, tested on balconies, rooftops and school compounds across Kenya.</p>
+    </div>
+    <div class="hero-side">
+      <p><strong>Who this is for:</strong> home growers with a balcony, a courtyard, or a strip of compound; smallholders wanting a controlled, water-wise setup; and teachers building living-science corners for CBC learners.</p>
+      <p><strong>How to use it:</strong> jump to a pillar below, or scroll straight through — each guide stands on its own.</p>
+    </div>
+  </div>
+</section>
+
+<svg class="horizon" viewBox="0 0 1200 64" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="64" fill="#F5F0E8"/>
+  <rect y="18" width="1200" height="14" fill="#C9A876" opacity="0.55"/>
+  <rect y="32" width="1200" height="14" fill="#2D6A4F" opacity="0.7"/>
+  <rect y="46" width="1200" height="18" fill="#0B1E12"/>
+</svg>
+
+<div class="pillars">
+  <div class="pillars-grid">
+    <a href="#growbag-guides" class="pillar-card">
+      <span class="pillar-tag">Pillar 01</span>
+      <h3>GrowBag Growing Guides</h3>
+      <p>Sizing, sub-irrigation, and what to plant in each tier — from Mini to Extra-Large and Vertical.</p>
+      <span class="pillar-count">6 guides</span>
+    </a>
+    <a href="#prosoil-tips" class="pillar-card">
+      <span class="pillar-tag">Pillar 02</span>
+      <h3>ProSoil Usage Tips</h3>
+      <p>What's in the bag, how to fill and feed it, and when to refresh it between seasons.</p>
+      <span class="pillar-count">5 guides</span>
+    </a>
+    <a href="#eco-labs" class="pillar-card">
+      <span class="pillar-tag">Pillar 03</span>
+      <h3>Eco Labs for Schools</h3>
+      <p>CBC-aligned lesson resources using Eco Frame and EcoBag Observer for living-science lessons.</p>
+      <span class="pillar-count">CBC-mapped</span>
+    </a>
+  </div>
+</div>
+
+<!-- ================= GROWBAG GUIDES ================= -->
+<section class="guide-section" id="growbag-guides">
+  <div class="section-head">
+    <p class="section-num">01 — Growing Guides</p>
+    <h2>The GrowBag range, size by size</h2>
+    <p>Every GrowBag uses the same core idea: a woven geotextile fabric bag paired with our HydraCore™ passive sub-irrigation system, so roots pull water up from a reservoir instead of you guessing when to top up. The size you choose just changes what you can grow in it, and how often you'll be back with a watering can.</p>
+  </div>
+
+  <div class="content-grid">
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Start here</span>
+        <h3>How HydraCore™ sub-irrigation actually works</h3>
+      </div>
+      <div class="guide-body">
+        <p>Every GrowBag has a built-in water reservoir at the base, separated from the growing medium by a wicking layer. You fill the reservoir through the side fill-tube, and the fabric draws moisture upward as the ProSoil above it dries out — the same principle as a wick lamp pulling oil up to the flame. Roots grow down toward that moisture instead of sitting in it, which is what keeps them from rotting the way they can in a waterlogged pot.</p>
+        <p>In Nairobi's climate this changes your watering rhythm more than almost anything else you'll do. During the long rains (March–May) and short rains (October–December), you may not need to top up the reservoir at all for a week or more. In the dry, sunny stretches of January–February and June–September, plan to check the fill-tube every 3–4 days for smaller bags and once a week for the Large and Extra-Large sizes.</p>
+        <ul class="mini-list">
+          <li>Check the reservoir by looking down the fill-tube — if you can't see water, top it up.</li>
+          <li>Never pour water directly onto the soil surface as your main watering method; use the fill-tube so the reservoir does its job.</li>
+          <li>An overflow hole near the top of the reservoir stops it from drowning the roots — if water runs straight back out, it's already full.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Mini &amp; Compact</span>
+        <h3>GrowBag Mini &amp; Mini Compact</h3>
+      </div>
+      <div class="guide-body">
+        <p>The smallest tier in the range, and the easiest place to start if you've never grown anything in a container before. It sits comfortably on a windowsill, a kitchen step, or a narrow balcony rail shelf, and the Compact variant is built specifically for spaces where footprint matters more than volume — think apartment balconies in Kilimani or Kahawa Sukari courtyards shared between several households.</p>
+        <p><strong>What grows well:</strong> coriander (dania), spring onions, mint, basil, rosemary, and loose-leaf salad greens like lettuce and rocket. Anything you harvest a little of at a time rather than one big crop at the end.</p>
+        <div class="stat-row">
+          <span>Best for<b>Herbs &amp; greens</b></span>
+          <span>Sun<b>4–6 hrs/day</b></span>
+          <span>Refill check<b>Every 3–4 days</b></span>
+        </div>
+        <p>Sow seeds directly into moist ProSoil at roughly the depth of the seed itself — as a rule of thumb, cover a seed with soil no deeper than twice its own width. Thin seedlings once they have their first true leaves so the strongest ones aren't competing for the same root space; overcrowding is the single most common reason Mini bags underperform.</p>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Medium</span>
+        <h3>GrowBag Medium</h3>
+      </div>
+      <div class="guide-body">
+        <p>A step up in root room, and the tier we recommend most often to first-time vegetable growers. It handles single plants that need more depth than herbs but don't yet demand the full spread of a Standard bag.</p>
+        <p><strong>What grows well:</strong> dwarf and determinate tomato varieties, chillies and bird's-eye pepper, capsicum, and dhania grown as a fuller crop rather than a windowsill garnish.</p>
+        <ul class="mini-list">
+          <li>One tomato or capsicum plant per bag gives the best yield — resist the urge to plant two "just in case."</li>
+          <li>Stake or cage tomato varieties early; roots establish fast in ProSoil and top growth can outpace an unsupported stem within three to four weeks.</li>
+          <li>Pinch out the lowest side shoots on tomatoes once the plant passes knee height to keep energy going into fruit rather than foliage.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Standard</span>
+        <h3>GrowBag Standard</h3>
+      </div>
+      <div class="guide-body">
+        <p>Our most popular size for a reason — it's the smallest bag that comfortably grows kale (sukuma wiki) as a proper cut-and-come-again crop, and it has enough soil volume to buffer against the odd missed watering.</p>
+        <p><strong>What grows well:</strong> sukuma wiki, managu, terere (amaranth), full-size capsicum, and compact courgette varieties.</p>
+        <div class="stat-row">
+          <span>Best for<b>Leafy greens</b></span>
+          <span>Sun<b>5–7 hrs/day</b></span>
+          <span>Refill check<b>Every 5–6 days</b></span>
+        </div>
+        <p>For sukuma wiki specifically: harvest the outer, lower leaves first and leave the growing tip at the top intact. Done this way, a single Standard bag can keep producing for two to three months before it's worth replacing the plant. Feed lightly with compost tea or a diluted organic feed every two to three weeks once you start harvesting — continuous cutting draws down nutrients faster than a plant grown for a single harvest.</p>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Large &amp; Extra-Large</span>
+        <h3>GrowBag Large &amp; Extra-Large</h3>
+      </div>
+      <div class="guide-body">
+        <p>These two sizes are built for crops with a real root system: eggplant (biringanya), full-size tomato varieties left to sprawl, cucumbers grown along the ground, and — in the Extra-Large — squash and pumpkin, which will happily send vines out over the bag's edge and along a fence or trellis you provide separately.</p>
+        <p>Because there's more soil mass, these bags hold moisture longer and are more forgiving if you're away for a few days, but that same mass means the reservoir takes longer to fill and drain, so give it a minute after topping up before checking whether it's full.</p>
+        <ul class="mini-list">
+          <li>Extra-Large bags can support a perennial like a dwarf passion fruit or a chilli bush left to grow year-round rather than replanted each season.</li>
+          <li>Top-dress with a handful of compost every four to six weeks during active fruiting — big fruiting crops draw down ProSoil's nutrient charge faster than leafy crops.</li>
+          <li>Rotate what you grow in a Large or Extra-Large bag each season where possible; tomatoes and capsicum are both in the nightshade family and repeated planting invites the same soil-borne issues.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Vertical</span>
+        <h3>GrowBag Vertical</h3>
+      </div>
+      <div class="guide-body">
+        <p>Built for climbers, and the best option when floor space is the scarce resource rather than soil volume. The Vertical variant uses the same footprint as our Standard bag but is paired with a taller support pocket at the back, so a trellis, cane wigwam, or wall-mounted mesh has something to anchor to.</p>
+        <p><strong>What grows well:</strong> passion fruit (grown as a compact espalier rather than left to run wild), climbing beans, snow peas, and cucumber varieties trained vertically instead of sprawled.</p>
+        <p>Train the main stem up your support as soon as it's long enough to loop, tying loosely with soft twine or an old stocking rather than wire, which can cut into stems as they thicken. Vertical growing means more of the plant is exposed to wind, so in exposed rooftop or balcony spots, secure the bag itself against tipping — a full Vertical bag with a mature passion fruit vine carries real weight up top.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= PROSOIL TIPS ================= -->
+<section class="guide-section" id="prosoil-tips">
+  <div class="section-head">
+    <p class="section-num">02 — Product Guides</p>
+    <h2>Getting the most out of ProSoil</h2>
+    <p>ProSoil is a pre-mixed, ready-to-use growing medium — no digging up garden soil, no guessing at ratios. Each 25kg bag is balanced for container growing specifically, which is a different job to open-ground soil: it needs to hold moisture without waterlogging, drain freely, and carry enough nutrient charge to support a full growing cycle in a confined root zone.</p>
+  </div>
+
+  <div class="content-grid">
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">What's inside</span>
+        <h3>What actually makes up ProSoil</h3>
+      </div>
+      <div class="guide-body">
+        <p>ProSoil blends composted organic matter, a coarse aeration component, and a moisture-retentive fraction, mixed to a pH that sits comfortably neutral for the widest range of vegetables and herbs — you don't need to test or amend it before your first planting. It arrives loose and ready to scoop straight from the bag, not compacted, so a little goes further by volume than it looks.</p>
+        <p>Because it's pre-mixed, ProSoil behaves consistently from bag to bag, which matters more than it sounds — garden soil varies wildly plot to plot, and that inconsistency is one of the most common reasons container growing frustrates first-timers. What works in one ProSoil-filled GrowBag will work the same way in the next.</p>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Setup</span>
+        <h3>Filling a GrowBag correctly</h3>
+      </div>
+      <div class="guide-body">
+        <p>Fill loosely rather than packing ProSoil down — compaction is the enemy of the sub-irrigation system, since it stops the wicking layer from drawing moisture evenly upward. Fill to roughly 2cm below the bag's rim, leaving a small lip that keeps water and mulch from spilling over the edge when you top-dress or water from above during germination.</p>
+        <ul class="mini-list">
+          <li>One 25kg bag fills roughly one Standard GrowBag, or two to three Mini bags, or a top-up for a Large bag that's already partially filled from a previous season.</li>
+          <li>Water the bag through once from the surface after filling, before planting, so the medium settles and you can see if it needs topping up before seeds or seedlings go in.</li>
+          <li>Fill the HydraCore reservoir at the same time you fill the bag with soil — planting into a dry reservoir means the first week of growth relies entirely on surface watering.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Feeding</span>
+        <h3>A simple feeding rhythm</h3>
+      </div>
+      <div class="guide-body">
+        <p>ProSoil comes with enough nutrient charge to carry most crops through their first six to eight weeks without any additional feeding. After that, what you do depends on what you're growing:</p>
+        <table class="feed-table">
+          <tr><th>Crop type</th><th>Feed from</th><th>Frequency</th></tr>
+          <tr><td>Herbs &amp; leafy greens (cut-and-come-again)</td><td>Week 3 onward</td><td>Every 2–3 weeks, light feed</td></tr>
+          <tr><td>Fruiting vegetables (tomato, capsicum, eggplant)</td><td>First flowers appear</td><td>Every 2 weeks through fruiting</td></tr>
+          <tr><td>Root &amp; bulb crops</td><td>Rarely needed</td><td>One light feed mid-cycle only</td></tr>
+          <tr><td>Perennials in Extra-Large bags</td><td>Start of each growing season</td><td>Monthly top-dress with compost</td></tr>
+        </table>
+        <p>A diluted organic liquid feed or well-made compost tea is enough for most home growers — there's no need to reach for synthetic fertiliser in a container this size. Over-feeding shows up as lush leaves and poor fruiting, which is a more common mistake than under-feeding.</p>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Between seasons</span>
+        <h3>Refreshing ProSoil for a new planting</h3>
+      </div>
+      <div class="guide-body">
+        <p>You don't need to empty and replace ProSoil after every crop. After harvest, remove old roots and stems, break up any compacted patches with your hand or a small trowel, and mix in a couple of handfuls of fresh compost or a top-up of ProSoil to restore volume that's settled or been used up by the previous crop.</p>
+        <p>A full replace is worth doing roughly once a year for continuously cropped bags, or sooner if you've had a plant affected by disease — in that case, discard the old medium away from other beds rather than composting it, since some soil-borne issues can survive composting at a small-batch, low-heat scale.</p>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Seed starting</span>
+        <h3>Starting seeds directly in ProSoil</h3>
+      </div>
+      <div class="guide-body">
+        <p>ProSoil's fine, even texture makes it usable for direct seed starting without a separate seed-raising mix, which simplifies things considerably for a first GrowBag. Keep the surface consistently moist — not wet — until germination, checking daily rather than relying on the reservoir alone in the first week, since young roots haven't reached down to the wicking layer yet.</p>
+        <p>For crops usually raised in a nursery bed and transplanted, like tomatoes and capsicum, you can still start them in a small Mini bag or seed tray and move seedlings into their final GrowBag once they have three to four true leaves and a stem sturdy enough to handle without snapping.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="kraft-callout wrap" style="max-width:var(--max); margin-left:auto; margin-right:auto;">
+  <span class="icon">”</span>
+  <p><strong>A note on Nairobi's altitude:</strong> Growing at roughly 1,700m brings cooler nights than most tropical growing guides assume. Warm-season crops like tomato and capsicum will grow more slowly here than at the coast — that's normal, not a sign anything's wrong with your setup.</p>
+</div>
+
+<!-- ================= ECO LABS ================= -->
+<section class="guide-section section-bg-dark" id="eco-labs">
+  <div class="section-head">
+    <p class="section-num">03 — For Schools</p>
+    <h2>Eco Labs: living science, mapped to CBC</h2>
+    <p>Eco Labs takes the same GrowBag and ProSoil system used at home and puts it to work in a classroom, built around two dedicated products: the <strong style="color:var(--linen)">Eco Frame</strong>, an aluminium modular stand that organises multiple bags into a tidy classroom growing station, and the <strong style="color:var(--linen)">EcoBag Observer</strong>, a GrowBag variant with a clear root-viewing panel so learners can watch what's normally hidden underground.</p>
+  </div>
+
+  <div class="content-grid">
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">The setup</span>
+        <h3>What a classroom Eco Lab looks like</h3>
+      </div>
+      <div class="guide-body">
+        <p>An Eco Frame holds several GrowBags at a fixed, waist-height working level — no bending to soil level, no bags getting knocked over on a classroom floor. Schools typically run one frame per stream or per science lab bench, with a mix of standard GrowBags for general planting and at least one EcoBag Observer so every lesson has a root-visibility component available.</p>
+        <p>Because the HydraCore reservoir means the bags don't need daily watering, an Eco Lab survives a weekend or a half-term break without a rota of staff coming in to water — a practical detail that matters as much as the curriculum fit for most schools deciding whether to take this on.</p>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">Root science</span>
+        <h3>Why the EcoBag Observer matters</h3>
+      </div>
+      <div class="guide-body">
+        <p>Most plant biology teaching stops at what's visible above soil — stems, leaves, flowers — simply because roots are hard to observe without disturbing them. The Observer's clear panel solves that directly: learners can track root development from germination through to a mature root system, without ever pulling a plant out of its growing medium to look.</p>
+        <p>This turns several textbook diagrams into something a class can actually watch happen over a term: root hairs forming, the direction roots grow relative to gravity and moisture, and how root density changes when a plant starts flowering or fruiting.</p>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">CBC mapping</span>
+        <h3>Where Eco Labs fits the curriculum</h3>
+      </div>
+      <div class="guide-body">
+        <p>Eco Labs content is built directly against the Kenyan CBC curriculum rather than adapted after the fact, covering both Junior School Integrated Science and Senior School Biology and Agriculture strands:</p>
+        <table class="curric-table">
+          <tr><th>Level</th><th>Strand</th><th>Eco Lab activity</th></tr>
+          <tr><td>Junior School — Integrated Science</td><td>Living things and their environment</td><td>Germination and growth-stage observation log using Standard GrowBags</td></tr>
+          <tr><td>Junior School — Integrated Science</td><td>Plants and their parts</td><td>Root, stem, leaf identification in real time via EcoBag Observer</td></tr>
+          <tr><td>Senior School — Agriculture</td><td>Soil and crop production</td><td>Comparing growing media, feeding schedules, and yield across GrowBag sizes</td></tr>
+          <tr><td>Senior School — Biology</td><td>Transport in plants</td><td>Water uptake and wicking demonstrated live through the HydraCore reservoir</td></tr>
+          <tr><td>Senior School — Biology</td><td>Photosynthesis &amp; plant nutrition</td><td>Controlled feeding trials comparing fed vs. unfed bags over a term</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="guide-article">
+      <div class="guide-meta">
+        <span class="guide-badge">In practice</span>
+        <h3>Three lesson ideas to start with</h3>
+      </div>
+      <div class="guide-body">
+        <p>These are designed to run across a full term rather than a single period, since a living-growth project works best observed over weeks rather than compressed into one lesson.</p>
+        <div class="lesson-cards">
+          <div class="lesson-card">
+            <span class="lesson-tag">Term-long</span>
+            <h4>Growth stage journal</h4>
+            <p>Each learner or small group tracks one GrowBag from sowing to harvest, sketching and measuring weekly. Ties directly to Junior School life-cycle strands and builds a real dataset for later graphing exercises.</p>
+          </div>
+          <div class="lesson-card">
+            <span class="lesson-tag">Comparative</span>
+            <h4>Fed vs. unfed trial</h4>
+            <p>Run two identical bags side by side, one on the ProSoil feeding schedule and one without, and have learners record and compare growth outcomes — a hands-on introduction to controlled variables and plant nutrition.</p>
+          </div>
+          <div class="lesson-card">
+            <span class="lesson-tag">Single-lesson</span>
+            <h4>Root observation walk</h4>
+            <p>A shorter activity using the EcoBag Observer alone: learners rotate through in small groups to sketch root structure at a single point in time, useful as a standalone lesson when term time is short.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="cta-band">
+  <h2>Ready to put a guide into practice?</h2>
+  <p>Browse the GrowBag range and ProSoil, or get in touch about setting up an Eco Lab at your school.</p>
+  <div class="cta-buttons">
+    <a href="/index.html" class="btn btn-gold">Shop the GrowBag range</a>
+    <a href="/index.html#contact" class="btn btn-outline">Talk to us about Eco Labs</a>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="foot-inner">
+    <span>© <span id="year"></span> Afams Limited — Farming into the Future.</span>
+    <a href="/index.html">afams.co.ke</a>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  const toggle = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', () => links.classList.toggle('open'));
+</script>
+
+</body>
+</html>
