@@ -357,6 +357,11 @@ const MAIN_PRODUCTS = [
     desc: 'Pre-mixed, pH-balanced, sterilised growing medium. Topsoil + compost + perlite + slow-release fertiliser. Pour in, water and plant immediately.',
     features: ['pH 6.2–6.8','Sterilised','Ready to plant','Made in Kenya'], priceKES: 799, image: 'assets/images/prosoil-front.jpg',
     type: 'prosoil', link: null, detailsLink: 'prosoil.html' },
+  { sku: 'SP-STARTER-01', name: 'Full Starter Pack', category: 'Home Gardening · Balcony Edition', badge: 'new', emoji: '🌿',
+    desc: 'A quiet green corner, delivered. This is less a gardening kit and more a small daily ritual — the kind of calm you get from soil on your hands and something living on your balcony. Everything you need is inside: a GrowBag Standard, a bag of ProSoil, gardening gloves, and a 3-piece hand tool set (mini shovel, mini rake, hand trowel). No experience needed, no guesswork — just unpack, plant, and enjoy the therapy of it.',
+    features: ['GrowBag Standard','ProSoil growing medium','Gloves + 3-piece tool set','Zero experience needed'],
+    priceKES: 2698, image: 'assets/images/growbag-standard-wide.jpg',
+    type: 'starter-pack', link: null, promoBadge: '⏳ Pre-order now — live in 72 hours' },
 ];
 
 const ALL_PRODUCTS = [...MAIN_PRODUCTS, ...SEED_PRODUCTS];
@@ -545,19 +550,19 @@ function renderGrowBagCard(grid) {
     Mini:     { wide: { sku: 'GB-MINI-W', price: 259,   volume: '10 L'  },
                 compact: { sku: 'GB-MINI-C', price: 129,   volume: '5 L'  },
                 crops: ['Herbs', 'Chillies', 'Spring onions', 'Microgreens'], defaultQty: 5 },
-    Medium:   { wide: { sku: 'GB-MED-W',  price: 629,  volume: '25 L' },
+    Medium:   { wide: { sku: 'GB-MED-W',  price: 599,  volume: '25 L' },
                 compact: { sku: 'GB-MED-C',  price: 499,  volume: '20 L' },
                 crops: ['Spinach', 'Sukuma wiki', 'Capsicum', 'Lettuce'], defaultQty: 5 },
-    Standard: { wide: { sku: 'GB-STD-W',  price: 1290,  volume: '50 L' },
-                compact: { sku: 'GB-STD-C',  price: 999,  volume: '40 L' },
+    Standard: { wide: { sku: 'GB-STD-W',  price: 699,  volume: '50 L' },
+                compact: { sku: 'GB-STD-C',  price: 649,  volume: '40 L' },
                 crops: ['Kale', 'Beans', 'Capsicum', 'Coriander', 'Spinach'], defaultQty: 5 },
-    Large:    { wide: { sku: 'GB-LRG-W',  price: 1800,  volume: '70 L' },
-                compact: { sku: 'GB-LRG-C',  price: 1679,  volume: '65 L' },
-                vertical: { sku: 'GB-LRG-V',  price: 1999,  volume: '65 L' },
+    Large:    { wide: { sku: 'GB-LRG-W',  price: 1499,  volume: '70 L' },
+                compact: { sku: 'GB-LRG-C',  price: 1400,  volume: '65 L' },
+                vertical: { sku: 'GB-LRG-V',  price: 1599,  volume: '65 L' },
                 crops: ['Tomatoes', 'Aubergine', 'Large kale', 'Capsicum'], defaultQty: 3 },
-    XL:       { wide: { sku: 'GB-XL-W',   price: 2300, volume: '90 L' },
-                compact: { sku: 'GB-XL-C',   price: 2099,  volume: '85 L' },
-                vertical: { sku: 'GB-XL-V',   price: 2699, volume: '85 L' },
+    XL:       { wide: { sku: 'GB-XL-W',   price: 1799, volume: '90 L' },
+                compact: { sku: 'GB-XL-C',   price: 1699,  volume: '85 L' },
+                vertical: { sku: 'GB-XL-V',   price: 1999, volume: '85 L' },
                 crops: ['Tomatoes', 'Sweet potato', 'Multi-plant', 'Large crops'], defaultQty: 2 },
   };
   const VERTICAL_SIZES = new Set(['Large', 'XL']);
@@ -682,7 +687,7 @@ function renderGrowBagCard(grid) {
 
       <div class="product-footer">
         <div>
-          <div class="product-price" id="pg-price">KES 1,290</div>
+          <div class="product-price" id="pg-price">KES 699</div>
           <div class="product-price-sub">Basic range · Ships in 3–5 days</div>
         </div>
         <button class="btn-order" id="pg-add-btn" onclick="pgAddToCart()">Add to Cart</button>
