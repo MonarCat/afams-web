@@ -639,6 +639,8 @@
     .badge-failed      { background: #FEE2E2; color: #991B1B; border: 1px solid #fca5a5; }
 
     .badge-active        { background: #D1FAE5; color: #065F46; }
+    .badge-scheduled     { background: #FEF3C7; color: #92400E; }
+    .badge-inactive      { background: #f5f5f5; color: #888; }
     .badge-unsubscribed  { background: #F3F4F6; color: #374151; }
 
     /* ══════════════════════════════════════════════════════════════
@@ -1126,6 +1128,9 @@
         <button class="sidebar-item" onclick="showPanel('analytics')" id="nav-analytics">
           <span class="icon">📈</span> Analytics
         </button>
+        <button class="sidebar-item" onclick="showPanel('adspaces')" id="nav-adspaces">
+          <span class="icon">📢</span> Ad Spaces
+        </button>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-label">Links</div>
@@ -1285,6 +1290,57 @@
             </thead>
             <tbody id="subscribers-tbody">
               <tr class="loading-row"><td colspan="5">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══════════ AD SPACES PANEL ═══════════ -->
+      <div class="panel" id="panel-adspaces">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Ad Spaces</div>
+            <div class="page-subtitle">Premium listing performance on afams.co.ke — direct-sold, no ad network</div>
+          </div>
+          <button class="btn-util" onclick="loadAdSpaces()">↻ Refresh</button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card green">
+            <div class="stat-label">Active Listings</div>
+            <div class="stat-value" id="ad-active-count">—</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">Slots Filled</div>
+            <div class="stat-value" id="ad-slots-filled">—</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-label">Total Clicks (all time)</div>
+            <div class="stat-value" id="ad-total-clicks">—</div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-label">Est. Monthly Ad Revenue</div>
+            <div class="stat-value" id="ad-monthly-revenue">—</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-toolbar">
+            <span style="font-size:0.83rem;color:var(--text-muted)">All sponsor listings, sold and unsold</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Sponsor</th>
+                <th>Slot</th>
+                <th style="text-align:center;">Status</th>
+                <th style="text-align:right;">Price (KES/mo)</th>
+                <th style="text-align:center;">Clicks</th>
+                <th>Runs</th>
+              </tr>
+            </thead>
+            <tbody id="adspaces-tbody">
+              <tr class="loading-row"><td colspan="6">Loading…</td></tr>
             </tbody>
           </table>
         </div>
@@ -1834,6 +1890,7 @@ function showPanel(name) {
   if (name === 'analytics')    loadAnalytics();
   if (name === 'subscribers')  loadSubscribers();
   if (name === 'products')     loadProducts();
+  if (name === 'adspaces')     loadAdSpaces();
 }
 
 // ════════════════════════════════════════════════════
@@ -3265,6 +3322,85 @@ function filterSubscribers() {
         || (s.first_name || '').toLowerCase().includes(search);
   });
   renderSubscribers(filtered);
+}
+
+// ════════════════════════════════════════════════════
+// AD SPACES (PREMIUM LISTINGS) — investor-facing metrics
+// ════════════════════════════════════════════════════
+var AD_SLOT_POSITIONS = ['sidebar_left', 'sidebar_right', 'mobile_banner'];
+var AD_SLOT_LABELS = {
+  sidebar_left:   'Sidebar (Left)',
+  sidebar_right:  'Sidebar (Right)',
+  mobile_banner:  'Mobile / Laptop Banner',
+};
+
+async function loadAdSpaces() {
+  var tbody = document.getElementById('adspaces-tbody');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="6">Loading…</td></tr>';
+
+  var listingsRes = await sb
+    .from('premium_listings')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (listingsRes.error) {
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="6" style="color:#C0392B">Error: '
+      + escapeHtml(listingsRes.error.message) + '</td></tr>';
+    return;
+  }
+
+  var listings = listingsRes.data || [];
+
+  // Click counts per listing — small table, safe to pull all rows and group client-side.
+  var clicksRes = await sb.from('ad_clicks').select('listing_id');
+  var clicksByListing = {};
+  var totalClicks = 0;
+  (clicksRes.data || []).forEach(function (row) {
+    clicksByListing[row.listing_id] = (clicksByListing[row.listing_id] || 0) + 1;
+    totalClicks += 1;
+  });
+
+  var today = new Date().toISOString().slice(0, 10);
+  var activeListings = listings.filter(function (l) {
+    return l.active
+      && (!l.start_date || l.start_date <= today)
+      && (!l.end_date   || l.end_date   >= today);
+  });
+
+  var filledPositions = {};
+  activeListings.forEach(function (l) { filledPositions[l.position] = true; });
+  var slotsFilledCount = Object.keys(filledPositions).length;
+
+  var monthlyRevenue = activeListings.reduce(function (sum, l) {
+    return sum + (l.price_kes || 0);
+  }, 0);
+
+  document.getElementById('ad-active-count').textContent    = activeListings.length;
+  document.getElementById('ad-slots-filled').textContent    = slotsFilledCount + ' / ' + AD_SLOT_POSITIONS.length;
+  document.getElementById('ad-total-clicks').textContent    = totalClicks;
+  document.getElementById('ad-monthly-revenue').textContent = 'KES ' + monthlyRevenue.toLocaleString('en-KE');
+
+  if (!listings.length) {
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="6">No listings yet — all 3 ad slots are open for sale.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = listings.map(function (l) {
+    var isLive = l.active
+      && (!l.start_date || l.start_date <= today)
+      && (!l.end_date   || l.end_date   >= today);
+    var statusLabel = isLive ? 'active' : (l.active ? 'scheduled' : 'inactive');
+    var runs = (l.start_date ? l.start_date : '—') + ' → ' + (l.end_date ? l.end_date : 'ongoing');
+    var clicks = clicksByListing[l.id] || 0;
+    return '<tr>'
+      + '<td style="font-weight:600">' + escapeHtml(l.sponsor_name || '—') + '</td>'
+      + '<td>' + escapeHtml(AD_SLOT_LABELS[l.position] || l.position) + '</td>'
+      + '<td style="text-align:center;"><span class="badge badge-' + statusLabel + '">' + statusLabel + '</span></td>'
+      + '<td style="text-align:right;">' + (l.price_kes ? Number(l.price_kes).toLocaleString('en-KE') : '—') + '</td>'
+      + '<td style="text-align:center;">' + clicks + '</td>'
+      + '<td style="color:var(--text-muted);font-size:0.82rem;">' + runs + '</td>'
+      + '</tr>';
+  }).join('');
 }
 
 // ════════════════════════════════════════════════════
