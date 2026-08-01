@@ -21,6 +21,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { BREVO_TEMPLATES } from "../_shared/types.ts";
 
 const CORS_HEADERS = {
+  // Deliberate wildcard: server-side auth below restricts this endpoint to service-role or authorized admin callers.
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -253,7 +254,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const { order_id: orderId } = body;
-  const requestedStatus = String(body.status ?? "").trim().toLowerCase();
+  const claimedStatusHint = String(body.status ?? "").trim().toLowerCase();
   const rawEmailType = String(body.email_type ?? "").trim().toLowerCase();
   const isExplicitEmailType = rawEmailType.length > 0;
   let emailType = rawEmailType;
@@ -265,26 +266,11 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  if (!emailType && requestedStatus) {
-    emailType = STATUS_TO_EMAIL_TYPE[requestedStatus] ?? "order_status_generic";
-  }
-
-  if (!emailType) {
-    return new Response(JSON.stringify({ error: "Missing email_type or status" }), {
+  if (isExplicitEmailType && !ADMIN_EMAIL_TYPES.includes(emailType as AdminEmailType)) {
+    return new Response(JSON.stringify({ error: `Unknown email_type "${emailType}"` }), {
       status: 400,
       headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
     });
-  }
-
-  if (!ADMIN_EMAIL_TYPES.includes(emailType as AdminEmailType)) {
-    if (isExplicitEmailType) {
-      return new Response(JSON.stringify({ error: `Unknown email_type "${emailType}"` }), {
-        status: 400,
-        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
-      });
-    }
-    console.warn(`[send-order-email] Unknown derived email_type "${emailType}" — falling back to order_status_generic`);
-    emailType = "order_status_generic";
   }
 
   if (!isServiceRoleCall) {
@@ -297,6 +283,23 @@ Deno.serve(async (req: Request) => {
     if (authError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
+        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      });
+    }
+
+    const configuredAdminEmails = (
+      Deno.env.get("ADMIN_EMAILS")
+      ?? Deno.env.get("ADMIN_EMAIL")
+      ?? Deno.env.get("BREVO_ADMIN_EMAIL")
+      ?? "iammwombe@gmail.com"
+    )
+      .split(",")
+      .map((value) => value.trim().toLowerCase())
+      .filter(Boolean);
+    const callerEmail = String(user.email ?? "").trim().toLowerCase();
+    if (!callerEmail || !configuredAdminEmails.includes(callerEmail)) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
         headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
       });
     }
@@ -358,7 +361,18 @@ Deno.serve(async (req: Request) => {
   const orderItemsText = orderLineItems.length
     ? orderLineItems.map((item) => formatOrderItemLine(item, true)).join("\n")
     : `${productName} ×${quantity}`;
-  const normalizedStatus = String(requestedStatus || order.status || "").trim().toLowerCase();
+  const normalizedStatus = String(order.status ?? "").trim().toLowerCase();
+  if (!isExplicitEmailType) {
+    emailType = STATUS_TO_EMAIL_TYPE[normalizedStatus] ?? "order_status_generic";
+    if (!STATUS_TO_EMAIL_TYPE[normalizedStatus]) {
+      console.warn(`[send-order-email] Unknown order.status "${normalizedStatus || "(empty)"}" — falling back to order_status_generic`);
+    }
+  }
+  if (claimedStatusHint && claimedStatusHint !== normalizedStatus) {
+    console.warn(
+      `[send-order-email] Ignoring client status "${claimedStatusHint}" for order ${orderRef}; using DB status "${normalizedStatus || "(empty)"}"`,
+    );
+  }
 
   if (!customerEmail) {
     console.warn(`[send-order-email] Order ${orderRef} has no customer_email — skipping`);
