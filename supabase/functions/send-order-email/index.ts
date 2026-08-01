@@ -463,6 +463,38 @@ Deno.serve(async (req: Request) => {
       providerMessageId = result.messageId;
       console.log(`[send-order-email] payment_success → ${customerEmail} (order ${orderRef})`);
 
+    } else if (emailType === "order_processing") {
+      const templateId = parseInt(
+        Deno.env.get("BREVO_TEMPLATE_ORDER_PROCESSING") ?? String(BREVO_TEMPLATES.order_processing),
+        10,
+      );
+      if (!Number.isInteger(templateId) || templateId <= 0) {
+        throw new Error("Invalid BREVO_TEMPLATE_ORDER_PROCESSING: expected a positive integer template ID");
+      }
+
+      const result = await sendBrevoTemplate(brevoApiKey, senderEmail, senderName, templateId, customerEmail, customerName, {
+        order_number:       orderRef,
+        order_ref:          orderRef,
+        order_reference:    orderRef,
+        customer_name:      customerName,
+        customer_email:     customerEmail,
+        customer_phone:     customerPhone,
+        delivery_address:   deliveryAddress,
+        county:             county,
+        product_name:       productName,
+        quantity:           quantity,
+        order_items:        orderItemsText,
+        order_items_text:   orderItemsText,
+        total_amount:       totalKES,
+        payment_method:     paymentMethod,
+        paystack_reference: paymentRef,
+        payment_reference:  paymentRef,
+        brand_logo_url:     "https://afams.co.ke/assets/images/afams_logo_stacked.png",
+        brand_icon_url:     "https://afams.co.ke/assets/images/afams_favicon_512.png",
+      });
+      providerMessageId = result.messageId;
+      console.log(`[send-order-email] order_processing → ${customerEmail} (order ${orderRef})`);
+
     } else if (emailType === "order_dispatched") {
       const templateId = parseInt(
         Deno.env.get("BREVO_TEMPLATE_ORDER_DISPATCHED") ?? String(BREVO_TEMPLATES.order_dispatched),
@@ -538,6 +570,86 @@ Deno.serve(async (req: Request) => {
       });
       providerMessageId = result.messageId;
       console.log(`[send-order-email] order_delivered → ${customerEmail} (order ${orderRef})`);
+
+    } else if (emailType === "order_cancelled") {
+      const templateId = parseInt(
+        Deno.env.get("BREVO_TEMPLATE_ORDER_CANCELLED") ?? String(BREVO_TEMPLATES.order_cancelled),
+        10,
+      );
+      if (!Number.isInteger(templateId) || templateId <= 0) {
+        throw new Error("Invalid BREVO_TEMPLATE_ORDER_CANCELLED: expected a positive integer template ID");
+      }
+      const cancelledAt = order.updated_at
+        ? new Date(order.updated_at).toLocaleDateString("en-KE", {
+            day: "numeric", month: "long", year: "numeric",
+          })
+        : new Date().toLocaleDateString("en-KE", {
+            day: "numeric", month: "long", year: "numeric",
+          });
+
+      const result = await sendBrevoTemplate(brevoApiKey, senderEmail, senderName, templateId, customerEmail, customerName, {
+        order_number: orderRef,
+        order_ref: orderRef,
+        order_reference: orderRef,
+        customer_name: customerName,
+        customer_email: customerEmail,
+        customer_phone: customerPhone,
+        delivery_address: deliveryAddress,
+        county: county,
+        product_name: productName,
+        quantity: quantity,
+        order_items: orderItemsText,
+        order_items_text: orderItemsText,
+        total_amount: totalKES,
+        payment_method: paymentMethod,
+        paystack_reference: paymentRef,
+        payment_reference: paymentRef,
+        brand_logo_url: "https://afams.co.ke/assets/images/afams_logo_stacked.png",
+        brand_icon_url: "https://afams.co.ke/assets/images/afams_favicon_512.png",
+        cancelled_at: cancelledAt,
+      });
+      providerMessageId = result.messageId;
+      console.log(`[send-order-email] order_cancelled → ${customerEmail} (order ${orderRef})`);
+
+    } else if (emailType === "order_refunded") {
+      const templateId = parseInt(
+        Deno.env.get("BREVO_TEMPLATE_ORDER_REFUNDED") ?? String(BREVO_TEMPLATES.order_refunded),
+        10,
+      );
+      if (!Number.isInteger(templateId) || templateId <= 0) {
+        throw new Error("Invalid BREVO_TEMPLATE_ORDER_REFUNDED: expected a positive integer template ID");
+      }
+      const refundedAt = order.updated_at
+        ? new Date(order.updated_at).toLocaleDateString("en-KE", {
+            day: "numeric", month: "long", year: "numeric",
+          })
+        : new Date().toLocaleDateString("en-KE", {
+            day: "numeric", month: "long", year: "numeric",
+          });
+
+      const result = await sendBrevoTemplate(brevoApiKey, senderEmail, senderName, templateId, customerEmail, customerName, {
+        order_number: orderRef,
+        order_ref: orderRef,
+        order_reference: orderRef,
+        customer_name: customerName,
+        customer_email: customerEmail,
+        customer_phone: customerPhone,
+        delivery_address: deliveryAddress,
+        county: county,
+        product_name: productName,
+        quantity: quantity,
+        order_items: orderItemsText,
+        order_items_text: orderItemsText,
+        total_amount: totalKES,
+        payment_method: paymentMethod,
+        paystack_reference: paymentRef,
+        payment_reference: paymentRef,
+        brand_logo_url: "https://afams.co.ke/assets/images/afams_logo_stacked.png",
+        brand_icon_url: "https://afams.co.ke/assets/images/afams_favicon_512.png",
+        refunded_at: refundedAt,
+      });
+      providerMessageId = result.messageId;
+      console.log(`[send-order-email] order_refunded → ${customerEmail} (order ${orderRef})`);
 
     } else {
       const copy = STATUS_EMAIL_COPY[normalizedStatus] ?? STATUS_EMAIL_COPY.generic;
