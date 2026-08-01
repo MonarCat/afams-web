@@ -254,7 +254,9 @@ Deno.serve(async (req: Request) => {
 
   const { order_id: orderId } = body;
   const requestedStatus = String(body.status ?? "").trim().toLowerCase();
-  let emailType = String(body.email_type ?? "").trim().toLowerCase();
+  const rawEmailType = String(body.email_type ?? "").trim().toLowerCase();
+  const isExplicitEmailType = rawEmailType.length > 0;
+  let emailType = rawEmailType;
 
   if (!orderId || typeof orderId !== "string") {
     return new Response(JSON.stringify({ error: "Missing order_id" }), {
@@ -275,7 +277,13 @@ Deno.serve(async (req: Request) => {
   }
 
   if (!ADMIN_EMAIL_TYPES.includes(emailType as AdminEmailType)) {
-    console.warn(`[send-order-email] Unknown email_type "${emailType}" — falling back to order_status_generic`);
+    if (isExplicitEmailType) {
+      return new Response(JSON.stringify({ error: `Unknown email_type "${emailType}"` }), {
+        status: 400,
+        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      });
+    }
+    console.warn(`[send-order-email] Unknown derived email_type "${emailType}" — falling back to order_status_generic`);
     emailType = "order_status_generic";
   }
 
@@ -406,6 +414,9 @@ Deno.serve(async (req: Request) => {
         Deno.env.get("BREVO_TEMPLATE_PAYMENT_SUCCESS") ?? String(BREVO_TEMPLATES.payment_success),
         10,
       );
+      if (!Number.isInteger(templateId) || templateId <= 0) {
+        throw new Error("Invalid BREVO_TEMPLATE_PAYMENT_SUCCESS: expected a positive integer template ID");
+      }
       const paidAt = order.paid_at
         ? new Date(order.paid_at).toLocaleDateString("en-KE", {
             day: "numeric", month: "long", year: "numeric",
