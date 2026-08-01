@@ -1629,6 +1629,27 @@ const ORDER_STATUSES = [
   'pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'
 ];
 
+const STATUS_TO_EMAIL_TYPE = {
+  pending: 'order_received',
+  paid: 'payment_success',
+  processing: 'order_processing',
+  shipped: 'order_dispatched',
+  delivered: 'order_delivered',
+  cancelled: 'order_cancelled',
+  refunded: 'order_refunded'
+};
+
+const STATUS_EMAIL_COPY = {
+  pending:    { subject: "We've received your order",            intro: 'Your order has been received and is now in our queue.' },
+  paid:       { subject: 'Payment confirmed',                    intro: 'We have received your payment and your order is secured.' },
+  processing: { subject: 'Your order is being prepared',         intro: 'Your order is being prepared by our team.' },
+  shipped:    { subject: 'Your order is on its way',             intro: 'Your order has been dispatched and is on its way.' },
+  delivered:  { subject: 'Your order has been delivered',        intro: 'Your order has been marked as delivered.' },
+  cancelled:  { subject: 'Your order has been cancelled',        intro: 'Your order has been cancelled.' },
+  refunded:   { subject: 'Your refund has been processed',       intro: 'Your refund has been processed.' },
+  generic:    { subject: 'Your order status has been updated',   intro: 'Your order status has been updated.' }
+};
+
 // Statuses where payment is considered confirmed (paid_at will be set)
 const PAID_STATUSES = ['paid', 'processing', 'shipped', 'delivered', 'refunded'];
 
@@ -2143,6 +2164,7 @@ function closeOrderModal() {
 async function saveOrderUpdate() {
   if (!currentOrder) return;
 
+  var oldStatus = String(currentOrder.status || '').toLowerCase().trim();
   var rawStatus = document.getElementById('modal-status-select').value;
   var newStatus = (rawStatus || '').toLowerCase().trim();
   var newNotes  = document.getElementById('modal-admin-notes').value.trim();
@@ -2192,17 +2214,15 @@ async function saveOrderUpdate() {
   filterOrders();
   showToast('✓ Order updated to ' + newStatus, 'success');
 
-  // Trigger Brevo email for status changes that have templates
-  var emailType = null;
-  if (newStatus === 'shipped')    emailType = 'order_dispatched';
-  if (newStatus === 'delivered')  emailType = 'order_delivered';
-
-  if (emailType && currentOrder.customer_email) {
+  // Trigger status email only when status changes (idempotency guard)
+  if (oldStatus !== newStatus && currentOrder.customer_email) {
+    var emailType = STATUS_TO_EMAIL_TYPE[newStatus] || 'order_status_generic';
     // Capture snapshot before modal closes and currentOrder is cleared
     var _orderSnapshot = Object.assign({}, currentOrder, updatePayload);
     var _emailType     = emailType;
+    var _newStatus     = newStatus;
     sb.functions.invoke('send-order-email', {
-      body: { order_id: currentOrder.id, email_type: emailType }
+      body: { order_id: currentOrder.id, email_type: emailType, status: newStatus }
     }).then(function (res) {
       var d = res.data;
       if (typeof d === 'string') {
@@ -2210,17 +2230,17 @@ async function saveOrderUpdate() {
       }
       if (res.error) {
         console.warn('[Admin] Email function error:', res.error.message);
-        openMailtoFallback(_orderSnapshot, _emailType);
+        openMailtoFallback(_orderSnapshot, _emailType, _newStatus);
       } else {
         if (d && d.sent) {
-          showToast('📧 Customer notified (' + _emailType + ')', 'success');
+          showToast('📧 Customer notified (' + _newStatus + ')', 'success');
         } else {
-          openMailtoFallback(_orderSnapshot, _emailType);
+          openMailtoFallback(_orderSnapshot, _emailType, _newStatus);
         }
       }
     }).catch(function (e) {
       console.warn('[Admin] Email invoke failed:', e);
-      openMailtoFallback(_orderSnapshot, _emailType);
+      openMailtoFallback(_orderSnapshot, _emailType, _newStatus);
     });
   }
 
@@ -2230,7 +2250,7 @@ async function saveOrderUpdate() {
   btn.textContent = 'Save Changes';
 }
 
-function openMailtoFallback(orderSnapshot, emailType) {
+function openMailtoFallback(orderSnapshot, emailType, statusValue) {
   // Build subject and body directly from the snapshot — no global mutation needed
   var ref         = orderSnapshot.order_number || orderSnapshot.id;
   var name        = orderSnapshot.customer_name  || 'Customer';
@@ -2241,10 +2261,15 @@ function openMailtoFallback(orderSnapshot, emailType) {
   var deliveredAt = orderSnapshot.delivered_at
     ? new Date(orderSnapshot.delivered_at).toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' })
     : '—';
+  var normalizedStatus = String(statusValue || orderSnapshot.status || '').toLowerCase().trim();
+  var copy = STATUS_EMAIL_COPY[normalizedStatus] || STATUS_EMAIL_COPY.generic;
+  if (!STATUS_EMAIL_COPY[normalizedStatus]) {
+    console.warn('[Admin] Unknown status for fallback mail copy:', normalizedStatus || '(empty)');
+  }
 
-  var subject, body;
+  var subject = '[Afams Order ' + ref + '] ' + copy.subject;
+  var body;
   if (emailType === 'order_dispatched') {
-    subject = '[Afams Order ' + ref + '] Your Order Is On Its Way!';
     body = 'Hello ' + name + ',\n\n'
       + 'Great news! Your Afams order has been dispatched and is on its way to you.\n\n'
       + 'Order REF:          ' + ref + '\n'
@@ -2255,8 +2280,7 @@ function openMailtoFallback(orderSnapshot, emailType) {
       + 'Our delivery partner may contact you when your package is near. '
       + 'Questions? Email orders@afams.co.ke'
       + EMAIL_SIGNATURE;
-  } else {
-    subject = '[Afams Order ' + ref + '] Order Delivered';
+  } else if (emailType === 'order_delivered') {
     body = 'Hello ' + name + ',\n\n'
       + 'Your Afams order has been marked as delivered. '
       + 'Thank you for trusting us to support your growing journey!\n\n'
@@ -2265,6 +2289,17 @@ function openMailtoFallback(orderSnapshot, emailType) {
       + 'Quantity:      ' + qty + '\n'
       + 'Delivered At:  ' + deliveredAt + '\n\n'
       + 'We hope you enjoy your purchase! Feel free to share your experience with us. '
+      + 'Questions? Email orders@afams.co.ke'
+      + EMAIL_SIGNATURE;
+  } else {
+    var statusLine = normalizedStatus || String(orderSnapshot.status || '').trim() || 'updated';
+    body = 'Hello ' + name + ',\n\n'
+      + copy.intro + '\n\n'
+      + 'Order REF:      ' + ref + '\n'
+      + 'Current Status: ' + statusLine + '\n'
+      + 'Product:        ' + product + '\n'
+      + 'Quantity:       ' + qty + '\n'
+      + 'Total Amount:   ' + total + '\n\n'
       + 'Questions? Email orders@afams.co.ke'
       + EMAIL_SIGNATURE;
   }

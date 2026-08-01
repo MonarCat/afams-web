@@ -11,6 +11,8 @@
 //   BREVO_API_KEY
 //   BREVO_SENDER_EMAIL   (e.g. orders@afams.co.ke)
 //   BREVO_SENDER_NAME    (e.g. Afams)
+//   BREVO_TEMPLATE_ORDER_RECEIVED    (integer template ID)
+//   BREVO_TEMPLATE_PAYMENT_SUCCESS   (integer template ID)
 //   BREVO_TEMPLATE_ORDER_DISPATCHED  (integer template ID)
 //   BREVO_TEMPLATE_ORDER_DELIVERED   (integer template ID)
 // ============================================================
@@ -24,7 +26,7 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-// ── Brevo helper ──────────────────────────────────────────────
+// ── Brevo helpers ─────────────────────────────────────────────
 async function sendBrevoTemplate(
   apiKey: string,
   senderEmail: string,
@@ -63,6 +65,51 @@ async function sendBrevoTemplate(
   return payload;
 }
 
+async function sendBrevoMessage(
+  apiKey: string,
+  senderEmail: string,
+  senderName: string,
+  toEmail: string,
+  toName: string,
+  subject: string,
+  textContent: string,
+): Promise<{ messageId?: string }> {
+  const escapedText = textContent
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+  const htmlContent = `<pre style="font-family:Arial,sans-serif;white-space:pre-wrap;line-height:1.6;margin:0;">${escapedText}</pre>`;
+
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": apiKey,
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    },
+    body: JSON.stringify({
+      sender: { email: senderEmail, name: senderName },
+      to: [{ email: toEmail, name: toName }],
+      subject,
+      textContent,
+      htmlContent,
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Brevo API error (raw message): ${res.status} ${text}`);
+  }
+
+  let payload: { messageId?: string } = {};
+  try {
+    payload = await res.json();
+  } catch {
+    // ignore non-json response
+  }
+  return payload;
+}
+
 // Constant-time string comparison to prevent timing-based credential leakage
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -74,8 +121,38 @@ function timingSafeEqual(a: string, b: string): boolean {
 }
 
 // ── Valid email types ─────────────────────────────────────────
-const ADMIN_EMAIL_TYPES = ["order_received", "order_dispatched", "order_delivered"] as const;
+const ADMIN_EMAIL_TYPES = [
+  "order_received",
+  "payment_success",
+  "order_processing",
+  "order_dispatched",
+  "order_delivered",
+  "order_cancelled",
+  "order_refunded",
+  "order_status_generic",
+] as const;
 type AdminEmailType = (typeof ADMIN_EMAIL_TYPES)[number];
+
+const STATUS_TO_EMAIL_TYPE: Record<string, AdminEmailType> = {
+  pending: "order_received",
+  paid: "payment_success",
+  processing: "order_processing",
+  shipped: "order_dispatched",
+  delivered: "order_delivered",
+  cancelled: "order_cancelled",
+  refunded: "order_refunded",
+};
+
+const STATUS_EMAIL_COPY: Record<string, { subject: string; intro: string }> = {
+  pending:    { subject: "We've received your order",          intro: "Your order has been received and is now in our queue." },
+  paid:       { subject: "Payment confirmed",                  intro: "We have received your payment and your order is secured." },
+  processing: { subject: "Your order is being prepared",       intro: "Your order is now being prepared by our team." },
+  shipped:    { subject: "Your order is on its way",           intro: "Your order has been dispatched and is on its way." },
+  delivered:  { subject: "Your order has been delivered",      intro: "Your order has been marked as delivered." },
+  cancelled:  { subject: "Your order has been cancelled",      intro: "Your order has been cancelled." },
+  refunded:   { subject: "Your refund has been processed",     intro: "Your refund has been processed." },
+  generic:    { subject: "Your order status has been updated", intro: "Your order status has been updated." },
+};
 
 function formatPaymentMethod(raw: unknown): string {
   const val = String(raw ?? "").trim().toLowerCase();
@@ -126,7 +203,6 @@ function formatOrderItemLine(item: EmailOrderItem, includePrice = false): string
 
 // ── Main handler ──────────────────────────────────────────────
 Deno.serve(async (req: Request) => {
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
@@ -149,7 +225,10 @@ Deno.serve(async (req: Request) => {
 
   // Allow internal service-role calls (e.g. from the paystack-webhook edge function)
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-  const isServiceRoleCall = timingSafeEqual(authHeader, `Bearer ${serviceRoleKey}`);
+  const serviceRoleBearer = serviceRoleKey ? ("Bearer " + serviceRoleKey) : "";
+  const isServiceRoleCall = serviceRoleBearer
+    ? timingSafeEqual(authHeader, serviceRoleBearer)
+    : false;
 
   const brevoApiKey = Deno.env.get("BREVO_API_KEY");
   if (!brevoApiKey) {
@@ -163,8 +242,7 @@ Deno.serve(async (req: Request) => {
   const senderEmail = Deno.env.get("BREVO_SENDER_EMAIL") ?? "orders@afams.co.ke";
   const senderName  = Deno.env.get("BREVO_SENDER_NAME")  ?? "Afams";
 
-  // Parse request body
-  let body: { order_id?: string; email_type?: string };
+  let body: { order_id?: string; email_type?: string; status?: string };
   try {
     body = await req.json();
   } catch {
@@ -174,7 +252,9 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  const { order_id: orderId, email_type: emailType } = body;
+  const { order_id: orderId } = body;
+  const requestedStatus = String(body.status ?? "").trim().toLowerCase();
+  let emailType = String(body.email_type ?? "").trim().toLowerCase();
 
   if (!orderId || typeof orderId !== "string") {
     return new Response(JSON.stringify({ error: "Missing order_id" }), {
@@ -183,14 +263,22 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  if (!emailType || !ADMIN_EMAIL_TYPES.includes(emailType as AdminEmailType)) {
-    return new Response(
-      JSON.stringify({ error: `Invalid email_type. Must be one of: ${ADMIN_EMAIL_TYPES.join(", ")}` }),
-      { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } },
-    );
+  if (!emailType && requestedStatus) {
+    emailType = STATUS_TO_EMAIL_TYPE[requestedStatus] ?? "order_status_generic";
   }
 
-  // Verify session is valid for non-service-role calls (admin panel JWT)
+  if (!emailType) {
+    return new Response(JSON.stringify({ error: "Missing email_type or status" }), {
+      status: 400,
+      headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+    });
+  }
+
+  if (!ADMIN_EMAIL_TYPES.includes(emailType as AdminEmailType)) {
+    console.warn(`[send-order-email] Unknown email_type "${emailType}" — falling back to order_status_generic`);
+    emailType = "order_status_generic";
+  }
+
   if (!isServiceRoleCall) {
     const supabaseUser = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -206,7 +294,6 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  // Fetch order using service role (bypasses RLS)
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -246,7 +333,7 @@ Deno.serve(async (req: Request) => {
   const orderLineItems = getOrderItems(order as Record<string, unknown>);
   const orderItemsSummary = getOrderItemsSummary(orderLineItems);
   const orderRef       = order.order_number ?? order.id.slice(0, 8);
-  const customerName   = order.customer_name  ?? "Customer";
+  const customerName   = order.customer_name ?? "Customer";
   const customerEmail  = order.customer_email ?? "";
   const productName    = orderItemsSummary || order.product_name || order.product_sku || "—";
   const quantity       = String(
@@ -263,6 +350,7 @@ Deno.serve(async (req: Request) => {
   const orderItemsText = orderLineItems.length
     ? orderLineItems.map((item) => formatOrderItemLine(item, true)).join("\n")
     : `${productName} ×${quantity}`;
+  const normalizedStatus = String(requestedStatus || order.status || "").trim().toLowerCase();
 
   if (!customerEmail) {
     console.warn(`[send-order-email] Order ${orderRef} has no customer_email — skipping`);
@@ -274,6 +362,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     let providerMessageId: string | undefined;
+
     if (emailType === "order_received") {
       const templateId = parseInt(
         Deno.env.get("BREVO_TEMPLATE_ORDER_RECEIVED") ?? String(BREVO_TEMPLATES.order_received),
@@ -310,8 +399,44 @@ Deno.serve(async (req: Request) => {
         ordered_at:         orderedAt,
       });
       providerMessageId = result.messageId;
-
       console.log(`[send-order-email] order_received → ${customerEmail} (order ${orderRef})`);
+
+    } else if (emailType === "payment_success") {
+      const templateId = parseInt(
+        Deno.env.get("BREVO_TEMPLATE_PAYMENT_SUCCESS") ?? String(BREVO_TEMPLATES.payment_success),
+        10,
+      );
+      const paidAt = order.paid_at
+        ? new Date(order.paid_at).toLocaleDateString("en-KE", {
+            day: "numeric", month: "long", year: "numeric",
+          })
+        : new Date().toLocaleDateString("en-KE", {
+            day: "numeric", month: "long", year: "numeric",
+          });
+
+      const result = await sendBrevoTemplate(brevoApiKey, senderEmail, senderName, templateId, customerEmail, customerName, {
+        order_number:       orderRef,
+        order_ref:          orderRef,
+        order_reference:    orderRef,
+        customer_name:      customerName,
+        customer_email:     customerEmail,
+        customer_phone:     customerPhone,
+        delivery_address:   deliveryAddress,
+        county:             county,
+        product_name:       productName,
+        quantity:           quantity,
+        order_items:        orderItemsText,
+        order_items_text:   orderItemsText,
+        total_amount:       totalKES,
+        payment_method:     paymentMethod,
+        paystack_reference: paymentRef,
+        payment_reference:  paymentRef,
+        brand_logo_url:     "https://afams.co.ke/assets/images/afams_logo_stacked.png",
+        brand_icon_url:     "https://afams.co.ke/assets/images/afams_favicon_512.png",
+        paid_at:            paidAt,
+      });
+      providerMessageId = result.messageId;
+      console.log(`[send-order-email] payment_success → ${customerEmail} (order ${orderRef})`);
 
     } else if (emailType === "order_dispatched") {
       const templateId = parseInt(
@@ -350,7 +475,6 @@ Deno.serve(async (req: Request) => {
         dispatched_at:      dispatchedAt,
       });
       providerMessageId = result.messageId;
-
       console.log(`[send-order-email] order_dispatched → ${customerEmail} (order ${orderRef})`);
 
     } else if (emailType === "order_delivered") {
@@ -367,29 +491,68 @@ Deno.serve(async (req: Request) => {
           });
 
       const result = await sendBrevoTemplate(brevoApiKey, senderEmail, senderName, templateId, customerEmail, customerName, {
-        order_number:  orderRef,
-        order_ref:     orderRef,
+        order_number: orderRef,
+        order_ref: orderRef,
         order_reference: orderRef,
         customer_name: customerName,
         customer_email: customerEmail,
         customer_phone: customerPhone,
         delivery_address: deliveryAddress,
-        county:       county,
-        product_name:  productName,
-        quantity:      quantity,
-        order_items:   orderItemsText,
+        county: county,
+        product_name: productName,
+        quantity: quantity,
+        order_items: orderItemsText,
         order_items_text: orderItemsText,
-        total_amount:  totalKES,
+        total_amount: totalKES,
         payment_method: paymentMethod,
         paystack_reference: paymentRef,
-        payment_reference:  paymentRef,
-        brand_logo_url:  "https://afams.co.ke/assets/images/afams_logo_stacked.png",
-        brand_icon_url:  "https://afams.co.ke/assets/images/afams_favicon_512.png",
-        delivered_at:  deliveredAt,
+        payment_reference: paymentRef,
+        brand_logo_url: "https://afams.co.ke/assets/images/afams_logo_stacked.png",
+        brand_icon_url: "https://afams.co.ke/assets/images/afams_favicon_512.png",
+        delivered_at: deliveredAt,
       });
       providerMessageId = result.messageId;
-
       console.log(`[send-order-email] order_delivered → ${customerEmail} (order ${orderRef})`);
+
+    } else {
+      const copy = STATUS_EMAIL_COPY[normalizedStatus] ?? STATUS_EMAIL_COPY.generic;
+      if (!STATUS_EMAIL_COPY[normalizedStatus]) {
+        console.warn(
+          `[send-order-email] Unknown status "${normalizedStatus || "(empty)"}" for order ${orderRef}; sending generic fallback email`,
+        );
+      }
+
+      const fallbackStatus = normalizedStatus || String(order.status ?? "").trim() || "updated";
+      const subject = `[Afams Order ${orderRef}] ${copy.subject}`;
+      const textBody = [
+        `Hello ${customerName},`,
+        "",
+        copy.intro,
+        "",
+        `Order REF: ${orderRef}`,
+        `Current Status: ${fallbackStatus}`,
+        `Items: ${orderItemsSummary || productName}`,
+        `Quantity: ${quantity}`,
+        `Total Amount: ${totalKES}`,
+        "",
+        "Questions? Email orders@afams.co.ke",
+        "",
+        "Best regards,",
+        "Afams LTD Team",
+        "orders@afams.co.ke · afams.co.ke · WhatsApp: +254 714 128 514",
+      ].join("\n");
+
+      const result = await sendBrevoMessage(
+        brevoApiKey,
+        senderEmail,
+        senderName,
+        customerEmail,
+        customerName,
+        subject,
+        textBody,
+      );
+      providerMessageId = result.messageId;
+      console.log(`[send-order-email] ${emailType} (${fallbackStatus}) → ${customerEmail} (order ${orderRef})`);
     }
 
     return new Response(JSON.stringify({ sent: true, emailType, orderRef, providerMessageId }), {
@@ -401,7 +564,6 @@ Deno.serve(async (req: Request) => {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[send-order-email] Brevo error:", msg);
     // Return 200 so the admin save still succeeds — email failure is non-blocking.
-    // Return a generic message to the client to avoid leaking internal details.
     return new Response(JSON.stringify({ sent: false, error: "Email delivery failed. Check Edge Function logs." }), {
       status: 200,
       headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
