@@ -57,9 +57,9 @@ export const BREVO_TEMPLATES = {
   payment_success: 2,
   payment_failed:  3,
   admin_new_order: 4,
-  order_processing: 7,
+  order_processing: 9,
   order_dispatched: 5,
   order_delivered: 6,
-  order_cancelled: 8,
-  order_refunded: 9,
+  order_cancelled: 10,
+  order_refunded: 11,
 } as const;

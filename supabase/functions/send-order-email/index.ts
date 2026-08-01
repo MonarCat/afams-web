@@ -15,6 +15,9 @@
 //   BREVO_TEMPLATE_PAYMENT_SUCCESS   (integer template ID)
 //   BREVO_TEMPLATE_ORDER_DISPATCHED  (integer template ID)
 //   BREVO_TEMPLATE_ORDER_DELIVERED   (integer template ID)
+//   BREVO_TEMPLATE_ORDER_PROCESSING  (integer template ID)
+//   BREVO_TEMPLATE_ORDER_CANCELLED   (integer template ID)
+//   BREVO_TEMPLATE_ORDER_REFUNDED    (integer template ID)
 // ============================================================
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
