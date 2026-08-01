@@ -17,16 +17,14 @@
         <tr><td align="center" style="background-color:#1565C0;padding:12px 24px;font-family:Arial,sans-serif;font-size:13px;line-height:18px;color:#FFFFFF;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">Your Order Is On Its Way</td></tr>
         <tr><td style="padding:32px 24px 12px;font-family:Arial,sans-serif;color:#1B4332;">
           <div style="font-family:Georgia,serif;font-size:28px;line-height:34px;font-weight:bold;margin-bottom:12px;">It's dispatched, {{params.customer_name}}!</div>
-          <div style="font-size:15px;line-height:24px;color:#3D5A47;">Your FarmBag has left our facility and is now in transit to you. Our delivery partner may contact you when your package is near.</div>
+          <div style="font-size:15px;line-height:24px;color:#3D5A47;">Your order is now in transit. Whether your setup is for food crops or ornamental greenery, your items are headed your way.</div>
         </td></tr>
         <tr><td style="padding:12px 24px 8px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background-color:#F0F7FF;border:1px solid #BFDBFE;">
             <tr><td colspan="2" style="padding:16px 18px;font-family:Arial,sans-serif;font-size:12px;line-height:16px;color:#1565C0;font-weight:bold;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #BFDBFE;">Shipment Details</td></tr>
             <tr><td style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#4B6280;border-bottom:1px solid #BFDBFE;">Order REF</td><td align="right" style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#1B4332;font-weight:bold;border-bottom:1px solid #BFDBFE;">{{params.order_ref}}</td></tr>
-            <tr><td style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#4B6280;border-bottom:1px solid #BFDBFE;">Product</td><td align="right" style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#1B4332;font-weight:bold;border-bottom:1px solid #BFDBFE;">{{params.product_name}}</td></tr>
+            <tr><td style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#4B6280;border-bottom:1px solid #BFDBFE;">Items</td><td align="right" style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#1B4332;font-weight:bold;border-bottom:1px solid #BFDBFE;">{{params.order_items}}</td></tr>
             <tr><td style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#4B6280;border-bottom:1px solid #BFDBFE;">Quantity</td><td align="right" style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#1B4332;font-weight:bold;border-bottom:1px solid #BFDBFE;">{{params.quantity}}</td></tr>
-            <tr><td style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#4B6280;border-bottom:1px solid #BFDBFE;">Payment Method</td><td align="right" style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#1B4332;font-weight:bold;border-bottom:1px solid #BFDBFE;">{{params.payment_method}}</td></tr>
-            <tr><td style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#4B6280;border-bottom:1px solid #BFDBFE;">Payment REF</td><td align="right" style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#1B4332;font-weight:bold;border-bottom:1px solid #BFDBFE;">{{params.payment_reference}}</td></tr>
             <tr><td style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#4B6280;border-bottom:1px solid #BFDBFE;">Estimated Delivery</td><td align="right" style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#1565C0;font-weight:bold;border-bottom:1px solid #BFDBFE;">{{params.estimated_delivery}}</td></tr>
             <tr><td style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#4B6280;">Tracking Number</td><td align="right" style="padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:20px;color:#1B4332;font-weight:bold;">{{params.tracking_number}}</td></tr>
           </table>
@@ -36,31 +34,27 @@
             <tr><td style="padding:16px 18px;font-family:Arial,sans-serif;font-size:14px;line-height:24px;color:#3D5A47;">
               <strong>What to expect:</strong><br />
               Our delivery agent may call you before arrival.<br />
-              Your FarmBag will arrive carefully packaged.<br />
-              Setup can begin the same day once delivery is complete.
+              Your package is suitable for edible and ornamental planting setups.<br />
+              You can begin setup once delivery is complete.
             </td></tr>
           </table>
         </td></tr>
         <tr><td align="center" style="padding:16px 24px 12px;"><a href="https://afams.co.ke" target="_blank" style="display:inline-block;background-color:#1565C0;color:#FFFFFF;font-family:Arial,sans-serif;font-size:14px;line-height:20px;font-weight:bold;text-decoration:none;padding:14px 28px;">Visit Afams</a></td></tr>
         <tr><td style="padding:0 24px 36px;font-family:Arial,sans-serif;font-size:13px;line-height:22px;color:#6B7C6B;text-align:center;">Need help? <a href="mailto:orders@afams.co.ke" style="color:#2D6A4F;text-decoration:none;font-weight:bold;">orders@afams.co.ke</a></td></tr>
-
-          <tr>
-            <td align="center" style="background-color:#1B4332;padding:24px;font-family:Arial,sans-serif;">
-              <div style="font-family:Georgia,serif;font-size:16px;line-height:22px;color:#F5F0E8;font-weight:bold;margin-bottom:6px;">AFAMS LTD</div>
-              <div style="font-size:12px;line-height:20px;color:#DDE7E0;margin-bottom:10px;">Thika Rd-Kiambu, Kenya &middot; Growing Food Security, One Bag at a Time</div>
-              <div style="font-size:12px;line-height:20px;margin-bottom:10px;">
-                <a href="https://afams.co.ke/#products" style="color:#9FD3B6;text-decoration:none;">Products</a>
-                <span style="color:#88A897;"> &nbsp;|&nbsp; </span>
-                <a href="https://afams.co.ke/#how-it-works" style="color:#9FD3B6;text-decoration:none;">How It Works</a>
-                <span style="color:#88A897;"> &nbsp;|&nbsp; </span>
-                <a href="https://afams.co.ke/#contact" style="color:#9FD3B6;text-decoration:none;">Contact</a>
-                <span style="color:#88A897;"> &nbsp;|&nbsp; </span>
-                <a href="https://afams.co.ke/privacy-policy.html" style="color:#9FD3B6;text-decoration:none;">Privacy</a>
-              </div>
-              <div style="font-size:11px;line-height:18px;color:#B8C8BE;">&copy; 2026 Afams Ltd. &middot; <a href="mailto:info@afams.co.ke" style="color:#B8C8BE;text-decoration:none;">info@afams.co.ke</a></div>
-            </td>
-          </tr>
-
+        <tr><td align="center" style="background-color:#1B4332;padding:24px;font-family:Arial,sans-serif;">
+          <div style="font-family:Georgia,serif;font-size:16px;line-height:22px;color:#F5F0E8;font-weight:bold;margin-bottom:6px;">AFAMS LTD</div>
+          <div style="font-size:12px;line-height:20px;color:#DDE7E0;margin-bottom:10px;">Thika Rd-Kiambu, Kenya &middot; Farming into the future.</div>
+          <div style="font-size:12px;line-height:20px;margin-bottom:10px;">
+            <a href="https://afams.co.ke/#products" style="color:#9FD3B6;text-decoration:none;">Products</a>
+            <span style="color:#88A897;"> &nbsp;|&nbsp; </span>
+            <a href="https://afams.co.ke/#how-it-works" style="color:#9FD3B6;text-decoration:none;">How It Works</a>
+            <span style="color:#88A897;"> &nbsp;|&nbsp; </span>
+            <a href="https://afams.co.ke/#contact" style="color:#9FD3B6;text-decoration:none;">Contact</a>
+            <span style="color:#88A897;"> &nbsp;|&nbsp; </span>
+            <a href="https://afams.co.ke/privacy-policy.html" style="color:#9FD3B6;text-decoration:none;">Privacy</a>
+          </div>
+          <div style="font-size:11px;line-height:18px;color:#B8C8BE;">&copy; 2026 Afams Ltd. &middot; <a href="mailto:info@afams.co.ke" style="color:#B8C8BE;text-decoration:none;">info@afams.co.ke</a></div>
+        </td></tr>
       </table>
     </td></tr>
   </table>
