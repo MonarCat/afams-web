@@ -360,7 +360,7 @@ const MAIN_PRODUCTS = [
   { sku: 'SP-STARTER-01', name: 'Full Starter Pack', category: 'Home Gardening · Balcony Edition', badge: 'new', emoji: '🌿',
     desc: 'A quiet green corner, delivered. This is less a gardening kit and more a small daily ritual — the kind of calm you get from soil on your hands and something living on your balcony. Everything you need is inside: a GrowBag Standard, a bag of ProSoil, gardening gloves, and a 3-piece hand tool set (mini shovel, mini rake, hand trowel). No experience needed, no guesswork — just unpack, plant, and enjoy the therapy of it.',
     features: ['GrowBag Standard','ProSoil growing medium','Gloves + 3-piece tool set','Zero experience needed'],
-    priceKES: 2698, image: 'assets/images/growbag-standard-wide.jpg',
+    priceKES: 2698, image: 'assets/images/growbag-standard.jpg',
     type: 'starter-pack', link: null, promoBadge: '⏳ Pre-order now — live in 72 hours' },
 ];
 
@@ -571,6 +571,7 @@ function renderGrowBagCard(grid) {
     Compact:  'Narrower and taller. Best for tight corners and small spaces.',
     Vertical: 'Tall and upright. Maximises vertical growing on small balconies.',
   };
+  const GB_SIZE_IMAGE_INDEX = { Mini: 1, Medium: 2, Standard: 3, Large: 4, XL: 5 };
 
   let gbSize = 'Standard', gbVariant = 'Wide', gbQty = 5;
 
@@ -583,6 +584,7 @@ function renderGrowBagCard(grid) {
     if (el('pg-name'))    el('pg-name').textContent = `GrowBag ${gbSize} \u2014 ${gbVariant}`;
     if (el('pg-volume'))  el('pg-volume').textContent = `${cur.volume} · White/Forest Green Heavy Duty PP Woven`;
     if (el('pg-price'))   el('pg-price').textContent = `KES ${cur.price.toLocaleString()}`;
+    if (typeof window.pgSetImageForSize === 'function') window.pgSetImageForSize(gbSize);
     if (el('growbag-products-card')) el('growbag-products-card').classList.toggle('product-card-disabled', !active);
     if (el('pg-add-btn')) {
       el('pg-add-btn').disabled = !active;
@@ -631,7 +633,7 @@ function renderGrowBagCard(grid) {
       alert('This GrowBag option is currently unavailable.');
       return;
     }
-    addToCart({ sku: cur.sku, name: `GrowBag ${gbSize} \u2014 ${gbVariant}`, unit_price: cur.price, qty: gbQty, image: 'assets/images/growbag-hero.jpg', type: 'growbag' });
+    addToCart({ sku: cur.sku, name: `GrowBag ${gbSize} \u2014 ${gbVariant}`, unit_price: cur.price, qty: gbQty, image: `assets/images/growbag-${gbSize.toLowerCase()}.jpg`, type: 'growbag' });
   };
 
   const btns = s => `<button class="pg-size-btn${s==='Standard'?' pg-active':''}" data-size="${s}" onclick="pgSelectSize('${s}')">${s}</button>`;
@@ -649,10 +651,11 @@ function renderGrowBagCard(grid) {
     </div>
     <div class="gb-img-strip" id="pg-img-strip">
       <img src="assets/images/growbag-hero.jpg" alt="GrowBag Hero" class="gb-thumb gb-thumb-active" onclick="pgSetImage(0)" loading="lazy"/>
-      <img src="assets/images/growbag-wide.jpg" alt="GrowBag Wide" class="gb-thumb" onclick="pgSetImage(1)" loading="lazy"/>
-      <img src="assets/images/growbag-compact.jpg" alt="GrowBag Compact" class="gb-thumb" onclick="pgSetImage(2)" loading="lazy"/>
-      <img src="assets/images/growbag-standard-wide.jpg" alt="GrowBag Standard Wide" class="gb-thumb" onclick="pgSetImage(3)" loading="lazy"/>
-      <img src="assets/images/growbag-sizes.jpg" alt="GrowBag Sizes" class="gb-thumb" onclick="pgSetImage(4)" loading="lazy"/>
+      <img src="assets/images/growbag-mini.jpg" alt="GrowBag Mini" class="gb-thumb" onclick="pgSetImage(1)" loading="lazy"/>
+      <img src="assets/images/growbag-medium.jpg" alt="GrowBag Medium" class="gb-thumb" onclick="pgSetImage(2)" loading="lazy"/>
+      <img src="assets/images/growbag-standard.jpg" alt="GrowBag Standard" class="gb-thumb" onclick="pgSetImage(3)" loading="lazy"/>
+      <img src="assets/images/growbag-large.jpg" alt="GrowBag Large" class="gb-thumb" onclick="pgSetImage(4)" loading="lazy"/>
+      <img src="assets/images/growbag-xl.jpg" alt="GrowBag XL" class="gb-thumb" onclick="pgSetImage(5)" loading="lazy"/>
     </div>
     <div class="product-body">
       <div class="product-category">GrowBag · Basic Range</div>
@@ -699,10 +702,11 @@ function renderGrowBagCard(grid) {
   // GrowBag gallery for products page
   var PG_GALLERY = [
     'assets/images/growbag-hero.jpg',
-    'assets/images/growbag-wide.jpg',
-    'assets/images/growbag-compact.jpg',
-    'assets/images/growbag-standard-wide.jpg',
-    'assets/images/growbag-sizes.jpg',
+    'assets/images/growbag-mini.jpg',
+    'assets/images/growbag-medium.jpg',
+    'assets/images/growbag-standard.jpg',
+    'assets/images/growbag-large.jpg',
+    'assets/images/growbag-xl.jpg',
   ];
   var _pgGalleryIdx = 0;
   window.pgSetImage = function(idx) {
@@ -714,6 +718,9 @@ function renderGrowBagCard(grid) {
     });
   };
   window.pgGalleryNav = function(dir) { pgSetImage(_pgGalleryIdx + dir); };
+  window.pgSetImageForSize = function(size) {
+    pgSetImage(GB_SIZE_IMAGE_INDEX[size] || 0);
+  };
 
   // Inject selector button styles
   if (!document.getElementById('pg-styles')) {
