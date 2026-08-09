@@ -419,16 +419,26 @@
 
       <!-- ═══ FULL STARTER PACK — LIFESTYLE BUNDLE ═══ -->
       <div class="product-card fade-up">
-        <div class="product-img-wrap">
-          <img data-src="assets/images/growbag-standard.jpg" data-emoji="🌿" alt="Full Starter Pack" class="product-img lazy-img"/>
+        <div class="product-img-wrap" style="position:relative;">
+          <img id="starter-pack-main-img" data-src="assets/images/full-starter-pack.jpg" data-emoji="🌿" alt="Full Starter Pack" class="product-img lazy-img"/>
           <span class="product-badge badge-new">New</span>
+          <button onclick="spGalleryNav(-1)" class="gb-gallery-arrow gb-gallery-arrow-left" aria-label="Previous image">&#8249;</button>
+          <button onclick="spGalleryNav(1)"  class="gb-gallery-arrow gb-gallery-arrow-right" aria-label="Next image">&#8250;</button>
+        </div>
+        <div class="gb-img-strip" id="starter-pack-img-strip">
+          <img src="assets/images/full-starter-pack.jpg" alt="Full Starter Pack" class="gb-thumb gb-thumb-active" onclick="spSetImage(0)"/>
+          <img src="assets/images/full-starterpack.jpg" alt="Full Starter Pack Alternate" class="gb-thumb" onclick="spSetImage(1)"/>
+          <img src="assets/images/growbag-medium.jpg" alt="GrowBag Medium" class="gb-thumb" onclick="spSetImage(2)"/>
+          <img src="assets/images/prosoil-front.jpg" alt="Afams ProSoil" class="gb-thumb" onclick="spSetImage(3)"/>
+          <img src="assets/images/gardening gloves.jpg" alt="Gardening Gloves" class="gb-thumb" onclick="spSetImage(4)"/>
+          <img src="assets/images/3 piece tools.jpg" alt="3 Piece Tools" class="gb-thumb" onclick="spSetImage(5)"/>
         </div>
         <div class="product-body">
           <div class="product-category">Home Gardening · Balcony Edition</div>
           <div class="product-name">Full Starter Pack</div>
-          <div class="product-desc">A quiet green corner, delivered. Less a gardening kit, more a small daily ritual — the calm of soil on your hands and something living on your balcony. No experience needed, no guesswork.</div>
+          <div class="product-desc">A quiet green corner, delivered. Everything you need is inside: a GrowBag Medium, ProSoil, gardening gloves, and a 3-piece hand tool set. No experience needed, no guesswork.</div>
           <div class="product-features">
-            <span class="feature-chip">GrowBag Standard</span>
+            <span class="feature-chip">GrowBag Medium</span>
             <span class="feature-chip">ProSoil</span>
             <span class="feature-chip">Gloves + 3-piece tool set</span>
             <span class="feature-chip">Beginner-friendly</span>
@@ -439,7 +449,7 @@
               <span class="price-val">KES 2,698</span>
               <span class="price-gbp">⏳ Pre-order now — live in 72 hours</span>
             </div>
-            <button class="btn-add-cart" onclick="addToCart({sku:'SP-STARTER-01',name:'Full Starter Pack',unit_price:2698,qty:1,image:'assets/images/growbag-standard.jpg',type:'starter-pack'})">
+            <button class="btn-add-cart" onclick="addToCart({sku:'SP-STARTER-01',name:'Full Starter Pack',unit_price:2698,qty:1,image:'assets/images/full-starter-pack.jpg',type:'starter-pack'})">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
               Add to Cart
             </button>
@@ -1523,6 +1533,33 @@ function goToPartnerContact(event) {
 
   window.gbSetImageForSize = function(size) {
     gbSetImage(GB_SIZE_IMAGE_INDEX[size] || 0);
+  };
+})();
+(function() {
+  var SP_GALLERY_IMAGES = [
+    'assets/images/full-starter-pack.jpg',
+    'assets/images/full-starterpack.jpg',
+    'assets/images/growbag-medium.jpg',
+    'assets/images/prosoil-front.jpg',
+    'assets/images/gardening gloves.jpg',
+    'assets/images/3 piece tools.jpg',
+  ];
+  var _spGalleryIdx = 0;
+
+  window.spSetImage = function(idx) {
+    _spGalleryIdx = (idx + SP_GALLERY_IMAGES.length) % SP_GALLERY_IMAGES.length;
+    var mainImg = document.getElementById('starter-pack-main-img');
+    if (mainImg) {
+      mainImg.src = SP_GALLERY_IMAGES[_spGalleryIdx];
+      mainImg.style.display = '';
+    }
+    document.querySelectorAll('#starter-pack-img-strip .gb-thumb').forEach(function(t, i) {
+      t.classList.toggle('gb-thumb-active', i === _spGalleryIdx);
+    });
+  };
+
+  window.spGalleryNav = function(dir) {
+    spSetImage(_spGalleryIdx + dir);
   };
 })();
 (function() {
