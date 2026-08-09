@@ -242,7 +242,7 @@
         <div class="hero-product-slider-track">
           <div class="hero-product-slide hl-active" id="hl-slide-0" style="cursor:pointer" onclick="scrollToSection('products')">
             <div class="hero-product-slide-img">
-              <img src="assets/images/growbag-hero.jpg" alt="GrowBag" onerror="this.parentElement.textContent='🌱'"/>
+              <img src="assets/images/growbag-hero.jpg" alt="GrowBag" class="hero-product-slide-img-growbag" onerror="this.parentElement.textContent='🌱'"/>
             </div>
             <div class="hero-product-slide-info">
               <div class="hero-product-slide-name">GrowBag Range</div>
@@ -349,18 +349,18 @@
       <!-- ═══ GROWBAG CARD — FIRST ═══ -->
       <div class="product-card fade-up" id="growbag-card">
         <div class="product-img-wrap" style="position:relative;">
-          <img id="growbag-main-img" src="assets/images/growbag-hero.jpg" data-emoji="🌱" alt="Afams GrowBag" class="product-img" onerror="this.style.display='none'"/>
+          <img id="growbag-main-img" src="assets/images/growbag-hero.jpg" data-emoji="🌱" alt="Afams GrowBag" class="product-img product-img-growbag" onerror="this.style.display='none'"/>
           <span id="growbag-badge" class="product-badge" style="background:linear-gradient(135deg,#2D6A4F,#52B788);color:#fff;">Most Popular</span>
           <button onclick="gbGalleryNav(-1)" class="gb-gallery-arrow gb-gallery-arrow-left" aria-label="Previous image">&#8249;</button>
           <button onclick="gbGalleryNav(1)"  class="gb-gallery-arrow gb-gallery-arrow-right" aria-label="Next image">&#8250;</button>
         </div>
         <div class="gb-img-strip" id="growbag-img-strip">
-          <img src="assets/images/growbag-hero.jpg" alt="GrowBag Hero" class="gb-thumb gb-thumb-active" onclick="gbSetImage(0)"/>
-          <img src="assets/images/growbag-mini.jpg" alt="GrowBag Mini" class="gb-thumb" onclick="gbSetImage(1)"/>
-          <img src="assets/images/growbag-medium.jpg" alt="GrowBag Medium" class="gb-thumb" onclick="gbSetImage(2)"/>
-          <img src="assets/images/growbag-standard.jpg" alt="GrowBag Standard" class="gb-thumb" onclick="gbSetImage(3)"/>
-          <img src="assets/images/growbag-large.jpg" alt="GrowBag Large" class="gb-thumb" onclick="gbSetImage(4)"/>
-          <img src="assets/images/growbag-xl.jpg" alt="GrowBag XL" class="gb-thumb" onclick="gbSetImage(5)"/>
+          <img src="assets/images/growbag-hero.jpg" alt="GrowBag Hero" class="gb-thumb gb-thumb-growbag gb-thumb-active" onclick="gbSetImage(0)"/>
+          <img src="assets/images/growbag-mini.jpg" alt="GrowBag Mini" class="gb-thumb gb-thumb-growbag" onclick="gbSetImage(1)"/>
+          <img src="assets/images/growbag-medium.jpg" alt="GrowBag Medium" class="gb-thumb gb-thumb-growbag" onclick="gbSetImage(2)"/>
+          <img src="assets/images/growbag-standard.jpg" alt="GrowBag Standard" class="gb-thumb gb-thumb-growbag" onclick="gbSetImage(3)"/>
+          <img src="assets/images/growbag-large.jpg" alt="GrowBag Large" class="gb-thumb gb-thumb-growbag" onclick="gbSetImage(4)"/>
+          <img src="assets/images/growbag-xl.jpg" alt="GrowBag XL" class="gb-thumb gb-thumb-growbag" onclick="gbSetImage(5)"/>
         </div>
         <div class="product-body">
           <div class="product-category">GrowBag · Basic Range</div>
