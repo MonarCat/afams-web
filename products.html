@@ -110,6 +110,10 @@
       height: 100%;
       object-fit: cover;
     }
+    .product-image img.product-image-growbag {
+      object-fit: contain;
+      padding: 0.45rem;
+    }
     .product-image img.failed { display: none; }
     .product-badge-pill {
       position: absolute;
@@ -644,18 +648,18 @@ function renderGrowBagCard(grid) {
   card.id = 'growbag-products-card';
   card.innerHTML = `
     <div class="product-image" style="position:relative;">
-      <img id="pg-main-img" src="assets/images/growbag-hero.jpg" alt="Afams GrowBag" loading="lazy" onerror="this.classList.add('failed');" />
+      <img id="pg-main-img" src="assets/images/growbag-hero.jpg" alt="Afams GrowBag" class="product-image-growbag" loading="lazy" onerror="this.classList.add('failed');" />
       <span id="pg-badge" class="product-badge-pill" style="background:linear-gradient(135deg,#2D6A4F,#52B788);color:#fff;top:0.85rem;left:0.85rem;">Most Popular</span>
       <button onclick="pgGalleryNav(-1)" class="gb-gallery-arrow gb-gallery-arrow-left" aria-label="Previous image">&#8249;</button>
       <button onclick="pgGalleryNav(1)"  class="gb-gallery-arrow gb-gallery-arrow-right" aria-label="Next image">&#8250;</button>
     </div>
     <div class="gb-img-strip" id="pg-img-strip">
-      <img src="assets/images/growbag-hero.jpg" alt="GrowBag Hero" class="gb-thumb gb-thumb-active" onclick="pgSetImage(0)" loading="lazy"/>
-      <img src="assets/images/growbag-mini.jpg" alt="GrowBag Mini" class="gb-thumb" onclick="pgSetImage(1)" loading="lazy"/>
-      <img src="assets/images/growbag-medium.jpg" alt="GrowBag Medium" class="gb-thumb" onclick="pgSetImage(2)" loading="lazy"/>
-      <img src="assets/images/growbag-standard.jpg" alt="GrowBag Standard" class="gb-thumb" onclick="pgSetImage(3)" loading="lazy"/>
-      <img src="assets/images/growbag-large.jpg" alt="GrowBag Large" class="gb-thumb" onclick="pgSetImage(4)" loading="lazy"/>
-      <img src="assets/images/growbag-xl.jpg" alt="GrowBag XL" class="gb-thumb" onclick="pgSetImage(5)" loading="lazy"/>
+      <img src="assets/images/growbag-hero.jpg" alt="GrowBag Hero" class="gb-thumb gb-thumb-growbag gb-thumb-active" onclick="pgSetImage(0)" loading="lazy"/>
+      <img src="assets/images/growbag-mini.jpg" alt="GrowBag Mini" class="gb-thumb gb-thumb-growbag" onclick="pgSetImage(1)" loading="lazy"/>
+      <img src="assets/images/growbag-medium.jpg" alt="GrowBag Medium" class="gb-thumb gb-thumb-growbag" onclick="pgSetImage(2)" loading="lazy"/>
+      <img src="assets/images/growbag-standard.jpg" alt="GrowBag Standard" class="gb-thumb gb-thumb-growbag" onclick="pgSetImage(3)" loading="lazy"/>
+      <img src="assets/images/growbag-large.jpg" alt="GrowBag Large" class="gb-thumb gb-thumb-growbag" onclick="pgSetImage(4)" loading="lazy"/>
+      <img src="assets/images/growbag-xl.jpg" alt="GrowBag XL" class="gb-thumb gb-thumb-growbag" onclick="pgSetImage(5)" loading="lazy"/>
     </div>
     <div class="product-body">
       <div class="product-category">GrowBag · Basic Range</div>
