@@ -3489,50 +3489,32 @@ var EMAIL_TEMPLATES = {
     label: '🌱 Support Afams — from Moses',
     desc: 'Personal note asking for support',
     tag: 'MISSION',
-    subject: 'A personal note from Moses — help us grow Afams 🌱',
+    subject: 'A personal note from Moses — help us grow Afams',
     body:
-      '<table cellpadding="0" cellspacing="0" width="100%" style="background:#F5F0E8;padding:32px 0;font-family:Georgia,serif;">'
+      '<table cellpadding="0" cellspacing="0" width="100%" style="background:#ffffff;font-family:Georgia,serif;">'
       + '<tr><td align="center">'
-      + '<table cellpadding="0" cellspacing="0" width="580" style="max-width:580px;width:100%;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.06);">'
+      + '<table cellpadding="0" cellspacing="0" width="580" style="max-width:580px;width:100%;">'
 
-      // Header
-      + '<tr><td style="padding:28px 40px 0;">'
-      + '<img src="https://afams.co.ke/assets/images/afams_logo_horizontal.png" alt="Afams" height="34" style="display:block;">'
+      // Header — plain, no card/shadow/background block (keeps this reading as a letter, not a newsletter)
+      + '<tr><td style="padding:32px 20px 12px;">'
+      + '<img src="https://afams.co.ke/assets/images/afams_logo_horizontal.png" alt="Afams" height="52" style="display:block;">'
       + '</td></tr>'
 
       // Letter body
-      + '<tr><td style="padding:24px 40px 8px;">'
+      + '<tr><td style="padding:8px 20px;">'
       + '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Hi {{name}},</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">I\'m Moses — I started Afams because I got tired of watching good land around Nairobi sit empty while families struggled to find fresh, affordable vegetables. What began as a handful of grow bags stitched together in Kahawa Sukari has slowly turned into something bigger, and I wanted to reach out to you directly instead of hiding behind a marketing team we don\'t actually have.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">Afams is still small. Every order, every referral, every shilling someone chooses to put behind us goes straight back into better grow bags, better soil, and honestly, into proving that urban farming can really work here.</p>'
-      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">If you\'ve ever wanted to be part of something from close to the beginning, this is that moment. There are two easy ways to help:</p>'
-      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 8px;">🌱 <strong>Order a GrowBag or FarmBag</strong> — the simplest way to help, and you get to grow your own food while you\'re at it.</p>'
-      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 22px;">🤝 <strong>Give directly</strong> — any amount, and your name goes up on our Support Base as one of the people who believed in this early.</p>'
-      + '</td></tr>'
-
-      // CTA button
-      + '<tr><td align="center" style="padding:0 40px 30px;">'
-      + '<table cellpadding="0" cellspacing="0"><tr><td style="border-radius:8px;background:#2D6A4F;">'
-      + '<a href="https://afams.co.ke/support.html" style="display:inline-block;padding:14px 34px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;font-family:Arial,sans-serif;border-radius:8px;">Support Afams →</a>'
-      + '</td></tr></table>'
-      + '</td></tr>'
-
-      // Sign-off
-      + '<tr><td style="padding:0 40px 30px;">'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">If you\'ve ever wanted to be part of something from close to the beginning, this is that moment. There are two easy ways to help — you can order a GrowBag or FarmBag (the simplest way, and you get to grow your own food while you\'re at it), or give directly, any amount, and your name goes up on our Support Base as one of the people who believed in this early.</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">You can do either one here: <a href="https://afams.co.ke/support.html" style="color:#2D6A4F;font-weight:bold;">afams.co.ke/support.html</a></p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 4px;">Whatever you choose, thank you for even reading this far. I read every reply personally.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#1B4332;margin:18px 0 0;">Asante sana,<br><strong>Moses Mwombe</strong><br><span style="font-size:13px;color:#667085;">Founder, Afams</span></p>'
       + '</td></tr>'
 
-      // Footer with real social links
-      + '<tr><td style="background:#1B4332;padding:22px 40px;text-align:center;">'
-      + '<table cellpadding="0" cellspacing="0" style="margin:0 auto 12px;"><tr>'
-      + '<td style="padding:0 8px;"><a href="https://www.facebook.com/AfamsLimited" style="color:#a8d5b5;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;">Facebook</a></td>'
-      + '<td style="padding:0 8px;color:#3d6b52;">·</td>'
-      + '<td style="padding:0 8px;"><a href="https://x.com/afams" style="color:#a8d5b5;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;">X</a></td>'
-      + '<td style="padding:0 8px;color:#3d6b52;">·</td>'
-      + '<td style="padding:0 8px;"><a href="https://wa.me/254714128514" style="color:#a8d5b5;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;">WhatsApp</a></td>'
-      + '</tr></table>'
-      + '<p style="color:#a8d5b5;font-size:11px;margin:0;font-family:Arial,sans-serif;">Afams Ltd · Kahawa Sukari, Nairobi · <a href="https://afams.co.ke" style="color:#52B788;text-decoration:none;">afams.co.ke</a></p>'
+      // Footer — plain text, no colored bar or badge styling
+      + '<tr><td style="padding:26px 20px 34px; border-top:1px solid #e5e5e5; margin-top:20px;">'
+      + '<p style="font-size:12px;color:#888;font-family:Arial,sans-serif;margin:0 0 6px;">Afams Ltd · Kahawa Sukari, Nairobi · <a href="https://afams.co.ke" style="color:#667085;">afams.co.ke</a></p>'
+      + '<p style="font-size:12px;color:#888;font-family:Arial,sans-serif;margin:0;">Find us on <a href="https://www.facebook.com/AfamsLimited" style="color:#667085;">Facebook</a>, <a href="https://x.com/afams" style="color:#667085;">X</a>, or <a href="https://wa.me/254714128514" style="color:#667085;">WhatsApp</a>.</p>'
       + '</td></tr>'
 
       + '</table>'

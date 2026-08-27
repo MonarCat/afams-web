@@ -171,6 +171,7 @@
       <a href="#how-it-works" onclick="scrollToSection('how-it-works')">How it works</a>
       <a href="#institutional" onclick="scrollToSection('institutional')">For institutions</a>
       <a href="#story" onclick="scrollToSection('story')">Our story</a>
+      <a href="support.html">Support Us</a>
       <a href="#contact" onclick="scrollToSection('contact')">Contact</a>
     </div>
     <div class="nav-actions">
@@ -194,6 +195,7 @@
   <a href="#how-it-works" onclick="scrollToSection('how-it-works')">How it works</a>
   <a href="#institutional" onclick="scrollToSection('institutional')">For institutions</a>
   <a href="#story" onclick="scrollToSection('story')">Our story</a>
+  <a href="support.html">Support Us</a>
   <a href="#contact" onclick="scrollToSection('contact')">Contact</a>
 </div>
 
@@ -1010,81 +1012,113 @@
   </button>
   <div class="accordion-body section" id="contact-body" aria-labelledby="contact-toggle" hidden>
   <div class="section-inner">
-    <div class="section-center">
-      <p class="section-sub">Choose the right team — we respond faster when your message lands in the right inbox.</p>
+
+    <!-- Social-first: fastest way to reach us -->
+    <div style="text-align:center; margin-bottom:2.2rem;">
+      <p class="section-sub" style="margin:0 auto 1rem;">The fastest way to reach us is on social — we're active there daily.</p>
+      <div style="display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap;">
+        <a href="https://wa.me/254714128514" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; font-weight:700; text-decoration:none; padding:0.65rem 1.3rem; border-radius:var(--radius-round); font-size:0.9rem;">💬 WhatsApp</a>
+        <a href="https://www.facebook.com/AfamsLimited" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:#1877F2; color:#fff; font-weight:700; text-decoration:none; padding:0.65rem 1.3rem; border-radius:var(--radius-round); font-size:0.9rem;">Facebook</a>
+        <a href="https://www.instagram.com/afams" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); color:#fff; font-weight:700; text-decoration:none; padding:0.65rem 1.3rem; border-radius:var(--radius-round); font-size:0.9rem;">Instagram</a>
+        <a href="https://x.com/afams" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:#000; color:#fff; font-weight:700; text-decoration:none; padding:0.65rem 1.3rem; border-radius:var(--radius-round); font-size:0.9rem;">X</a>
+      </div>
     </div>
-    <div class="contact-emails-grid">
-      <!-- Orders & Shopping -->
-      <a class="contact-email-card fade-up"
-         href="mailto:orders@afams.co.ke?subject=%5BORDER%20ENQUIRY%5D&body=Hi%20Afams%20Orders%20Team%2C%0A%0AOrder%20number%20(if%20applicable)%3A%20%0A%0AName%3A%20%0AEnquiry%3A%20%0A%0AThank%20you"
-         target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
-        <div class="contact-email-icon">📦</div>
-        <div class="contact-email-topic">Orders &amp; Shopping</div>
-        <div class="contact-email-addr">orders@afams.co.ke</div>
-        <div class="contact-email-subject" style="font-size:0.75rem;color:var(--gray-mid);font-style:italic;margin-top:0.1rem">Subject: [ORDER ENQUIRY]</div>
-        <div class="contact-email-desc">Track an order, amend delivery details, or ask about pre-order timelines. We respond within 4 hours.</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem">
-          <span class="contact-email-cta">Open Mail App →</span>
-          <a href="https://mail.google.com/mail/?view=cm&to=orders%40afams.co.ke&su=%5BORDER%20ENQUIRY%5D&body=Hi%20Afams%20Orders%20Team%2C%0A%0AOrder%20number%20(if%20applicable)%3A%20%0A%0AName%3A%20%0AEnquiry%3A%20%0A%0AThank%20you"
-             target="_blank" rel="noopener" onclick="event.stopPropagation()"
-             style="font-size:0.78rem;font-weight:600;color:#155D27;text-decoration:none;border:1px solid var(--g-soft);border-radius:6px;padding:3px 9px;">Gmail ↗</a>
+
+    <!-- Real contact form — sends server-side, no mail client required -->
+    <div style="max-width:560px; margin:0 auto; background:var(--white); border:1px solid var(--g-soft); border-radius:var(--radius-lg); padding:2rem; box-shadow:var(--shadow-sm);">
+      <p style="font-family:'Playfair Display',serif; font-weight:700; font-size:1.15rem; color:var(--g-dark); margin:0 0 1.2rem; text-align:center;">Or send us a message directly</p>
+
+      <form id="site-contact-form" novalidate>
+        <!-- Honeypot — hidden from real visitors, catches simple bots -->
+        <div style="position:absolute; left:-9999px;" aria-hidden="true">
+          <label>Leave this empty</label>
+          <input type="text" name="website" id="cf-website" tabindex="-1" autocomplete="off">
         </div>
-      </a>
-      <!-- Support & Returns -->
-      <a class="contact-email-card fade-up"
-         href="mailto:support@afams.co.ke?subject=%5BSUPPORT%20REQUEST%5D&body=Hi%20Afams%20Support%20Team%2C%0A%0AOrder%20number%20(if%20applicable)%3A%20%0AProduct%3A%20FarmBag%20Classic%20%2F%20FarmBag%20Vertical%20%2F%20ProSoil%20%2F%20GrowBag%0A%0AIssue%20description%3A%20%0A%0AThank%20you"
-         target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
-        <div class="contact-email-icon">🛠</div>
-        <div class="contact-email-topic">Support &amp; Returns</div>
-        <div class="contact-email-addr">support@afams.co.ke</div>
-        <div class="contact-email-subject" style="font-size:0.75rem;color:var(--gray-mid);font-style:italic;margin-top:0.1rem">Subject: [SUPPORT REQUEST]</div>
-        <div class="contact-email-desc">Product issues, returns, refunds, or anything that needs fixing. We respond within 1 business day.</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem">
-          <span class="contact-email-cta">Open Mail App →</span>
-          <a href="https://mail.google.com/mail/?view=cm&to=support%40afams.co.ke&su=%5BSUPPORT%20REQUEST%5D&body=Hi%20Afams%20Support%20Team%2C%0A%0AOrder%20number%20(if%20applicable)%3A%20%0AProduct%3A%20FarmBag%20Classic%20%2F%20FarmBag%20Vertical%20%2F%20ProSoil%20%2F%20GrowBag%0A%0AIssue%20description%3A%20%0A%0AThank%20you"
-             target="_blank" rel="noopener" onclick="event.stopPropagation()"
-             style="font-size:0.78rem;font-weight:600;color:#155D27;text-decoration:none;border:1px solid var(--g-soft);border-radius:6px;padding:3px 9px;">Gmail ↗</a>
+
+        <div style="margin-bottom:0.9rem;">
+          <label for="cf-name" style="display:block; font-size:0.82rem; font-weight:600; color:var(--g-dark); margin-bottom:4px;">Name</label>
+          <input type="text" id="cf-name" required style="width:100%; box-sizing:border-box; padding:0.7rem 0.85rem; border:1.5px solid rgba(0,0,0,0.12); border-radius:var(--radius-sm); font-size:0.92rem;">
         </div>
-      </a>
-      <!-- Partnerships & B2B -->
-      <a class="contact-email-card fade-up" id="contact-partner"
-         href="mailto:partner@afams.co.ke?subject=%5BPARTNERSHIP%20ENQUIRY%5D&body=Hi%20Afams%20Partnerships%20Team%2C%0A%0AOrganisation%3A%20%0AType%3A%20School%20%2F%20Restaurant%20%2F%20Hotel%20%2F%20Corporate%20%2F%20Distributor%0A%0AWhat%20we%E2%80%99re%20looking%20for%3A%20%0A%0AThank%20you"
-         target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
-        <div class="contact-email-icon">🤝</div>
-        <div class="contact-email-topic">Partnerships &amp; B2B</div>
-        <div class="contact-email-addr">partner@afams.co.ke</div>
-        <div class="contact-email-subject" style="font-size:0.75rem;color:var(--gray-mid);font-style:italic;margin-top:0.1rem">Subject: [PARTNERSHIP ENQUIRY]</div>
-        <div class="contact-email-desc">Schools, restaurants, hotels, distributors, and institutional buyers. Bulk pricing and bespoke installations available.</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem">
-          <span class="contact-email-cta">Open Mail App →</span>
-          <a href="https://mail.google.com/mail/?view=cm&to=partner%40afams.co.ke&su=%5BPARTNERSHIP%20ENQUIRY%5D&body=Hi%20Afams%20Partnerships%20Team%2C%0A%0AOrganisation%3A%20%0AType%3A%20School%20%2F%20Restaurant%20%2F%20Hotel%20%2F%20Corporate%20%2F%20Distributor%0A%0AWhat%20we%E2%80%99re%20looking%20for%3A%20%0A%0AThank%20you"
-             target="_blank" rel="noopener" onclick="event.stopPropagation()"
-             style="font-size:0.78rem;font-weight:600;color:#155D27;text-decoration:none;border:1px solid var(--g-soft);border-radius:6px;padding:3px 9px;">Gmail ↗</a>
+        <div style="margin-bottom:0.9rem;">
+          <label for="cf-email" style="display:block; font-size:0.82rem; font-weight:600; color:var(--g-dark); margin-bottom:4px;">Email</label>
+          <input type="email" id="cf-email" required style="width:100%; box-sizing:border-box; padding:0.7rem 0.85rem; border:1.5px solid rgba(0,0,0,0.12); border-radius:var(--radius-sm); font-size:0.92rem;">
         </div>
-      </a>
-      <!-- Press & Media -->
-      <a class="contact-email-card fade-up"
-         href="mailto:press@afams.co.ke?subject=%5BPRESS%20ENQUIRY%5D&body=Hi%20Afams%20Press%20Team%2C%0A%0APublication%20%2F%20Organisation%3A%20%0AEnquiry%20type%3A%20Interview%20%2F%20Media%20kit%20%2F%20Product%20sample%20%2F%20Speaking%20engagement%0A%0AMessage%3A%20%0A%0AThank%20you"
-         target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
-        <div class="contact-email-icon">📰</div>
-        <div class="contact-email-topic">Press &amp; Media</div>
-        <div class="contact-email-addr">press@afams.co.ke</div>
-        <div class="contact-email-subject" style="font-size:0.75rem;color:var(--gray-mid);font-style:italic;margin-top:0.1rem">Subject: [PRESS ENQUIRY]</div>
-        <div class="contact-email-desc">Interview requests, media kits, product samples for review, and speaking engagements.</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem">
-          <span class="contact-email-cta">Open Mail App →</span>
-          <a href="https://mail.google.com/mail/?view=cm&to=press%40afams.co.ke&su=%5BPRESS%20ENQUIRY%5D&body=Hi%20Afams%20Press%20Team%2C%0A%0APublication%20%2F%20Organisation%3A%20%0AEnquiry%20type%3A%20Interview%20%2F%20Media%20kit%20%2F%20Product%20sample%20%2F%20Speaking%20engagement%0A%0AMessage%3A%20%0A%0AThank%20you"
-             target="_blank" rel="noopener" onclick="event.stopPropagation()"
-             style="font-size:0.78rem;font-weight:600;color:#155D27;text-decoration:none;border:1px solid var(--g-soft);border-radius:6px;padding:3px 9px;">Gmail ↗</a>
+        <div style="margin-bottom:0.9rem;">
+          <label for="cf-reason" style="display:block; font-size:0.82rem; font-weight:600; color:var(--g-dark); margin-bottom:4px;">Reason</label>
+          <select id="cf-reason" style="width:100%; box-sizing:border-box; padding:0.7rem 0.85rem; border:1.5px solid rgba(0,0,0,0.12); border-radius:var(--radius-sm); font-size:0.92rem; background:#fff;">
+            <option value="general">General Inquiry</option>
+            <option value="suggestion">Suggestion</option>
+            <option value="orders">Orders &amp; Shopping</option>
+            <option value="support">Support &amp; Returns</option>
+            <option value="partnership">Partnership &amp; B2B</option>
+            <option value="press">Press &amp; Media</option>
+          </select>
         </div>
-      </a>
+        <div style="margin-bottom:1.2rem;">
+          <label for="cf-message" style="display:block; font-size:0.82rem; font-weight:600; color:var(--g-dark); margin-bottom:4px;">Message</label>
+          <textarea id="cf-message" rows="5" required style="width:100%; box-sizing:border-box; padding:0.7rem 0.85rem; border:1.5px solid rgba(0,0,0,0.12); border-radius:var(--radius-sm); font-size:0.92rem; resize:vertical;"></textarea>
+        </div>
+
+        <button type="submit" id="cf-submit" class="btn-preorder-nav" style="width:100%; text-align:center; justify-content:center; padding:0.85rem; font-size:0.95rem;">Send Message</button>
+        <p id="cf-status" style="text-align:center; font-size:0.85rem; margin-top:0.8rem; display:none;"></p>
+      </form>
     </div>
-    <div style="text-align:center;margin-top:2rem">
-      <p style="font-size:0.88rem;color:var(--gray-mid)">Prefer WhatsApp? <a href="https://wa.me/254714128514" target="_blank" rel="noopener" style="color:var(--g-mid);font-weight:600">Chat with us</a> · Response usually within 2 hours</p>
-    </div>
+
   </div>
   </div><!-- /.accordion-body -->
 </section>
+
+<script>
+(function () {
+  var form = document.getElementById('site-contact-form');
+  if (!form) return;
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var btn = document.getElementById('cf-submit');
+    var status = document.getElementById('cf-status');
+    var payload = {
+      website: document.getElementById('cf-website').value, // honeypot
+      name: document.getElementById('cf-name').value.trim(),
+      email: document.getElementById('cf-email').value.trim(),
+      reason: document.getElementById('cf-reason').value,
+      message: document.getElementById('cf-message').value.trim(),
+    };
+    if (!payload.name || !payload.email || !payload.message) {
+      status.style.display = 'block';
+      status.style.color = '#C62828';
+      status.textContent = 'Please fill in all fields.';
+      return;
+    }
+    btn.disabled = true;
+    var originalLabel = btn.textContent;
+    btn.textContent = 'Sending…';
+    try {
+      var res = await fetch('https://dvquyzzqsnlcassvgdzz.supabase.co/functions/v1/contact-form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      var data = await res.json().catch(function () { return {}; });
+      if (res.ok && data.success) {
+        form.reset();
+        status.style.display = 'block';
+        status.style.color = '#155D27';
+        status.textContent = "Message sent — we'll get back to you soon.";
+      } else {
+        status.style.display = 'block';
+        status.style.color = '#C62828';
+        status.textContent = data.error || 'Something went wrong — please try WhatsApp instead.';
+      }
+    } catch (err) {
+      status.style.display = 'block';
+      status.style.color = '#C62828';
+      status.textContent = 'Network error — please try WhatsApp instead.';
+    }
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  });
+})();
+</script>
 
 </div><!-- /.accordion-group -->
 
@@ -1179,6 +1213,7 @@
           <li><a href="#global" onclick="scrollToSection('global')">Global presence</a></li>
           <li><a href="#institutional" onclick="scrollToSection('institutional')">Institutions</a></li>
           <li><a href="#partners" onclick="scrollToSection('partners')">Partners</a></li>
+          <li><a href="support.html">Support Us</a></li>
           <li><a href="#" onclick="showInfoPanel('careers'); return false;">Careers</a></li>
           <li><a href="#" onclick="showInfoPanel('press'); return false;">Press</a></li>
         </ul>
