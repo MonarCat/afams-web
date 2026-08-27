@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Afams — Help Us Grow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script
+  src="https://www.paypal.com/sdk/js?client-id=BAAngrJiTDenTT1uxWG-I4TdTdJnnwTEHfxAo8K5zjwd0lLpDITRQsIKbyqzZCF5RL6bEYpa6rySzgflp4&components=hosted-buttons&disable-funding=venmo&currency=USD">
+</script>
+<style>
+  :root{
+    --forest-950:#0e2a1f;
+    --forest-800:#1b4332;
+    --forest-600:#2d6a4f;
+    --forest-400:#52886b;
+    --gold-600:#b8912b;
+    --gold-500:#c9a227;
+    --gold-300:#e3c76a;
+    --canvas-100:#f4ecda;
+    --canvas-200:#ece0c6;
+    --canvas-50:#faf6ec;
+    --ink-900:#1c1a13;
+    --ink-600:#4a4738;
+    --line:#d9caa3;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--canvas-50);
+    color:var(--ink-900);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+  a{color:inherit;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 0;
+  }
+  .brand{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.15rem;
+    letter-spacing:0.01em;
+    color:var(--forest-800);
+  }
+  .brand span{color:var(--gold-600);}
+  .nav-link{
+    font-size:0.9rem;
+    font-weight:500;
+    text-decoration:none;
+    color:var(--forest-800);
+    border-bottom:1px solid transparent;
+    transition:border-color .2s ease;
+  }
+  .nav-link:hover{border-color:var(--gold-500);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:64px 0 88px;
+    overflow:hidden;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:48px;
+    align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--forest-600);
+    background:var(--canvas-200);
+    border:1px solid var(--line);
+    padding:6px 12px;
+    border-radius:999px;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:6px; height:6px; border-radius:50%;
+    background:var(--gold-500);
+    display:inline-block;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(2.4rem, 5vw, 3.6rem);
+    line-height:1.04;
+    letter-spacing:-0.01em;
+    margin:0 0 6px;
+    color:var(--forest-950);
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--forest-600);
+  }
+  .hero-sub{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:1.25rem;
+    color:var(--gold-600);
+    margin:0 0 20px;
+  }
+  .hero-body{
+    font-size:1.05rem;
+    color:var(--ink-600);
+    max-width:46ch;
+    margin:0 0 30px;
+  }
+  .cta-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  .btn-primary{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:var(--forest-800);
+    color:var(--canvas-50);
+    font-weight:600;
+    font-size:1rem;
+    text-decoration:none;
+    padding:15px 26px;
+    border-radius:10px;
+    box-shadow:0 1px 0 rgba(0,0,0,0.06);
+    transition:transform .18s ease, background .18s ease;
+  }
+  .btn-primary:hover{background:var(--forest-600); transform:translateY(-1px);}
+  .btn-primary svg{transition:transform .18s ease;}
+  .btn-primary:hover svg{transform:translateX(3px);}
+  .about-link{
+    font-size:0.92rem;
+    font-weight:500;
+    text-decoration:underline;
+    text-decoration-color:var(--gold-500);
+    text-underline-offset:4px;
+    color:var(--forest-800);
+  }
+
+  /* growbag illustration */
+  .hero-art{
+    position:relative;
+    display:flex; justify-content:center;
+  }
+  .grow-scene{width:100%; max-width:340px; height:auto;}
+  .sway{transform-origin:bottom center; animation:sway 5s ease-in-out infinite;}
+  @keyframes sway{
+    0%,100%{transform:rotate(-1.2deg);}
+    50%{transform:rotate(1.2deg);}
+  }
+  .rise{
+    animation:rise 900ms cubic-bezier(.2,.7,.2,1) both;
+  }
+  @keyframes rise{
+    from{transform:scaleY(0.05); transform-origin:bottom;}
+    to{transform:scaleY(1); transform-origin:bottom;}
+  }
+
+  /* ---------- STORY STRIP ---------- */
+  .story{
+    background:var(--forest-950);
+    color:var(--canvas-100);
+    padding:46px 0;
+  }
+  .story-inner{
+    display:flex; gap:40px; align-items:flex-start; flex-wrap:wrap;
+  }
+  .story p{
+    font-size:1.05rem;
+    max-width:62ch;
+    margin:0;
+    color:var(--canvas-200);
+  }
+  .story strong{color:var(--canvas-50); font-weight:600;}
+
+  /* ---------- STEPS ---------- */
+  .section{padding:76px 0;}
+  .section-head{max-width:56ch; margin-bottom:44px;}
+  .kicker{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gold-600);
+    margin:0 0 10px;
+  }
+  h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(1.7rem, 3vw, 2.3rem);
+    margin:0 0 10px;
+    color:var(--forest-950);
+  }
+  .section-sub{color:var(--ink-600); font-size:1rem; margin:0;}
+
+  .steps{
+    position:relative;
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:0;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .step{
+    padding:28px 20px 26px;
+    border-right:1px solid var(--line);
+    position:relative;
+  }
+  .step:last-child{border-right:none;}
+  .step-num{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:1.6rem;
+    color:var(--gold-500);
+    display:block;
+    margin-bottom:10px;
+  }
+  .step-title{font-weight:600; font-size:0.98rem; margin-bottom:6px; color:var(--forest-950);}
+  .step-desc{font-size:0.87rem; color:var(--ink-600);}
+
+  .post-note{
+    display:flex; gap:14px; align-items:flex-start;
+    margin-top:30px;
+    padding:18px 20px;
+    background:var(--canvas-100);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    font-size:0.94rem;
+    color:var(--ink-600);
+  }
+  .post-note svg{flex:none; margin-top:2px; color:var(--forest-600);}
+  .post-note strong{color:var(--forest-950);}
+
+  /* ---------- GROWTH LADDER (reward tiers) ---------- */
+  .ladder-head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; margin-bottom:44px;}
+  .tiers{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  .tier{
+    background:var(--canvas-50);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 22px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    position:relative;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .tier:hover{border-color:var(--gold-500); transform:translateY(-3px);}
+  .tier-top{display:flex; align-items:center; justify-content:space-between;}
+  .tier-plant{width:34px; height:44px;}
+  .tier-name{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.2rem;
+    color:var(--forest-950);
+    margin:0;
+  }
+  .tier-range{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    color:var(--gold-600);
+    letter-spacing:0.02em;
+  }
+  .tier-list{
+    list-style:none; margin:0; padding:0;
+    display:flex; flex-direction:column; gap:9px;
+    font-size:0.88rem;
+    color:var(--ink-600);
+  }
+  .tier-list li{display:flex; gap:9px; align-items:flex-start;}
+  .tier-list li::before{
+    content:"";
+    width:5px; height:5px; border-radius:50%;
+    background:var(--forest-600);
+    margin-top:7px;
+    flex:none;
+  }
+  .tier.pioneer{
+    background:var(--forest-950);
+    border-color:var(--forest-950);
+  }
+  .tier.pioneer .tier-name, .tier.pioneer .tier-range{color:var(--canvas-50);}
+  .tier.pioneer .tier-range{color:var(--gold-300);}
+  .tier.pioneer .tier-list{color:var(--canvas-200);}
+  .tier.pioneer .tier-list li::before{background:var(--gold-500);}
+
+  /* ---------- FINAL CTA ---------- */
+  .final-cta{
+    background:var(--canvas-200);
+    border-radius:20px;
+    padding:56px 48px;
+    margin:0 24px 90px;
+    max-width:1032px;
+    margin-left:auto; margin-right:auto;
+    text-align:center;
+  }
+  .final-cta h2{margin-bottom:14px;}
+  .final-cta p{max-width:52ch; margin:0 auto 30px; color:var(--ink-600);}
+
+  footer{
+    padding:30px 0 50px;
+    text-align:center;
+    font-size:0.82rem;
+    color:var(--ink-600);
+  }
+
+  @media (max-width:860px){
+    .hero-grid{grid-template-columns:1fr; gap:36px;}
+    .hero-art{order:-1;}
+    .grow-scene{max-width:220px;}
+    .steps{grid-template-columns:1fr 1fr; }
+    .step{border-right:1px solid var(--line); border-bottom:1px solid var(--line);}
+    .step:nth-child(2n){border-right:none;}
+    .tiers{grid-template-columns:1fr 1fr;}
+    .final-cta{padding:40px 26px;}
+  }
+  @media (max-width:560px){
+    .steps{grid-template-columns:1fr;}
+    .step{border-right:none;}
+    .tiers{grid-template-columns:1fr;}
+    .story-inner{flex-direction:column; gap:18px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <div class="brand">AFAMS<span>.</span></div>
+    <a class="nav-link" href="#about">About Afams →</a>
+  </nav>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Afams Support Program</div>
+      <h1>We need you.<br>Help us <em>grow.</em></h1>
+      <p class="hero-sub">Support Afams today — we're glad you showed up.</p>
+      <p class="hero-body">We're inviting you to help us grow by supporting our mission to bring smart, affordable urban farming to every home in Kenya — one grow bag at a time. There are two ways to do it: order our products, or give directly and join our Support Base.</p>
+      <div class="cta-row">
+        <a class="btn-primary" href="#how">
+          Choose how you support us
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="about-link" href="#about">See our story</a>
+      </div>
+    </div>
+    <div class="hero-art">
+      <svg class="grow-scene" viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg">
+        <path d="M85 210 L215 210 L200 320 Q150 332 100 320 Z" fill="#ece0c6" stroke="#1b4332" stroke-width="2"/>
+        <path d="M85 210 L215 210 L211 226 L89 226 Z" fill="#d9caa3" stroke="#1b4332" stroke-width="2"/>
+        <line x1="105" y1="230" x2="98" y2="315" stroke="#c9a227" stroke-width="1.4" stroke-dasharray="3 4"/>
+        <line x1="150" y1="230" x2="149" y2="322" stroke="#c9a227" stroke-width="1.4" stroke-dasharray="3 4"/>
+        <line x1="195" y1="230" x2="202" y2="315" stroke="#c9a227" stroke-width="1.4" stroke-dasharray="3 4"/>
+        <ellipse cx="150" cy="210" rx="65" ry="12" fill="#4a3a22"/>
+        <g class="sway">
+          <g class="rise">
+            <path d="M150 210 C150 165 150 140 150 100" stroke="#2d6a4f" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M150 150 C150 150 118 140 108 108 C142 112 150 140 150 150 Z" fill="#52886b"/>
+            <path d="M150 130 C150 130 184 118 196 84 C160 90 150 118 150 130 Z" fill="#2d6a4f"/>
+            <path d="M150 100 C150 100 128 88 124 62 C148 68 150 90 150 100 Z" fill="#52886b"/>
+            <circle cx="150" cy="96" r="7" fill="#c9a227"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<section class="story" id="about">
+  <div class="wrap story-inner">
+    <p><strong>Afams designs and builds urban farming systems in Nairobi</strong> — grow bags, FarmBags, and growing media engineered for small spaces and big harvests. We believe better food systems start close to home, and we're building the tools to make that possible for every household. <a href="https://afams.co.ke/about" style="color:#e3c76a; text-decoration:underline;">Read our full story on afams.co.ke →</a></p>
+  </div>
+</section>
+
+<!-- ============ CHOOSE HOW YOU SUPPORT ============ -->
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker">Two ways in</p>
+      <h2>Choose how you support us</h2>
+      <p class="section-sub">Both matter. Pick whichever fits.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px;">
+
+      <!-- PATH 1: PREORDER -->
+      <div style="background:var(--canvas-50); border:1px solid var(--line); border-radius:var(--radius); padding:32px 28px; display:flex; flex-direction:column; gap:16px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-family:'Fraunces', serif; font-style:italic; font-weight:500; font-size:1.5rem; color:var(--gold-500);">01</span>
+          <p class="tier-name" style="margin:0;">Preorder</p>
+        </div>
+        <p style="color:var(--ink-600); font-size:0.96rem; margin:0;">Order our products on afams.co.ke. Ordering is the first line of support — every preorder funds the next production run and gets a real GrowBag or FarmBag in your hands.</p>
+        <a class="btn-primary" style="align-self:flex-start; margin-top:auto;" href="products.html">
+          Shop Afams Products
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <!-- PATH 2: GIVE / SUPPORT BASE -->
+      <div style="background:var(--forest-950); border-radius:var(--radius); padding:32px 28px; display:flex; flex-direction:column; gap:16px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-family:'Fraunces', serif; font-style:italic; font-weight:500; font-size:1.5rem; color:var(--gold-300);">02</span>
+          <p class="tier-name" style="margin:0; color:var(--canvas-50);">Give — Join Our Support Base</p>
+        </div>
+        <p style="color:var(--canvas-200); font-size:0.96rem; margin:0;">Give any amount directly, and we'll add your name to our Support Base below — a running, public honor roll we update regularly to thank everyone helping us grow.</p>
+
+        <div id="paypal-container-39QM7BM43NYFE" style="margin-top:4px;"></div>
+        <script>
+          paypal.HostedButtons({
+            hostedButtonId: "39QM7BM43NYFE",
+          }).render("#paypal-container-39QM7BM43NYFE")
+        </script>
+
+        <p style="color:var(--canvas-200); font-size:0.8rem; margin:4px 0 0; line-height:1.5;">
+          By giving, you agree we may list your name and amount on the public Support Base below. Prefer to stay anonymous? Email <a href="mailto:hello@afams.co.ke" style="color:var(--gold-300);">hello@afams.co.ke</a> and we'll list you as "Anonymous" instead.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="post-note">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 6.5V10.5M10 13.5H10.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.6"/></svg>
+      <div><strong>A note on giving:</strong> Afams Limited is a private company, not a registered charity. A gift here is voluntary support — not a tax-deductible donation, not an investment, and not a purchase of shares or any return.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SUPPORT BASE HONOR ROLL (live, Supabase Realtime) ============ -->
+<section class="section" style="padding-top:0; background:var(--canvas-100); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap" style="padding-top:50px; padding-bottom:10px;">
+    <div class="section-head">
+      <p class="kicker">Thank you</p>
+      <h2>Our Support Base</h2>
+      <p class="section-sub">Updates automatically as gifts come in. Thank you to everyone on this list — and to those who asked to stay anonymous.</p>
+    </div>
+
+    <div id="support-base-list" style="border-top:1px solid var(--line); min-height:60px;">
+      <p style="padding:20px 4px; color:var(--ink-600); font-size:0.9rem;">Loading supporters…</p>
+    </div>
+    <p style="font-size:0.8rem; color:var(--ink-600); margin-top:16px;">This list updates itself in real time as gifts are confirmed — no need to refresh the page.</p>
+  </div>
+</section>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  const SUPABASE_URL = 'https://dvquyzzqsnlcassvgdzz.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cXV5enpxc25sY2Fzc3ZnZHp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NDMyODksImV4cCI6MjA5MDIxOTI4OX0.cUPcNPGnw3dNh19sQlUr-FFU7piRUxDSw6wh6SdfPEA';
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const listEl = document.getElementById('support-base-list');
+
+  function formatAmount(amount, currency) {
+    const symbol = currency === 'USD' ? '$' : currency + ' ';
+    const num = Number(amount).toLocaleString(undefined, { maximumFractionDigits: 2 });
+    return symbol + num;
+  }
+
+  function rowHtml(entry) {
+    const name = entry.is_anonymous ? 'Anonymous' : entry.display_name;
+    return `<div style="display:flex; justify-content:space-between; padding:14px 4px; border-bottom:1px solid var(--line); font-size:0.94rem;">
+      <span style="font-weight:500; color:var(--forest-950);">${name}</span>
+      <span style="font-family:'JetBrains Mono', monospace; color:var(--gold-600);">${formatAmount(entry.amount, entry.currency)}</span>
+    </div>`;
+  }
+
+  function prependRow(entry) {
+    if (listEl.dataset.empty === 'true') { listEl.innerHTML = ''; listEl.dataset.empty = 'false'; }
+    listEl.insertAdjacentHTML('afterbegin', rowHtml(entry));
+  }
+
+  async function loadInitial() {
+    const { data, error } = await supabase
+      .from('support_base')
+      .select('display_name, is_anonymous, amount, currency, created_at')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) {
+      console.error('[support-base] load failed:', error.message);
+      listEl.innerHTML = '<p style="padding:20px 4px; color:var(--ink-600); font-size:0.9rem;">Couldn\'t load the Support Base right now — please refresh.</p>';
+      return;
+    }
+    if (!data || data.length === 0) {
+      listEl.dataset.empty = 'true';
+      listEl.innerHTML = '<p style="padding:20px 4px; color:var(--ink-600); font-size:0.9rem;">Be the first to join our Support Base — your name will appear here.</p>';
+      return;
+    }
+    listEl.innerHTML = data.map(rowHtml).join('');
+  }
+
+  loadInitial();
+
+  supabase
+    .channel('support_base_changes')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_base' }, (payload) => {
+      prependRow(payload.new);
+    })
+    .subscribe();
+</script>
+
+<div class="final-cta">
+  <h2>Ready to help us grow?</h2>
+  <p>Preorder a product, or give directly and join our Support Base — every bit helps us grow.</p>
+  <a class="btn-primary" href="#how">
+    Choose how you support us
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</div>
+
+<footer>
+  <div class="wrap">Afams Limited · Kahawa Sukari, Nairobi · Gifts made through this page are voluntary support, not tax-deductible donations, investments, or offers of shares.</div>
+</footer>
+
+</body>
+</html>
