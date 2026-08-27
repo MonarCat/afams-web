@@ -1331,6 +1331,7 @@
                 <option value="all_customers">📦 All Customers (from orders)</option>
                 <option value="growers_club">🌱 Growers Club (active subscribers)</option>
                 <option value="single">👤 Specific Email</option>
+                <option value="bulk">📝 Paste Email List (up to 250)</option>
               </select>
               <p style="font-size:11px; color:var(--text-muted); margin:6px 0 0;">Sent via <strong style="color:var(--accent);">Brevo</strong> transactional delivery — same account used for order emails.</p>
             </div>
@@ -1338,6 +1339,12 @@
             <div id="email-single-wrap" style="display:none; margin-bottom:14px;">
               <label style="font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Recipient Email</label>
               <input id="email-single-input" type="email" placeholder="someone@example.com" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-size:13px;">
+            </div>
+
+            <div id="email-bulk-wrap" style="display:none; margin-bottom:14px;">
+              <label style="font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Paste Email Addresses</label>
+              <textarea id="email-bulk-input" rows="6" placeholder="Paste up to 250 addresses — one per line, or separated by commas/spaces" oninput="updateEmailRecipientCount()" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-size:12px; font-family:monospace; resize:vertical;"></textarea>
+              <p id="email-bulk-status" style="font-size:11px; color:var(--text-muted); margin:6px 0 0;">0 valid addresses found</p>
             </div>
 
             <div style="margin-bottom:14px;">
@@ -3478,7 +3485,62 @@ var EMAIL_TEMPLATES = {
       + '<p style="line-height:1.7;color:#444;">Write your message here…</p>'
       + '<p style="line-height:1.7;color:#444;margin-top:24px;">Best regards,<br><strong>The Afams Team</strong></p>',
   },
+  support_mission: {
+    label: '🌱 Support Afams — from Moses',
+    desc: 'Personal note asking for support',
+    tag: 'MISSION',
+    subject: 'A personal note from Moses — help us grow Afams 🌱',
+    body:
+      '<table cellpadding="0" cellspacing="0" width="100%" style="background:#F5F0E8;padding:32px 0;font-family:Georgia,serif;">'
+      + '<tr><td align="center">'
+      + '<table cellpadding="0" cellspacing="0" width="580" style="max-width:580px;width:100%;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.06);">'
+
+      // Header
+      + '<tr><td style="padding:28px 40px 0;">'
+      + '<img src="https://afams.co.ke/assets/images/afams_logo_horizontal.png" alt="Afams" height="34" style="display:block;">'
+      + '</td></tr>'
+
+      // Letter body
+      + '<tr><td style="padding:24px 40px 8px;">'
+      + '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Hi {{name}},</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">I\'m Moses — I started Afams because I got tired of watching good land around Nairobi sit empty while families struggled to find fresh, affordable vegetables. What began as a handful of grow bags stitched together in Kahawa Sukari has slowly turned into something bigger, and I wanted to reach out to you directly instead of hiding behind a marketing team we don\'t actually have.</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">Afams is still small. Every order, every referral, every shilling someone chooses to put behind us goes straight back into better grow bags, better soil, and honestly, into proving that urban farming can really work here.</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">If you\'ve ever wanted to be part of something from close to the beginning, this is that moment. There are two easy ways to help:</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 8px;">🌱 <strong>Order a GrowBag or FarmBag</strong> — the simplest way to help, and you get to grow your own food while you\'re at it.</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 22px;">🤝 <strong>Give directly</strong> — any amount, and your name goes up on our Support Base as one of the people who believed in this early.</p>'
+      + '</td></tr>'
+
+      // CTA button
+      + '<tr><td align="center" style="padding:0 40px 30px;">'
+      + '<table cellpadding="0" cellspacing="0"><tr><td style="border-radius:8px;background:#2D6A4F;">'
+      + '<a href="https://afams.co.ke/support.html" style="display:inline-block;padding:14px 34px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;font-family:Arial,sans-serif;border-radius:8px;">Support Afams →</a>'
+      + '</td></tr></table>'
+      + '</td></tr>'
+
+      // Sign-off
+      + '<tr><td style="padding:0 40px 30px;">'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 4px;">Whatever you choose, thank you for even reading this far. I read every reply personally.</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#1B4332;margin:18px 0 0;">Asante sana,<br><strong>Moses Mwombe</strong><br><span style="font-size:13px;color:#667085;">Founder, Afams</span></p>'
+      + '</td></tr>'
+
+      // Footer with real social links
+      + '<tr><td style="background:#1B4332;padding:22px 40px;text-align:center;">'
+      + '<table cellpadding="0" cellspacing="0" style="margin:0 auto 12px;"><tr>'
+      + '<td style="padding:0 8px;"><a href="https://www.facebook.com/AfamsLimited" style="color:#a8d5b5;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;">Facebook</a></td>'
+      + '<td style="padding:0 8px;color:#3d6b52;">·</td>'
+      + '<td style="padding:0 8px;"><a href="https://x.com/afams" style="color:#a8d5b5;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;">X</a></td>'
+      + '<td style="padding:0 8px;color:#3d6b52;">·</td>'
+      + '<td style="padding:0 8px;"><a href="https://wa.me/254714128514" style="color:#a8d5b5;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;">WhatsApp</a></td>'
+      + '</tr></table>'
+      + '<p style="color:#a8d5b5;font-size:11px;margin:0;font-family:Arial,sans-serif;">Afams Ltd · Kahawa Sukari, Nairobi · <a href="https://afams.co.ke" style="color:#52B788;text-decoration:none;">afams.co.ke</a></p>'
+      + '</td></tr>'
+
+      + '</table>'
+      + '</td></tr>'
+      + '</table>',
+  },
 };
+
 
 var activeEmailTemplate = 'growers_welcome';
 var emailCenterReady = false;
@@ -3531,7 +3593,20 @@ function insertEmailToken(token) {
 function onEmailTargetChange() {
   var t = document.getElementById('email-target').value;
   document.getElementById('email-single-wrap').style.display = (t === 'single') ? 'block' : 'none';
+  document.getElementById('email-bulk-wrap').style.display = (t === 'bulk') ? 'block' : 'none';
   updateEmailRecipientCount();
+}
+
+function parseBulkEmails() {
+  var raw = document.getElementById('email-bulk-input') ? document.getElementById('email-bulk-input').value : '';
+  var candidates = raw.split(/[\s,;]+/).map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);
+  var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var seen = {};
+  var valid = [];
+  candidates.forEach(function (e) {
+    if (emailRe.test(e) && !seen[e]) { seen[e] = true; valid.push(e); }
+  });
+  return valid;
 }
 
 function updateEmailRecipientCount() {
@@ -3545,6 +3620,19 @@ function updateEmailRecipientCount() {
     count = allSubscribers.filter(function (s) { return s.status === 'active'; }).length;
   } else if (target === 'single') {
     count = 1;
+  } else if (target === 'bulk') {
+    var valid = parseBulkEmails();
+    count = valid.length;
+    var status = document.getElementById('email-bulk-status');
+    if (status) {
+      if (valid.length > 250) {
+        status.style.color = '#c0392b';
+        status.textContent = valid.length + ' valid addresses found — over the 250 limit, only the first 250 will be sent to.';
+      } else {
+        status.style.color = 'var(--text-muted)';
+        status.textContent = valid.length + ' valid address' + (valid.length === 1 ? '' : 'es') + ' found';
+      }
+    }
   }
   var label = document.getElementById('email-recipient-count-label');
   if (label) label.textContent = 'to ' + count + ' recipient' + (count === 1 ? '' : 's');
@@ -3568,10 +3656,12 @@ async function sendEmailCenter() {
   var subject = document.getElementById('email-subject').value.trim();
   var body = document.getElementById('email-body').value.trim();
   var singleEmail = document.getElementById('email-single-input').value.trim();
+  var bulkEmails = target === 'bulk' ? parseBulkEmails().slice(0, 250) : [];
 
   if (!subject) { alert('Subject is required'); return; }
   if (!body) { alert('Message body is required'); return; }
   if (target === 'single' && !singleEmail) { alert('Enter the recipient email'); return; }
+  if (target === 'bulk' && bulkEmails.length === 0) { alert('Paste at least one valid email address'); return; }
 
   var recipientCount = document.getElementById('email-recipient-count-label').textContent;
   if (!confirm('Send this email ' + recipientCount + '? This cannot be undone.')) return;
@@ -3588,6 +3678,7 @@ async function sendEmailCenter() {
         html_body: body,
         target: target,
         single_email: target === 'single' ? singleEmail : undefined,
+        bulk_emails: target === 'bulk' ? bulkEmails : undefined,
       },
     });
 
