@@ -1121,6 +1121,12 @@
         </button>
       </div>
       <div class="sidebar-section">
+        <div class="sidebar-section-label">Marketing</div>
+        <button class="sidebar-item" onclick="showPanel('email')" id="nav-email">
+          <span class="icon">✉️</span> Email Center
+        </button>
+      </div>
+      <div class="sidebar-section">
         <div class="sidebar-section-label">Store</div>
         <button class="sidebar-item" onclick="showPanel('products')" id="nav-products">
           <span class="icon">🌱</span> Products
@@ -1295,7 +1301,77 @@
         </div>
       </div>
 
-      <!-- ═══════════ AD SPACES PANEL ═══════════ -->
+      <!-- ═══════════ EMAIL CENTER PANEL ═══════════ -->
+      <div class="panel" id="panel-email">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Email Center</div>
+            <div class="page-subtitle">Send templated or custom broadcasts via Brevo</div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:260px 1fr; gap:16px; align-items:start;">
+
+          <!-- LEFT: templates + send log -->
+          <div>
+            <div style="font:700 10px monospace; color:var(--text-muted); letter-spacing:1px; margin-bottom:8px;">TEMPLATES</div>
+            <div id="email-template-list" style="display:grid; gap:6px; margin-bottom:20px;"></div>
+            <div style="font:700 10px monospace; color:var(--text-muted); letter-spacing:1px; margin-bottom:8px;">SEND HISTORY</div>
+            <div id="email-send-log" style="display:grid; gap:6px;">
+              <div style="font-size:12px; color:var(--text-muted);">No emails sent yet.</div>
+            </div>
+          </div>
+
+          <!-- RIGHT: composer -->
+          <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:20px; box-shadow:var(--shadow);">
+
+            <div style="margin-bottom:14px;">
+              <label style="font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Send To</label>
+              <select id="email-target" class="filter-select" style="width:100%; box-sizing:border-box;" onchange="onEmailTargetChange()">
+                <option value="all_customers">📦 All Customers (from orders)</option>
+                <option value="growers_club">🌱 Growers Club (active subscribers)</option>
+                <option value="single">👤 Specific Email</option>
+              </select>
+              <p style="font-size:11px; color:var(--text-muted); margin:6px 0 0;">Sent via <strong style="color:var(--accent);">Brevo</strong> transactional delivery — same account used for order emails.</p>
+            </div>
+
+            <div id="email-single-wrap" style="display:none; margin-bottom:14px;">
+              <label style="font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Recipient Email</label>
+              <input id="email-single-input" type="email" placeholder="someone@example.com" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-size:13px;">
+            </div>
+
+            <div style="margin-bottom:14px;">
+              <label style="font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Subject Line</label>
+              <input id="email-subject" type="text" placeholder="Your subject line…" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-size:13px;">
+            </div>
+
+            <div style="margin-bottom:14px;">
+              <label style="font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Personalization Tokens</label>
+              <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:6px;">
+                <button class="btn-util" type="button" onclick="insertEmailToken('{{name}}')">{{name}}</button>
+                <button class="btn-util" type="button" onclick="insertEmailToken('{{email}}')">{{email}}</button>
+              </div>
+              <label style="font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Message Body (HTML supported)</label>
+              <textarea id="email-body" rows="14" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-size:12px; font-family:monospace; resize:vertical;"></textarea>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+              <div style="font:12px monospace; color:var(--text-muted);" id="email-recipient-count-label">to — recipients</div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-util" type="button" onclick="previewEmailCenter()">👁 Preview</button>
+                <button id="send-email-btn" class="btn-util" type="button" style="background:var(--accent); color:#fff; border-color:var(--accent);" onclick="sendEmailCenter()">✉️ Send Email</button>
+              </div>
+            </div>
+
+            <div id="email-preview-box" style="display:none; margin-top:16px; background:var(--table-alt); border:1px solid var(--border); border-radius:8px; padding:16px;">
+              <div style="font:700 10px monospace; color:var(--text-muted); margin-bottom:8px;">PREVIEW</div>
+              <div style="font-size:13px; color:var(--text-muted); margin-bottom:4px;">Subject: <strong id="email-preview-subject" style="color:var(--text-primary);">—</strong></div>
+              <div style="font-size:12px; color:var(--text-primary); line-height:1.7; white-space:pre-wrap; max-height:200px; overflow:auto;" id="email-preview-body">—</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
       <div class="panel" id="panel-adspaces">
         <div class="page-header">
           <div>
@@ -1912,6 +1988,7 @@ function showPanel(name) {
   if (name === 'subscribers')  loadSubscribers();
   if (name === 'products')     loadProducts();
   if (name === 'adspaces')     loadAdSpaces();
+  if (name === 'email')        initEmailCenter();
 }
 
 // ════════════════════════════════════════════════════
@@ -3357,6 +3434,195 @@ function filterSubscribers() {
         || (s.first_name || '').toLowerCase().includes(search);
   });
   renderSubscribers(filtered);
+}
+
+// ════════════════════════════════════════════════════
+// EMAIL CENTER
+// ════════════════════════════════════════════════════
+var EMAIL_TEMPLATES = {
+  growers_welcome: {
+    label: '🌱 Growers Club Welcome',
+    desc: 'Onboarding for new subscribers',
+    tag: 'TRANSACTIONAL',
+    subject: 'Welcome to the Afams Growers Club 🌱',
+    body: '<p style="font-size:16px;margin:0 0 18px;">Hi {{name}},</p>'
+      + '<p style="line-height:1.7;color:#444;margin:0 0 20px;">Welcome to the Afams Growers Club! You will be first to hear about new products, restocks, and growing tips built for Nairobi\'s climate.</p>'
+      + '<p style="line-height:1.7;color:#444;">Happy growing 🌿<br><strong>The Afams Team</strong></p>',
+  },
+  new_product: {
+    label: '🆕 New Product Announcement',
+    desc: 'Launch update for a new SKU',
+    tag: 'MARKETING',
+    subject: 'New from Afams: [Product Name] is here',
+    body: '<p style="font-size:16px;margin:0 0 18px;">Hi {{name}},</p>'
+      + '<p style="line-height:1.7;color:#444;margin:0 0 20px;">We just added a new product to the Afams lineup — [describe what it is and why it matters].</p>'
+      + '<p style="line-height:1.7;color:#444;margin:0 0 24px;"><a href="https://afams.co.ke/products.html" style="background:#2D6A4F;color:#fff;padding:12px 26px;border-radius:6px;text-decoration:none;font-weight:600;">Shop Now →</a></p>'
+      + '<p style="line-height:1.7;color:#444;">Happy growing 🌿<br><strong>The Afams Team</strong></p>',
+  },
+  restock_alert: {
+    label: '📦 Restock Alert',
+    desc: 'Product back in stock',
+    tag: 'MARKETING',
+    subject: '[Product Name] is back in stock',
+    body: '<p style="font-size:16px;margin:0 0 18px;">Hi {{name}},</p>'
+      + '<p style="line-height:1.7;color:#444;margin:0 0 20px;">Good news — [Product Name] is back in stock. Grab yours before it sells out again.</p>'
+      + '<p style="line-height:1.7;color:#444;margin:0 0 24px;"><a href="https://afams.co.ke/products.html" style="background:#2D6A4F;color:#fff;padding:12px 26px;border-radius:6px;text-decoration:none;font-weight:600;">Shop Now →</a></p>'
+      + '<p style="line-height:1.7;color:#444;">Happy growing 🌿<br><strong>The Afams Team</strong></p>',
+  },
+  custom: {
+    label: '✏️ Custom Broadcast',
+    desc: 'Compose from scratch',
+    tag: 'BROADCAST',
+    subject: '',
+    body: '<p style="font-size:16px;margin:0 0 18px;">Hi {{name}},</p>'
+      + '<p style="line-height:1.7;color:#444;">Write your message here…</p>'
+      + '<p style="line-height:1.7;color:#444;margin-top:24px;">Best regards,<br><strong>The Afams Team</strong></p>',
+  },
+};
+
+var activeEmailTemplate = 'growers_welcome';
+var emailCenterReady = false;
+
+function initEmailCenter() {
+  if (emailCenterReady) return;
+  emailCenterReady = true;
+  renderEmailTemplateList();
+  loadEmailTemplate('growers_welcome');
+  updateEmailRecipientCount();
+}
+
+function renderEmailTemplateList() {
+  var el = document.getElementById('email-template-list');
+  if (!el) return;
+  el.innerHTML = Object.keys(EMAIL_TEMPLATES).map(function (key) {
+    var t = EMAIL_TEMPLATES[key];
+    return '<div onclick="loadEmailTemplate(\'' + key + '\')" id="email-tpl-btn-' + key + '" '
+      + 'style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;">'
+      + '<div style="font-size:13px;font-weight:600;color:var(--text-primary);">' + t.label + '</div>'
+      + '<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">' + t.desc + '</div>'
+      + '<div style="display:inline-block;margin-top:5px;font:700 9px monospace;padding:2px 7px;border-radius:14px;background:var(--table-alt);color:var(--text-muted);border:1px solid var(--border);">' + t.tag + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function loadEmailTemplate(key) {
+  activeEmailTemplate = key;
+  var t = EMAIL_TEMPLATES[key];
+  if (!t) return;
+  document.querySelectorAll('#email-template-list > div').forEach(function (d) {
+    d.style.borderColor = 'var(--border)';
+  });
+  var btn = document.getElementById('email-tpl-btn-' + key);
+  if (btn) btn.style.borderColor = 'var(--accent)';
+  document.getElementById('email-subject').value = t.subject;
+  document.getElementById('email-body').value = t.body;
+  document.getElementById('email-preview-box').style.display = 'none';
+}
+
+function insertEmailToken(token) {
+  var ta = document.getElementById('email-body');
+  if (!ta) return;
+  var s = ta.selectionStart, e = ta.selectionEnd, v = ta.value;
+  ta.value = v.slice(0, s) + token + v.slice(e);
+  ta.selectionStart = ta.selectionEnd = s + token.length;
+  ta.focus();
+}
+
+function onEmailTargetChange() {
+  var t = document.getElementById('email-target').value;
+  document.getElementById('email-single-wrap').style.display = (t === 'single') ? 'block' : 'none';
+  updateEmailRecipientCount();
+}
+
+function updateEmailRecipientCount() {
+  var target = document.getElementById('email-target') ? document.getElementById('email-target').value : 'all_customers';
+  var count = '—';
+  if (target === 'all_customers') {
+    var seen = {};
+    allOrders.forEach(function (o) { if (o.customer_email) seen[o.customer_email.toLowerCase()] = true; });
+    count = Object.keys(seen).length;
+  } else if (target === 'growers_club') {
+    count = allSubscribers.filter(function (s) { return s.status === 'active'; }).length;
+  } else if (target === 'single') {
+    count = 1;
+  }
+  var label = document.getElementById('email-recipient-count-label');
+  if (label) label.textContent = 'to ' + count + ' recipient' + (count === 1 ? '' : 's');
+}
+
+function previewEmailCenter() {
+  var subject = document.getElementById('email-subject').value;
+  var body = document.getElementById('email-body').value;
+  var sampleName = 'Jane Wanjiku';
+  var sampleEmail = 'jane@example.com';
+  var pSubject = subject.replace(/\{\{name\}\}/g, sampleName).replace(/\{\{email\}\}/g, sampleEmail);
+  var pBody = body.replace(/\{\{name\}\}/g, sampleName).replace(/\{\{email\}\}/g, sampleEmail)
+    .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  document.getElementById('email-preview-subject').textContent = pSubject || '(no subject)';
+  document.getElementById('email-preview-body').textContent = pBody.slice(0, 400) + (pBody.length > 400 ? '…' : '');
+  document.getElementById('email-preview-box').style.display = 'block';
+}
+
+async function sendEmailCenter() {
+  var target = document.getElementById('email-target').value;
+  var subject = document.getElementById('email-subject').value.trim();
+  var body = document.getElementById('email-body').value.trim();
+  var singleEmail = document.getElementById('email-single-input').value.trim();
+
+  if (!subject) { alert('Subject is required'); return; }
+  if (!body) { alert('Message body is required'); return; }
+  if (target === 'single' && !singleEmail) { alert('Enter the recipient email'); return; }
+
+  var recipientCount = document.getElementById('email-recipient-count-label').textContent;
+  if (!confirm('Send this email ' + recipientCount + '? This cannot be undone.')) return;
+
+  var btn = document.getElementById('send-email-btn');
+  var originalText = btn.textContent;
+  btn.textContent = '⏳ Sending…';
+  btn.disabled = true;
+
+  try {
+    var { data, error } = await sb.functions.invoke('admin-send-email', {
+      body: {
+        subject: subject,
+        html_body: body,
+        target: target,
+        single_email: target === 'single' ? singleEmail : undefined,
+      },
+    });
+
+    if (error) {
+      alert('Send error: ' + error.message);
+    } else if (data && data.error) {
+      alert('Send error: ' + data.error);
+    } else {
+      var sent = (data && data.sent) || 0;
+      var failed = (data && data.failed) || 0;
+      alert('✉️ Sent to ' + sent + ' recipient' + (sent === 1 ? '' : 's') + (failed ? ' · ' + failed + ' failed' : ''));
+      addEmailSendLogEntry({ subject: subject, sent: sent, target: target });
+    }
+  } catch (err) {
+    alert('Send failed: ' + err.message);
+  }
+
+  btn.textContent = originalText;
+  btn.disabled = false;
+}
+
+function addEmailSendLogEntry(entry) {
+  var log = document.getElementById('email-send-log');
+  if (!log) return;
+  if (log.querySelector('div[style*="color:var(--text-muted)"]')) log.innerHTML = '';
+  var icons = { all_customers: '📦', growers_club: '🌱', single: '👤' };
+  var row = document.createElement('div');
+  row.style.cssText = 'background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:8px 10px;';
+  var subjPreview = entry.subject.length > 40 ? entry.subject.slice(0, 40) + '…' : entry.subject;
+  row.innerHTML = '<div style="font-size:12px;font-weight:600;color:var(--text-primary);">' + (icons[entry.target] || '✉️') + ' ' + escapeHtml(subjPreview) + '</div>'
+    + '<div style="display:flex;justify-content:space-between;margin-top:3px;">'
+    + '<span style="font:11px monospace;color:var(--text-muted);">' + new Date().toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit' }) + '</span>'
+    + '<span style="font:700 11px monospace;color:var(--accent);">' + entry.sent + ' sent</span>'
+    + '</div>';
+  log.insertBefore(row, log.firstChild);
 }
 
 // ════════════════════════════════════════════════════
