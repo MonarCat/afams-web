@@ -11,7 +11,7 @@ const AFAMS = {
   // Paystack public key is set by assets/js/paystack-config.js (loaded before this file).
   paystackKey: window.__PAYSTACK_PUBLIC_KEY,
   whatsapp: '+254714128514', // WhatsApp Business number
-  email: 'info@afams.co.ke',
+  email: 'afamsgroup@gmail.com',
   currency: 'KES',
   deliveryDays: 5,
   fulfillmentNote: 'Pre-orders are fulfilled within 3–5 business days.',
@@ -772,45 +772,45 @@ const SUPPORT_CONFIGS = {
     title: '📦 Track My Order',
     subtitle: 'Enter your order reference (found in your confirmation email) or the name used when ordering.',
     fields: ['ref', 'email'],
-    recipient: 'orders@afams.co.ke',
+    reason: 'orders',
     subjectPrefix: '[ORDER TRACK]',
-    note: 'This will open your email app. Hit send to reach our orders team.',
+    note: "We'll send this straight to our team — no email app required.",
     submitLabel: 'Send Tracking Request',
     buildBody: (f) =>
-      `Hello Afams Orders Team,\n\nI would like to track my order.\n\nOrder Reference / Name: ${f.ref}\nEmail: ${f.email}\n\nPlease advise on the status of my order.\n\nThank you.`
+      `I would like to track my order.\n\nOrder Reference / Name: ${f.ref}\nEmail: ${f.email}\n\nPlease advise on the status of my order.`
   },
   returns: {
     title: '↩️ Return / Refund Request',
     subtitle: 'Share your order details and describe your issue. We respond within 1 business day.',
     fields: ['ref', 'email', 'message'],
-    recipient: 'support@afams.co.ke',
+    reason: 'support',
     subjectPrefix: '[RETURN REQUEST]',
-    note: 'This will open your email app. Our support team responds within 1 business day.',
+    note: "We'll send this straight to our team — no email app required. We respond within 1 business day.",
     submitLabel: 'Send Return Request',
     buildBody: (f) =>
-      `Hello Afams Support,\n\nI would like to request a return/refund.\n\nOrder Reference / Name: ${f.ref}\nEmail: ${f.email}\n\nIssue:\n${f.message}\n\nThank you.`
+      `I would like to request a return/refund.\n\nOrder Reference / Name: ${f.ref}\nEmail: ${f.email}\n\nIssue:\n${f.message}`
   },
   general: {
     title: '💬 Get in Touch',
     subtitle: 'Have a question or feedback? We read every message.',
     fields: ['name', 'email', 'message'],
-    recipient: 'info@afams.co.ke',
+    reason: 'general',
     subjectPrefix: '[ENQUIRY]',
-    note: 'This will open your email app.',
+    note: "We'll send this straight to our team — no email app required.",
     submitLabel: 'Send Message',
     buildBody: (f) =>
-      `Hello Afams,\n\nName: ${f.name}\nEmail: ${f.email}\n\nMessage:\n${f.message}\n\nThank you.`
+      `Name: ${f.name}\nEmail: ${f.email}\n\nMessage:\n${f.message}`
   },
   institutional: {
     title: '🏫 Institutional Enquiry',
     subtitle: 'For schools, restaurants, hotels, hospitals, and corporates. We\'ll get back to you within 48 hours.',
     fields: ['institution', 'contact', 'email', 'message'],
-    recipient: 'partner@afams.co.ke',
+    reason: 'partnership',
     subjectPrefix: '[INSTITUTIONAL]',
-    note: 'This will open your email app. Our partnerships team responds within 48 hours.',
+    note: "We'll send this straight to our team — no email app required. Our partnerships team responds within 48 hours.",
     submitLabel: 'Send Institutional Enquiry',
     buildBody: (f) =>
-      `Hello Afams Partnerships,\n\nInstitution: ${f.institution}\nContact Person: ${f.contact}\nEmail: ${f.email}\n\nEnquiry:\n${f.message}\n\nThank you.`
+      `Institution: ${f.institution}\nContact Person: ${f.contact}\nEmail: ${f.email}\n\nEnquiry:\n${f.message}`
   }
 };
 
@@ -868,7 +868,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const supportForm = document.getElementById('support-form');
   if (supportForm) {
-    supportForm.addEventListener('submit', function(e) {
+    supportForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       const config = SUPPORT_CONFIGS[activeSupportType];
       if (!config) return;
@@ -894,17 +894,36 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
 
-      const subject = encodeURIComponent(`${config.subjectPrefix} — ${fields.ref || fields.institution || fields.name || fields.email}`);
-      const body = encodeURIComponent(config.buildBody(fields));
-      const mailtoLink = `mailto:${config.recipient}?subject=${subject}&body=${body}`;
+      const submitBtn = document.getElementById('support-submit-btn');
+      const originalLabel = submitBtn ? submitBtn.textContent : '';
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
 
-      // Use an invisible anchor click for reliable cross-browser mailto: handling
-      const a = document.createElement('a');
-      a.href = mailtoLink;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      // Display name for the record — falls back to the reference/institution
+      // field for forms (like Track My Order) that don't collect a name directly.
+      const displayName = fields.name || fields.contact || fields.institution || fields.ref || fields.email;
+
+      try {
+        const res = await fetch('https://dvquyzzqsnlcassvgdzz.supabase.co/functions/v1/contact-form', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: displayName,
+            email: fields.email,
+            reason: config.reason,
+            message: `[${config.subjectPrefix}]\n\n${config.buildBody(fields)}`,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.success) {
+          showToast("Message sent — we'll get back to you soon.");
+        } else {
+          showToast(data.error || 'Something went wrong — please try WhatsApp instead.');
+        }
+      } catch (err) {
+        showToast('Network error — please try WhatsApp instead.');
+      }
+
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
       closeSupportModal();
     });
   }
@@ -958,23 +977,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function openContactForm(type) {
   const configs = {
-    orders:       { label: 'Orders & Shopping',   recipient: 'orders@afams.co.ke',  subject: '[ORDER ENQUIRY]'   },
-    support:      { label: 'General Support',     recipient: 'support@afams.co.ke', subject: '[SUPPORT]'         },
-    partnerships: { label: 'Partnerships & B2B',  recipient: 'partner@afams.co.ke', subject: '[PARTNERSHIP]'     },
-    press:        { label: 'Press & Media',        recipient: 'press@afams.co.ke',   subject: '[PRESS]'           },
+    orders:       { label: 'Orders & Shopping',  reason: 'orders',      subject: '[ORDER ENQUIRY]'   },
+    support:      { label: 'General Support',    reason: 'support',     subject: '[SUPPORT]'         },
+    partnerships: { label: 'Partnerships & B2B', reason: 'partnership', subject: '[PARTNERSHIP]'     },
+    press:        { label: 'Press & Media',      reason: 'press',       subject: '[PRESS]'           },
   };
   const cfg = configs[type];
   if (!cfg) return;
 
-  document.getElementById('contact-dialog-to').textContent     = cfg.recipient;
+  document.getElementById('contact-dialog-to').textContent     = 'Afams Team';
   document.getElementById('contact-dialog-label').textContent  = cfg.label;
   document.getElementById('contact-dialog-msg').value          = '';
   document.getElementById('contact-dialog-name').value         = '';
   document.getElementById('contact-dialog-email').value        = '';
+  document.getElementById('contact-dialog-status').style.display = 'none';
   document.getElementById('contact-dialog-overlay').style.display = 'flex';
-  document.getElementById('contact-dialog-overlay').dataset.type   = type;
-  document.getElementById('contact-dialog-overlay').dataset.recipient = cfg.recipient;
-  document.getElementById('contact-dialog-overlay').dataset.subject   = cfg.subject;
+  document.getElementById('contact-dialog-overlay').dataset.type    = type;
+  document.getElementById('contact-dialog-overlay').dataset.reason  = cfg.reason;
+  document.getElementById('contact-dialog-overlay').dataset.subject = cfg.subject;
   document.body.style.overflow = 'hidden';
 }
 
@@ -983,37 +1003,48 @@ function closeContactDialog() {
   document.body.style.overflow = '';
 }
 
-function sendContactViaMailto() {
-  const overlay   = document.getElementById('contact-dialog-overlay');
-  const recipient = overlay.dataset.recipient;
-  const subPrefix = overlay.dataset.subject;
-  const name      = document.getElementById('contact-dialog-name').value.trim();
-  const email     = document.getElementById('contact-dialog-email').value.trim();
-  const msg       = document.getElementById('contact-dialog-msg').value.trim();
-  if (!name || !email || !msg) { showToast('Please fill in all fields.'); return; }
-  const subject = encodeURIComponent(subPrefix + ' from ' + name);
-  const body    = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + msg);
-  const a = document.createElement('a');
-  a.href = 'mailto:' + recipient + '?subject=' + subject + '&body=' + body;
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  closeContactDialog();
-}
+async function sendContactMessage() {
+  const overlay  = document.getElementById('contact-dialog-overlay');
+  const reason   = overlay.dataset.reason || 'general';
+  const subPrefix = overlay.dataset.subject || '';
+  const name     = document.getElementById('contact-dialog-name').value.trim();
+  const email    = document.getElementById('contact-dialog-email').value.trim();
+  const msg      = document.getElementById('contact-dialog-msg').value.trim();
+  const status   = document.getElementById('contact-dialog-status');
+  const btn      = document.getElementById('contact-dialog-send-btn');
 
-function sendContactViaGmail() {
-  const overlay   = document.getElementById('contact-dialog-overlay');
-  const recipient = overlay.dataset.recipient;
-  const subPrefix = overlay.dataset.subject;
-  const name      = document.getElementById('contact-dialog-name').value.trim();
-  const email     = document.getElementById('contact-dialog-email').value.trim();
-  const msg       = document.getElementById('contact-dialog-msg').value.trim();
   if (!name || !email || !msg) { showToast('Please fill in all fields.'); return; }
-  const su   = encodeURIComponent(subPrefix + ' from ' + name);
-  const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + msg);
-  window.open('https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent(recipient) + '&su=' + su + '&body=' + body, '_blank');
-  closeContactDialog();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Please enter a valid email address.'); return; }
+
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  try {
+    const res = await fetch('https://dvquyzzqsnlcassvgdzz.supabase.co/functions/v1/contact-form', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, reason, message: `[${subPrefix}]\n\n${msg}` }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.success) {
+      status.style.display = 'block';
+      status.style.color = '#155D27';
+      status.textContent = "Message sent — we'll get back to you soon.";
+      setTimeout(closeContactDialog, 1600);
+    } else {
+      status.style.display = 'block';
+      status.style.color = '#C62828';
+      status.textContent = data.error || 'Something went wrong — please try WhatsApp instead.';
+    }
+  } catch (err) {
+    status.style.display = 'block';
+    status.style.color = '#C62828';
+    status.textContent = 'Network error — please try WhatsApp instead.';
+  }
+
+  btn.disabled = false;
+  btn.textContent = originalLabel;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
