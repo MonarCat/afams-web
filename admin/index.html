@@ -3487,11 +3487,24 @@ function instShell(bodyHtml) {
     + '</td></tr>'
     + '<tr><td style="padding:26px 20px 34px; border-top:1px solid #e5e5e5; margin-top:20px;">'
     + '<p style="font-size:12px;color:#888;font-family:Arial,sans-serif;margin:0 0 6px;">Afams Ltd · Kahawa Sukari, Nairobi · <a href="https://afams.co.ke" style="color:#667085;">afams.co.ke</a></p>'
-    + '<p style="font-size:12px;color:#888;font-family:Arial,sans-serif;margin:0;">Find us on <a href="https://www.facebook.com/AfamsLimited" style="color:#667085;">Facebook</a>, <a href="https://x.com/afams" style="color:#667085;">X</a>, or <a href="https://wa.me/254714128514" style="color:#667085;">WhatsApp</a>.</p>'
+    + '<p style="font-size:12px;color:#888;font-family:Arial,sans-serif;margin:0 0 6px;">Find us on <a href="https://www.facebook.com/AfamsLimited" style="color:#667085;">Facebook</a>, <a href="https://www.instagram.com/afamsbrand" style="color:#667085;">Instagram</a>, <a href="https://x.com/afams" style="color:#667085;">X</a>, or <a href="https://wa.me/254715128514" style="color:#667085;">WhatsApp</a>.</p>'
+    + '<p style="font-size:11px;color:#aaa;font-family:Arial,sans-serif;margin:0;">'
+    +   '<a href="https://afams.co.ke/privacy-policy.html" style="color:#aaa;">Privacy Policy</a>'
+    +   ' &nbsp;·&nbsp; <a href="https://afams.co.ke/terms.html" style="color:#aaa;">Terms &amp; Conditions</a>'
+    +   ' &nbsp;·&nbsp; <a href="https://afams.co.ke/returns-policy.html" style="color:#aaa;">Returns Policy</a>'
+    + '</p>'
     + '</td></tr>'
     + '</table>'
     + '</td></tr>'
     + '</table>';
+}
+
+// Shared gold CTA button for institutional templates — every send should
+// carry a real button/link, not just a text mention.
+function instCtaButton(url, label) {
+  return '<table cellpadding="0" cellspacing="0" style="margin:6px 0 18px;"><tr><td style="border-radius:8px;background:#2D6A4F;">'
+    + '<a href="' + url + '" style="display:inline-block;padding:12px 28px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;font-family:Arial,sans-serif;border-radius:8px;">' + label + '</a>'
+    + '</td></tr></table>';
 }
 
 var EMAIL_TEMPLATES = {
@@ -3581,11 +3594,12 @@ var EMAIL_TEMPLATES = {
     tag: 'B2B · SCHOOLS',
     subject: 'Custom-branded kitchen gardens for [School Name]',
     body: instShell(
-      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear {{name}},</p>'
+      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear School Team,</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">My name is Moses Mwombe, founder of Afams — we design and build urban farming systems here in Nairobi. I\'m reaching out because I think a kitchen garden could be a genuinely useful addition to [School Name], both for learning and for the kitchen.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">We build our GrowBag systems in-house, which means we can size and configure a garden to fit whatever space you actually have — from a simple row of balcony GrowBags along a walkway, to a full rack-mounted growing wall for a larger compound. Where useful, we can brand the units in your school colours or crest, so it reads as part of the school, not a bolted-on extra.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">A few schools have used a kitchen garden as a hands-on complement to CBC agriculture and life-skills learning — students plant, tend, and harvest what eventually reaches the kitchen. It\'s a small, tangible way to connect a lesson to something real.</p>'
-      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 4px;">Happy to visit the compound and put together a layout and quote at no obligation — just reply to this email, or call/WhatsApp me directly.</p>'
+      + instCtaButton('https://afams.co.ke/#institutional', 'See What We Build for Schools →')
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 4px;">Happy to visit the compound and put together a layout and quote at no obligation — just reply to this email, or reach me on WhatsApp.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#1B4332;margin:18px 0 0;">Asante sana,<br><strong>Moses Mwombe</strong><br><span style="font-size:13px;color:#667085;">Founder, Afams</span></p>'
     ),
   },
@@ -3596,10 +3610,11 @@ var EMAIL_TEMPLATES = {
     tag: 'B2B · HOSPITALITY',
     subject: 'Farm-to-table, without the farm — for [Property Name]',
     body: instShell(
-      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear {{name}},</p>'
+      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear Hospitality Team,</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">I\'m Moses Mwombe, founder of Afams. We build growing systems designed to sit well inside hospitality spaces — not just function, but look right in a dining room or lobby.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">For [Property Name], that could mean a herb wall at the entrance guests notice on the way in, table-side harvest pots where diners cut their own garnish, or a working herb and salad-green setup for the kitchen — self-irrigating, so it stays low-maintenance for your staff. Everything can be built to match your interior — planter finish, colour, even branded with your property\'s name or logo.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">It\'s a genuine talking point for guests, and it\'s also just useful — fresher garnish and herbs, grown a few steps from the pass.</p>'
+      + instCtaButton('https://afams.co.ke/#institutional', 'See What We Build for Hospitality →')
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 4px;">I\'d be glad to walk the space with you and sketch out what would actually work — reply here or reach me directly on WhatsApp.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#1B4332;margin:18px 0 0;">Asante sana,<br><strong>Moses Mwombe</strong><br><span style="font-size:13px;color:#667085;">Founder, Afams</span></p>'
     ),
@@ -3611,10 +3626,11 @@ var EMAIL_TEMPLATES = {
     tag: 'B2B · HEALTHCARE',
     subject: 'A calmer courtyard for [Facility Name]',
     body: instShell(
-      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear {{name}},</p>'
+      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear Facilities Team,</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">I\'m Moses Mwombe, founder of Afams. We build growing systems that are increasingly finding a place in healthcare settings — courtyards and waiting areas that give patients, families, and staff a genuinely calmer space, without adding to anyone\'s workload.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">Our systems use easy-clean materials and self-irrigating reservoirs, so they hold up to a healthcare environment\'s hygiene standards without needing daily attention from your team. Depending on the space, that could be a planted courtyard, a therapeutic garden corner for a rehabilitation ward, or even a small nutrition garden supplying fresh herbs and greens to the kitchen.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">Every installation is sized to the space you actually have, from a single quiet corner to a full courtyard layout.</p>'
+      + instCtaButton('https://afams.co.ke/#institutional', 'See What We Build for Healthcare →')
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 4px;">I\'d welcome the chance to see the space and talk through what would work for [Facility Name] — reply here or reach me directly on WhatsApp.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#1B4332;margin:18px 0 0;">Asante sana,<br><strong>Moses Mwombe</strong><br><span style="font-size:13px;color:#667085;">Founder, Afams</span></p>'
     ),
@@ -3626,10 +3642,11 @@ var EMAIL_TEMPLATES = {
     tag: 'B2B · RESIDENTIAL',
     subject: 'A growing amenity for [Estate Name] residents',
     body: instShell(
-      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear {{name}},</p>'
+      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear Estate Management Team,</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">I\'m Moses Mwombe, founder of Afams. We build growing systems that work well as a shared estate amenity — the kind of thing residents notice and actually use.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">For [Estate Name], that could be a shared community garden bed near the clubhouse or common area, or something simpler: compact, self-irrigating GrowBags sized for individual balconies, so residents who want their own small garden can have one without the upkeep most gardening requires. Everything can carry the estate\'s branding if that\'s useful for your management team.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">A few estate managers we\'ve spoken with see it as a genuine differentiator — a tangible amenity that shows up well in listings and resident satisfaction alike.</p>'
+      + instCtaButton('https://afams.co.ke/#institutional', 'See What We Build for Estates →')
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 4px;">Happy to walk the grounds and put together options — reply here or reach me directly on WhatsApp.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#1B4332;margin:18px 0 0;">Asante sana,<br><strong>Moses Mwombe</strong><br><span style="font-size:13px;color:#667085;">Founder, Afams</span></p>'
     ),
@@ -3641,10 +3658,11 @@ var EMAIL_TEMPLATES = {
     tag: 'B2B · HIGHER ED',
     subject: 'A growing project for [Institution Name]',
     body: instShell(
-      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear {{name}},</p>'
+      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear Administration Team,</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">I\'m Moses Mwombe, founder of Afams. We build urban growing systems, and I think there could be a good fit for [Institution Name] — whether that\'s a campus sustainability project, a food-security initiative for students, or something tied more directly to coursework.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">For a health-sciences institution like KMTC in particular, a working nutrition garden can be a genuinely useful, hands-on complement to community health and nutrition modules — not just decoration. For general campus settings, compact self-irrigating GrowBags work well for dormitory balconies, letting students grow something of their own with minimal upkeep.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">We size and configure every installation to the space and purpose — from a few dormitory balcony units to a full campus growing project.</p>'
+      + instCtaButton('https://afams.co.ke/#institutional', 'See What We Build for Campuses →')
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 4px;">I\'d welcome a conversation about what would genuinely add value here — reply here or reach me directly on WhatsApp.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#1B4332;margin:18px 0 0;">Asante sana,<br><strong>Moses Mwombe</strong><br><span style="font-size:13px;color:#667085;">Founder, Afams</span></p>'
     ),
@@ -3656,10 +3674,11 @@ var EMAIL_TEMPLATES = {
     tag: 'B2B · HOUSING',
     subject: 'Compact growing solutions for [Housing Project Name]',
     body: instShell(
-      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear {{name}},</p>'
+      '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Dear Project Team,</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">I\'m Moses Mwombe, founder of Afams. We build compact, low-maintenance growing systems designed for exactly the kind of small-footprint housing that projects like [Housing Project Name] are built around.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">Our self-irrigating balcony GrowBags need very little attention — a genuine fit for residents who are busy, or growing food for the first time. Sized right, they let a household grow a real, useful amount of food in a space no bigger than a balcony rail, without adding maintenance burden to your project.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">For a project this size, we can also talk through a bulk/unit-level rollout — pricing and configuration that works at scale, not just per household.</p>'
+      + instCtaButton('https://afams.co.ke/#institutional', 'See What We Build for Housing Projects →')
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 4px;">I\'d welcome the chance to discuss what would work well for your residents — reply here or reach me directly on WhatsApp.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#1B4332;margin:18px 0 0;">Asante sana,<br><strong>Moses Mwombe</strong><br><span style="font-size:13px;color:#667085;">Founder, Afams</span></p>'
     ),
