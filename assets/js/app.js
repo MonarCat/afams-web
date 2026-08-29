@@ -10,7 +10,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const AFAMS = {
   // Paystack public key is set by assets/js/paystack-config.js (loaded before this file).
   paystackKey: window.__PAYSTACK_PUBLIC_KEY,
-  whatsapp: '+254715128514', // WhatsApp Business number
+  whatsapp: '+254714128514', // WhatsApp Business number
   email: 'afamsgroup@gmail.com',
   currency: 'KES',
   deliveryDays: 5,
