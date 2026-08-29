@@ -1375,6 +1375,13 @@
               <textarea id="email-body" rows="14" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-size:12px; font-family:monospace; resize:vertical;"></textarea>
             </div>
 
+            <div id="prospect-batch-box" style="display:none; margin-bottom:12px; background:var(--table-alt); border:1px solid var(--border); border-radius:8px; padding:12px 14px;">
+              <div id="prospect-batch-status" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Checking campaign status…</div>
+              <label style="font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Send up to (this batch)</label>
+              <input id="prospect-batch-size" type="number" min="1" max="300" value="250" style="width:100px; box-sizing:border-box; border:1px solid var(--border); border-radius:6px; padding:6px 8px; font-size:13px;" onchange="updateEmailRecipientCount()">
+              <span style="font-size:11px; color:var(--text-muted); margin-left:6px;">max 300/day (Brevo limit)</span>
+            </div>
+
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
               <div style="font:12px monospace; color:var(--text-muted);" id="email-recipient-count-label">to — recipients</div>
               <div style="display:flex; gap:8px;">
@@ -4012,6 +4019,7 @@ function loadEmailTemplate(key) {
   document.getElementById('email-subject').value = t.subject;
   document.getElementById('email-body').value = t.body;
   document.getElementById('email-preview-box').style.display = 'none';
+  updateEmailRecipientCount(); // subject/body changed -> campaign status may differ
 }
 
 function insertEmailToken(token) {
@@ -4027,6 +4035,7 @@ function onEmailTargetChange() {
   var t = document.getElementById('email-target').value;
   document.getElementById('email-single-wrap').style.display = (t === 'single') ? 'block' : 'none';
   document.getElementById('email-bulk-wrap').style.display = (t === 'bulk') ? 'block' : 'none';
+  document.getElementById('prospect-batch-box').style.display = (t.indexOf('prospects:') === 0) ? 'block' : 'none';
   updateEmailRecipientCount();
 }
 
@@ -4035,7 +4044,7 @@ function parseBulkEmails() {
   return extractEmails(raw);
 }
 
-function updateEmailRecipientCount() {
+async function updateEmailRecipientCount() {
   var target = document.getElementById('email-target') ? document.getElementById('email-target').value : 'all_customers';
   var count = '—';
   if (target === 'all_customers') {
@@ -4062,7 +4071,43 @@ function updateEmailRecipientCount() {
   } else if (target.indexOf('prospects:') === 0) {
     var listId = target.split(':')[1];
     var listObj = prospectLists.find(function (l) { return l.id === listId; });
-    count = listObj ? listObj.count : 0;
+    var listTotalFallback = listObj ? listObj.count : 0;
+    count = listTotalFallback; // shown immediately, refined below once dry-run resolves
+
+    var subject = document.getElementById('email-subject').value.trim();
+    var htmlBody = document.getElementById('email-body').value.trim();
+    var batchSizeInput = document.getElementById('prospect-batch-size');
+    var batchSize = batchSizeInput ? (parseInt(batchSizeInput.value, 10) || 250) : 250;
+    var statusEl = document.getElementById('prospect-batch-status');
+
+    if (subject && htmlBody && statusEl) {
+      statusEl.textContent = 'Checking campaign status…';
+      try {
+        var { data, error } = await sb.functions.invoke('admin-send-email', {
+          body: { subject: subject, html_body: htmlBody, target: 'prospects', list_id: listId, batch_size: batchSize, dry_run: true },
+        });
+        if (error || (data && data.error)) throw new Error((data && data.error) || error.message);
+
+        if (data.remaining === 0) {
+          statusEl.style.color = '#1a7f37';
+          statusEl.textContent = '✓ Everyone in this list (' + data.list_total + ') has already received this exact email. Edit the subject or body to start a new campaign.';
+        } else if (data.already_sent > 0) {
+          statusEl.style.color = 'var(--text-muted)';
+          statusEl.textContent = data.already_sent + ' of ' + data.list_total + ' already sent this exact email · ' + data.remaining + ' remaining · this batch will reach ' + data.will_send + '.';
+        } else {
+          statusEl.style.color = 'var(--text-muted)';
+          statusEl.textContent = 'New campaign · ' + data.list_total + ' in list · this batch will reach ' + data.will_send + '.';
+        }
+        var label2 = document.getElementById('email-recipient-count-label');
+        if (label2) label2.textContent = 'to ' + data.will_send + ' recipient' + (data.will_send === 1 ? '' : 's') + ' (of ' + data.remaining + ' remaining)';
+        return; // label already set with richer info
+      } catch (err) {
+        statusEl.style.color = '#c0392b';
+        statusEl.textContent = 'Could not check campaign status: ' + err.message;
+      }
+    } else if (statusEl) {
+      statusEl.textContent = 'Load a template or write a subject + message to see campaign status.';
+    }
   }
   var label = document.getElementById('email-recipient-count-label');
   if (label) label.textContent = 'to ' + count + ' recipient' + (count === 1 ? '' : 's');
@@ -4090,6 +4135,8 @@ async function sendEmailCenter() {
   var body = document.getElementById('email-body').value.trim();
   var singleEmail = document.getElementById('email-single-input').value.trim();
   var bulkEmails = target === 'bulk' ? parseBulkEmails().slice(0, 250) : [];
+  var batchSizeInput = document.getElementById('prospect-batch-size');
+  var batchSize = batchSizeInput ? (parseInt(batchSizeInput.value, 10) || 250) : 250;
 
   if (!subject) { alert('Subject is required'); return; }
   if (!body) { alert('Message body is required'); return; }
@@ -4117,6 +4164,7 @@ async function sendEmailCenter() {
         single_email: target === 'single' ? singleEmail : undefined,
         bulk_emails: target === 'bulk' ? bulkEmails : undefined,
         list_id: target === 'prospects' ? listId : undefined,
+        batch_size: target === 'prospects' ? batchSize : undefined,
       },
     });
 
@@ -4124,11 +4172,22 @@ async function sendEmailCenter() {
       alert('Send error: ' + error.message);
     } else if (data && data.error) {
       alert('Send error: ' + data.error);
+    } else if (isProspects) {
+      var sentP = (data && data.sent) || 0;
+      var failedP = (data && data.failed) || 0;
+      var remainingAfter = (data && data.remaining_after) || 0;
+      var msg = data.message
+        ? data.message
+        : '✉️ Sent to ' + sentP + ' recipient' + (sentP === 1 ? '' : 's') + (failedP ? ' · ' + failedP + ' failed' : '')
+          + (remainingAfter > 0 ? '\n\n' + remainingAfter + ' still remaining in this campaign — send another batch (today or tomorrow) to reach the rest.' : '\n\nEveryone in this list has now received this email.');
+      alert(msg);
+      addEmailSendLogEntry({ subject: subject, sent: sentP, target: 'prospects:' + listId });
+      updateEmailRecipientCount(); // refresh remaining count for this campaign
     } else {
       var sent = (data && data.sent) || 0;
       var failed = (data && data.failed) || 0;
       alert('✉️ Sent to ' + sent + ' recipient' + (sent === 1 ? '' : 's') + (failed ? ' · ' + failed + ' failed' : ''));
-      addEmailSendLogEntry({ subject: subject, sent: sent, target: isProspects ? ('prospects:' + listId) : target });
+      addEmailSendLogEntry({ subject: subject, sent: sent, target: target });
     }
   } catch (err) {
     alert('Send failed: ' + err.message);
