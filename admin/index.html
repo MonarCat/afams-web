@@ -1318,19 +1318,12 @@
             <div id="email-template-list" style="display:grid; gap:6px; margin-bottom:20px;"></div>
 
             <div style="font:700 10px monospace; color:var(--text-muted); letter-spacing:1px; margin-bottom:8px;">PROSPECT LISTS</div>
-            <div id="prospect-counts" style="display:grid; gap:3px; margin-bottom:10px; font-size:12px;">
-              <div style="color:var(--text-muted);">Loading…</div>
-            </div>
-            <select id="prospect-add-category" class="filter-select" style="width:100%; box-sizing:border-box; margin-bottom:6px; font-size:12px;">
-              <option value="schools">🏫 Schools</option>
-              <option value="hotels">🍽️ Hotels &amp; Restaurants</option>
-              <option value="hospitals">🏥 Hospitals</option>
-              <option value="estates">🏘️ Gated Estates</option>
-              <option value="colleges">🎓 Colleges &amp; Universities</option>
-              <option value="housing">🏗️ Affordable Housing</option>
+            <button class="btn-util" type="button" onclick="openProspectModal()" style="width:100%; margin-bottom:10px;">⚙️ Manage Prospect Lists</button>
+            <select id="prospect-add-list" class="filter-select" style="width:100%; box-sizing:border-box; margin-bottom:6px; font-size:12px;">
+              <option value="">Loading lists…</option>
             </select>
             <textarea id="prospect-add-input" rows="4" placeholder="Paste emails, a list, or a messy paragraph — we'll pull out the addresses automatically" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:6px; padding:6px 8px; font-size:11px; font-family:monospace; resize:vertical; margin-bottom:6px;"></textarea>
-            <button class="btn-util" type="button" onclick="addProspects()" style="width:100%;">+ Add to List</button>
+            <button class="btn-util" type="button" onclick="addProspectsQuick()" style="width:100%;">+ Add to Selected List</button>
             <p id="prospect-add-status" style="font-size:11px; color:var(--text-muted); margin:6px 0 20px;"></p>
 
             <div style="font:700 10px monospace; color:var(--text-muted); letter-spacing:1px; margin-bottom:8px;">SEND HISTORY</div>
@@ -1349,13 +1342,8 @@
                 <option value="growers_club">🌱 Growers Club (active subscribers)</option>
                 <option value="single">👤 Specific Email</option>
                 <option value="bulk">📝 Paste Email List (up to 250)</option>
-                <optgroup label="Saved Prospect Lists">
-                  <option value="prospects:schools">🏫 Schools</option>
-                  <option value="prospects:hotels">🍽️ Hotels &amp; Restaurants</option>
-                  <option value="prospects:hospitals">🏥 Hospitals</option>
-                  <option value="prospects:estates">🏘️ Gated Estates</option>
-                  <option value="prospects:colleges">🎓 Colleges &amp; Universities</option>
-                  <option value="prospects:housing">🏗️ Affordable Housing</option>
+                <optgroup label="Saved Prospect Lists" id="email-target-prospect-group">
+                  <option value="" disabled>Loading lists…</option>
                 </optgroup>
               </select>
               <p style="font-size:11px; color:var(--text-muted); margin:6px 0 0;">Sent via <strong style="color:var(--accent);">Brevo</strong> transactional delivery — same account used for order emails.</p>
@@ -1626,6 +1614,46 @@
 <div id="toast" role="status" aria-live="polite"></div>
 
 <!-- WhatsApp Template Modal -->
+<!-- Prospect Lists Management Modal -->
+<div id="prospect-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:2000;overflow-y:auto;" role="dialog" aria-modal="true" aria-labelledby="prospectModalTitle">
+  <div style="background:#fff;border-radius:12px;max-width:560px;margin:40px auto;padding:28px 28px 24px;box-shadow:0 8px 40px rgba(0,0,0,0.18);position:relative;">
+    <button onclick="closeProspectModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;line-height:1;cursor:pointer;color:#9ca3af;">×</button>
+
+    <!-- LIST OVERVIEW -->
+    <div id="prospect-modal-list-view">
+      <h2 id="prospectModalTitle" style="font-size:18px;font-weight:800;color:var(--accent);margin:0 0 4px;">🎯 Prospect Lists</h2>
+      <p style="font-size:12px;color:#6b7280;margin:0 0 18px;">Create, rename, or delete lists — click a list to view and edit its saved addresses.</p>
+
+      <div id="prospect-modal-lists" style="display:grid; gap:8px; margin-bottom:18px; max-height:320px; overflow-y:auto;">
+        <div style="font-size:13px;color:#9ca3af;">Loading…</div>
+      </div>
+
+      <div style="display:flex; gap:8px;">
+        <input id="prospect-new-list-name" type="text" placeholder="New list name — e.g. Estates: Roysambu" style="flex:1; box-sizing:border-box; border:1px solid #d1d5db; border-radius:6px; padding:9px 10px; font-size:13px;">
+        <button onclick="createProspectList()" style="background:var(--accent,#155D27);color:#fff;border:none;border-radius:6px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Create</button>
+      </div>
+      <p id="prospect-create-status" style="font-size:11px; color:#9ca3af; margin:6px 0 0;"></p>
+    </div>
+
+    <!-- LIST DETAIL: view/edit emails within one list -->
+    <div id="prospect-modal-detail-view" style="display:none;">
+      <button onclick="showProspectListView()" style="background:none;border:none;color:var(--accent,#155D27);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px;padding:0;">← Back to lists</button>
+      <h2 id="prospect-detail-name" style="font-size:18px;font-weight:800;color:var(--accent);margin:0 0 4px;"></h2>
+      <p id="prospect-detail-count" style="font-size:12px;color:#6b7280;margin:0 0 14px;"></p>
+
+      <div id="prospect-detail-emails" style="max-height:220px; overflow-y:auto; border:1px solid #eee; border-radius:8px; margin-bottom:14px;">
+        <div style="padding:14px; font-size:13px; color:#9ca3af;">Loading…</div>
+      </div>
+
+      <label style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Add More Addresses</label>
+      <textarea id="prospect-detail-add-input" rows="3" placeholder="Paste emails, a list, or a messy paragraph — we'll pull out the addresses automatically" style="width:100%; box-sizing:border-box; border:1px solid #d1d5db; border-radius:6px; padding:8px 10px; font-size:12px; font-family:monospace; resize:vertical; margin-bottom:8px;"></textarea>
+      <button onclick="addToOpenProspectList()" style="width:100%; background:var(--accent,#155D27);color:#fff;border:none;border-radius:6px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;">+ Add Emails</button>
+      <p id="prospect-detail-add-status" style="font-size:11px; color:#9ca3af; margin:6px 0 0;"></p>
+    </div>
+  </div>
+</div>
+
+
 <div id="waModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:2000;overflow-y:auto;" role="dialog" aria-modal="true" aria-labelledby="waModalTitle">
   <div style="background:#fff;border-radius:12px;max-width:600px;margin:40px auto;padding:28px 28px 24px;box-shadow:0 8px 40px rgba(0,0,0,0.18);position:relative;">
     <h2 id="waModalTitle" style="font-size:18px;font-weight:800;color:#075e54;margin:0 0 4px;">💬 WhatsApp Customer</h2>
@@ -3704,15 +3732,8 @@ function extractEmails(raw) {
   return out;
 }
 
-var PROSPECT_CATEGORY_LABELS = {
-  schools: '🏫 Schools',
-  hotels: '🍽️ Hotels & Restaurants',
-  hospitals: '🏥 Hospitals',
-  estates: '🏘️ Gated Estates',
-  colleges: '🎓 Colleges & Universities',
-  housing: '🏗️ Affordable Housing',
-};
-var prospectCounts = {};
+var prospectLists = []; // [{id, name, count}]
+var openProspectListId = null; // list currently open in the detail view
 
 function initEmailCenter() {
   if (emailCenterReady) return;
@@ -3720,37 +3741,151 @@ function initEmailCenter() {
   renderEmailTemplateList();
   loadEmailTemplate('growers_welcome');
   updateEmailRecipientCount();
-  loadProspectCounts();
+  loadProspectLists();
 }
 
-async function loadProspectCounts() {
-  var el = document.getElementById('prospect-counts');
+// ── Fetch + render list overview (used by modal, quick-add dropdown, and Send To) ──
+async function loadProspectLists() {
   try {
-    var { data, error } = await sb.functions.invoke('manage-prospects', { body: { action: 'list_counts' } });
+    var { data, error } = await sb.functions.invoke('manage-prospects', { body: { action: 'list_lists' } });
     if (error || (data && data.error)) throw new Error((data && data.error) || error.message);
-    prospectCounts = data.counts || {};
+    prospectLists = data.lists || [];
   } catch (err) {
-    if (el) el.innerHTML = '<div style="color:var(--text-muted);">Couldn\'t load counts</div>';
+    console.error('[prospects] Failed to load lists:', err.message);
+    prospectLists = [];
+  }
+  renderProspectQuickAddDropdown();
+  renderProspectSendToOptions();
+  renderProspectModalListOverview();
+  updateEmailRecipientCount();
+}
+
+function renderProspectQuickAddDropdown() {
+  var sel = document.getElementById('prospect-add-list');
+  if (!sel) return;
+  var current = sel.value;
+  if (prospectLists.length === 0) {
+    sel.innerHTML = '<option value="">No lists yet — create one below</option>';
     return;
   }
-  if (el) {
-    el.innerHTML = Object.keys(PROSPECT_CATEGORY_LABELS).map(function (cat) {
-      var count = prospectCounts[cat] || 0;
-      return '<div style="display:flex; justify-content:space-between; padding:3px 0;">'
-        + '<span style="color:var(--text-muted);">' + PROSPECT_CATEGORY_LABELS[cat] + '</span>'
-        + '<span style="font-weight:700; color:var(--accent);">' + count + '</span>'
-        + '</div>';
-    }).join('');
-  }
-  updateEmailRecipientCount(); // in case a prospects: target is currently selected
+  sel.innerHTML = prospectLists.map(function (l) {
+    return '<option value="' + l.id + '">' + escapeHtml(l.name) + ' (' + l.count + ')</option>';
+  }).join('');
+  if (current && prospectLists.some(function (l) { return l.id === current; })) sel.value = current;
 }
 
-async function addProspects() {
-  var category = document.getElementById('prospect-add-category').value;
+function renderProspectSendToOptions() {
+  var group = document.getElementById('email-target-prospect-group');
+  if (!group) return;
+  var currentTarget = document.getElementById('email-target').value;
+  if (prospectLists.length === 0) {
+    group.innerHTML = '<option value="" disabled>No saved lists yet</option>';
+    return;
+  }
+  group.innerHTML = prospectLists.map(function (l) {
+    return '<option value="prospects:' + l.id + '">🎯 ' + escapeHtml(l.name) + ' (' + l.count + ')</option>';
+  }).join('');
+  // Restore selection if it still exists
+  if (currentTarget && document.getElementById('email-target').querySelector('option[value="' + currentTarget + '"]')) {
+    document.getElementById('email-target').value = currentTarget;
+  }
+}
+
+function renderProspectModalListOverview() {
+  var el = document.getElementById('prospect-modal-lists');
+  if (!el) return;
+  if (prospectLists.length === 0) {
+    el.innerHTML = '<div style="font-size:13px;color:#9ca3af;padding:8px 0;">No lists yet — create your first one below.</div>';
+    return;
+  }
+  el.innerHTML = prospectLists.map(function (l) {
+    return '<div style="display:flex; align-items:center; justify-content:space-between; border:1px solid #eee; border-radius:8px; padding:10px 12px;">'
+      + '<div onclick="openProspectListDetail(\'' + l.id + '\')" style="cursor:pointer; flex:1;">'
+      + '<div style="font-size:13px; font-weight:700; color:#1f2937;">' + escapeHtml(l.name) + '</div>'
+      + '<div style="font-size:11px; color:#9ca3af;">' + l.count + ' address' + (l.count === 1 ? '' : 'es') + '</div>'
+      + '</div>'
+      + '<div style="display:flex; gap:4px;">'
+      + '<button onclick="renameProspectList(\'' + l.id + '\')" title="Rename" style="background:#f3f4f6;border:none;border-radius:6px;padding:6px 9px;font-size:12px;cursor:pointer;">✏️</button>'
+      + '<button onclick="deleteProspectList(\'' + l.id + '\',\'' + escapeHtml(l.name).replace(/'/g, "\\'") + '\')" title="Delete" style="background:#fee2e2;color:#b91c1c;border:none;border-radius:6px;padding:6px 9px;font-size:12px;cursor:pointer;">🗑️</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ── Modal open/close + view switching ──────────────────────────
+function openProspectModal() {
+  document.getElementById('prospect-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  showProspectListView();
+  loadProspectLists();
+}
+function closeProspectModal() {
+  document.getElementById('prospect-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+function showProspectListView() {
+  openProspectListId = null;
+  document.getElementById('prospect-modal-list-view').style.display = 'block';
+  document.getElementById('prospect-modal-detail-view').style.display = 'none';
+}
+
+// ── Create / rename / delete lists ─────────────────────────────
+async function createProspectList() {
+  var input = document.getElementById('prospect-new-list-name');
+  var name = input.value.trim();
+  var status = document.getElementById('prospect-create-status');
+  if (!name) { status.style.color = '#c0392b'; status.textContent = 'Enter a name for the new list.'; return; }
+
+  try {
+    var { data, error } = await sb.functions.invoke('manage-prospects', { body: { action: 'create_list', name: name } });
+    if (error || (data && data.error)) throw new Error((data && data.error) || error.message);
+    status.style.color = '#1a7f37';
+    status.textContent = '✓ Created "' + name + '"';
+    input.value = '';
+    loadProspectLists();
+  } catch (err) {
+    status.style.color = '#c0392b';
+    status.textContent = 'Error: ' + err.message;
+  }
+}
+
+async function renameProspectList(listId) {
+  var list = prospectLists.find(function (l) { return l.id === listId; });
+  var newName = prompt('Rename list:', list ? list.name : '');
+  if (newName === null) return; // cancelled
+  newName = newName.trim();
+  if (!newName) return;
+
+  try {
+    var { data, error } = await sb.functions.invoke('manage-prospects', { body: { action: 'rename_list', list_id: listId, name: newName } });
+    if (error || (data && data.error)) throw new Error((data && data.error) || error.message);
+    loadProspectLists();
+  } catch (err) {
+    alert('Rename failed: ' + err.message);
+  }
+}
+
+async function deleteProspectList(listId, listName) {
+  if (!confirm('Delete "' + listName + '" and all its saved addresses? This cannot be undone.')) return;
+
+  try {
+    var { data, error } = await sb.functions.invoke('manage-prospects', { body: { action: 'delete_list', list_id: listId } });
+    if (error || (data && data.error)) throw new Error((data && data.error) || error.message);
+    loadProspectLists();
+  } catch (err) {
+    alert('Delete failed: ' + err.message);
+  }
+}
+
+// ── Quick-add (sidebar) ─────────────────────────────────────────
+async function addProspectsQuick() {
+  var listId = document.getElementById('prospect-add-list').value;
   var rawText = document.getElementById('prospect-add-input').value;
   var status = document.getElementById('prospect-add-status');
-  var found = extractEmails(rawText);
 
+  if (!listId) { status.style.color = '#c0392b'; status.textContent = 'Create or select a list first (⚙️ Manage Prospect Lists).'; return; }
+
+  var found = extractEmails(rawText);
   if (found.length === 0) {
     status.style.color = '#c0392b';
     status.textContent = 'No valid email addresses found in that text.';
@@ -3762,19 +3897,95 @@ async function addProspects() {
 
   try {
     var { data, error } = await sb.functions.invoke('manage-prospects', {
-      body: { action: 'add', category: category, emails: found },
+      body: { action: 'add', list_id: listId, emails: found },
     });
     if (error || (data && data.error)) throw new Error((data && data.error) || error.message);
     status.style.color = '#1a7f37';
-    status.textContent = '✓ Added ' + data.added + ' new (' + data.duplicates + ' already on the list). ' + PROSPECT_CATEGORY_LABELS[category] + ' now has ' + data.total + ' total.';
+    status.textContent = '✓ Added ' + data.added + ' new (' + data.duplicates + ' already on the list). Total now ' + data.total + '.';
     document.getElementById('prospect-add-input').value = '';
-    loadProspectCounts();
+    loadProspectLists();
   } catch (err) {
     status.style.color = '#c0392b';
     status.textContent = 'Error: ' + err.message;
   }
 }
 
+// ── List detail view: view + remove individual emails, add more ─
+async function openProspectListDetail(listId) {
+  openProspectListId = listId;
+  var list = prospectLists.find(function (l) { return l.id === listId; });
+
+  document.getElementById('prospect-modal-list-view').style.display = 'none';
+  document.getElementById('prospect-modal-detail-view').style.display = 'block';
+  document.getElementById('prospect-detail-name').textContent = list ? list.name : 'List';
+  document.getElementById('prospect-detail-count').textContent = 'Loading…';
+  document.getElementById('prospect-detail-emails').innerHTML = '<div style="padding:14px; font-size:13px; color:#9ca3af;">Loading…</div>';
+
+  try {
+    var { data, error } = await sb.functions.invoke('manage-prospects', { body: { action: 'list_emails', list_id: listId } });
+    if (error || (data && data.error)) throw new Error((data && data.error) || error.message);
+    renderProspectDetailEmails(data.emails || []);
+  } catch (err) {
+    document.getElementById('prospect-detail-emails').innerHTML = '<div style="padding:14px; font-size:13px; color:#c0392b;">Failed to load: ' + err.message + '</div>';
+  }
+}
+
+function renderProspectDetailEmails(emails) {
+  document.getElementById('prospect-detail-count').textContent = emails.length + ' address' + (emails.length === 1 ? '' : 'es');
+  var el = document.getElementById('prospect-detail-emails');
+  if (emails.length === 0) {
+    el.innerHTML = '<div style="padding:14px; font-size:13px; color:#9ca3af;">No addresses yet — add some below.</div>';
+    return;
+  }
+  el.innerHTML = emails.map(function (email) {
+    return '<div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid #f3f4f6; font-size:12px;">'
+      + '<span style="color:#374151;">' + escapeHtml(email) + '</span>'
+      + '<button onclick="removeProspectEmail(\'' + email.replace(/'/g, "\\'") + '\')" title="Remove" style="background:none;border:none;color:#b91c1c;font-size:14px;cursor:pointer;padding:2px 6px;">×</button>'
+      + '</div>';
+  }).join('');
+}
+
+async function removeProspectEmail(email) {
+  if (!openProspectListId) return;
+  try {
+    var { data, error } = await sb.functions.invoke('manage-prospects', {
+      body: { action: 'delete_email', list_id: openProspectListId, email: email },
+    });
+    if (error || (data && data.error)) throw new Error((data && data.error) || error.message);
+    openProspectListDetail(openProspectListId); // refresh detail view
+    loadProspectLists(); // refresh counts elsewhere
+  } catch (err) {
+    alert('Failed to remove: ' + err.message);
+  }
+}
+
+async function addToOpenProspectList() {
+  if (!openProspectListId) return;
+  var rawText = document.getElementById('prospect-detail-add-input').value;
+  var status = document.getElementById('prospect-detail-add-status');
+  var found = extractEmails(rawText);
+
+  if (found.length === 0) {
+    status.style.color = '#c0392b';
+    status.textContent = 'No valid email addresses found in that text.';
+    return;
+  }
+
+  try {
+    var { data, error } = await sb.functions.invoke('manage-prospects', {
+      body: { action: 'add', list_id: openProspectListId, emails: found },
+    });
+    if (error || (data && data.error)) throw new Error((data && data.error) || error.message);
+    status.style.color = '#1a7f37';
+    status.textContent = '✓ Added ' + data.added + ' new (' + data.duplicates + ' already on the list).';
+    document.getElementById('prospect-detail-add-input').value = '';
+    openProspectListDetail(openProspectListId); // refresh
+    loadProspectLists();
+  } catch (err) {
+    status.style.color = '#c0392b';
+    status.textContent = 'Error: ' + err.message;
+  }
+}
 function renderEmailTemplateList() {
   var el = document.getElementById('email-template-list');
   if (!el) return;
@@ -3849,8 +4060,9 @@ function updateEmailRecipientCount() {
       }
     }
   } else if (target.indexOf('prospects:') === 0) {
-    var cat = target.split(':')[1];
-    count = prospectCounts[cat] || 0;
+    var listId = target.split(':')[1];
+    var listObj = prospectLists.find(function (l) { return l.id === listId; });
+    count = listObj ? listObj.count : 0;
   }
   var label = document.getElementById('email-recipient-count-label');
   if (label) label.textContent = 'to ' + count + ' recipient' + (count === 1 ? '' : 's');
@@ -3873,7 +4085,7 @@ async function sendEmailCenter() {
   var rawTarget = document.getElementById('email-target').value;
   var isProspects = rawTarget.indexOf('prospects:') === 0;
   var target = isProspects ? 'prospects' : rawTarget;
-  var category = isProspects ? rawTarget.split(':')[1] : undefined;
+  var listId = isProspects ? rawTarget.split(':')[1] : undefined;
   var subject = document.getElementById('email-subject').value.trim();
   var body = document.getElementById('email-body').value.trim();
   var singleEmail = document.getElementById('email-single-input').value.trim();
@@ -3883,7 +4095,10 @@ async function sendEmailCenter() {
   if (!body) { alert('Message body is required'); return; }
   if (target === 'single' && !singleEmail) { alert('Enter the recipient email'); return; }
   if (target === 'bulk' && bulkEmails.length === 0) { alert('Paste at least one valid email address'); return; }
-  if (target === 'prospects' && !(prospectCounts[category] > 0)) { alert('That prospect list is empty — add some addresses first.'); return; }
+  if (target === 'prospects') {
+    var listObj2 = prospectLists.find(function (l) { return l.id === listId; });
+    if (!listObj2 || !(listObj2.count > 0)) { alert('That prospect list is empty — add some addresses first.'); return; }
+  }
 
   var recipientCount = document.getElementById('email-recipient-count-label').textContent;
   if (!confirm('Send this email ' + recipientCount + '? This cannot be undone.')) return;
@@ -3901,7 +4116,7 @@ async function sendEmailCenter() {
         target: target,
         single_email: target === 'single' ? singleEmail : undefined,
         bulk_emails: target === 'bulk' ? bulkEmails : undefined,
-        category: target === 'prospects' ? category : undefined,
+        list_id: target === 'prospects' ? listId : undefined,
       },
     });
 
@@ -3913,7 +4128,7 @@ async function sendEmailCenter() {
       var sent = (data && data.sent) || 0;
       var failed = (data && data.failed) || 0;
       alert('✉️ Sent to ' + sent + ' recipient' + (sent === 1 ? '' : 's') + (failed ? ' · ' + failed + ' failed' : ''));
-      addEmailSendLogEntry({ subject: subject, sent: sent, target: isProspects ? ('prospects:' + category) : target });
+      addEmailSendLogEntry({ subject: subject, sent: sent, target: isProspects ? ('prospects:' + listId) : target });
     }
   } catch (err) {
     alert('Send failed: ' + err.message);
