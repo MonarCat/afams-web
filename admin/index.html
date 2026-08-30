@@ -3598,10 +3598,12 @@ var EMAIL_TEMPLATES = {
 
       // Letter body
       + '<tr><td style="padding:8px 20px;">'
-      + '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Hi {{name}},</p>'
-      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">I\'m Moses — I started Afams because I got tired of watching good land around Nairobi sit empty while families struggled to find fresh, affordable vegetables. What began as a handful of grow bags stitched together in Kahawa Sukari has slowly turned into something bigger, and I wanted to reach out to you directly instead of hiding behind a marketing team we don\'t actually have.</p>'
+      + '<p style="font-size:16px;line-height:1.8;color:#1B4332;margin:0 0 18px;">Jambo,</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">I\'m Moses — I started Afams because I believe I could make growing food as easy and enjoyable as scrolling our phones on our balconies. What began as a handful of Growbags stitched together in Kahawa Sukari has slowly turned into something bigger, and I wanted to reach out to you directly instead of hiding behind a marketing team we don\'t actually have.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">Afams is still small. Every order, every referral, every shilling someone chooses to put behind us goes straight back into better grow bags, better soil, and honestly, into proving that urban farming can really work here.</p>'
-      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">If you\'ve ever wanted to be part of something from close to the beginning, this is that moment. There are two easy ways to help — you can order a GrowBag or FarmBag (the simplest way, and you get to grow your own food while you\'re at it), or give directly, any amount, and your name goes up on our Support Base as one of the people who believed in this early.</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 12px;">If you\'ve ever wanted to be part of something from close to the beginning, this is that moment. There are two easy ways to help:</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 10px;"><strong>Order a GrowBag or FarmBag</strong> — the simplest way to help, and you get to grow your own food while you\'re at it.</p>'
+      + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;"><strong>Give directly</strong> — any amount, and your name goes up on our Support Base as one of the people who believed in this early.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 16px;">You can do either one here: <a href="https://afams.co.ke/support.html" style="color:#2D6A4F;font-weight:bold;">afams.co.ke/support.html</a></p>'
       + '<p style="font-size:15px;line-height:1.85;color:#333;margin:0 0 4px;">Whatever you choose, thank you for even reading this far. I read every reply personally.</p>'
       + '<p style="font-size:15px;line-height:1.85;color:#1B4332;margin:18px 0 0;">Asante sana,<br><strong>Moses Mwombe</strong><br><span style="font-size:13px;color:#667085;">Founder, Afams</span></p>'
@@ -4186,7 +4188,11 @@ async function sendEmailCenter() {
     } else {
       var sent = (data && data.sent) || 0;
       var failed = (data && data.failed) || 0;
-      alert('✉️ Sent to ' + sent + ' recipient' + (sent === 1 ? '' : 's') + (failed ? ' · ' + failed + ' failed' : ''));
+      var skipped = (data && data.skipped_already_sent) || 0;
+      var sendMsg = data.message
+        ? data.message
+        : '✉️ Sent to ' + sent + ' recipient' + (sent === 1 ? '' : 's') + (failed ? ' · ' + failed + ' failed' : '') + (skipped ? ' · ' + skipped + ' skipped (already received this exact email)' : '');
+      alert(sendMsg);
       addEmailSendLogEntry({ subject: subject, sent: sent, target: target });
     }
   } catch (err) {
