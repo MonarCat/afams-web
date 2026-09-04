@@ -156,7 +156,7 @@
 </section>
 
 <!-- ═══════════ SUPPORT BASE HONOR ROLL (live) ═══════════ -->
-<section style="background:var(--g-pale); border-top:1px solid var(--g-soft); border-bottom:1px solid var(--g-soft); padding:4rem 1.5rem;">
+<section id="support-base-section" style="background:var(--g-pale); border-top:1px solid var(--g-soft); border-bottom:1px solid var(--g-soft); padding:4rem 1.5rem;">
   <div style="max-width:1080px; margin:0 auto;">
     <div style="text-align:center; margin-bottom:2rem;">
       <span class="section-label" style="display:block;">Thank you</span>
@@ -260,11 +260,10 @@
   }
 
   let toastTimer = null;
-  function showCelebrationToast(entry) {
+  function showToastMessage(text) {
     const toast = document.getElementById('celebration-toast');
     if (!toast) return;
-    const name = entry.is_anonymous ? 'A supporter' : entry.display_name;
-    toast.textContent = '🎉 ' + name + ' just joined the Support Base — ' + formatAmount(entry.amount, entry.currency) + '!';
+    toast.textContent = text;
     toast.style.opacity = '1';
     toast.style.transform = 'translateX(-50%) translateY(0)';
     clearTimeout(toastTimer);
@@ -274,9 +273,36 @@
     }, 4200);
   }
 
+  function showCelebrationToast(entry) {
+    const name = entry.is_anonymous ? 'A supporter' : entry.display_name;
+    showToastMessage('🎉 ' + name + ' just joined the Support Base — ' + formatAmount(entry.amount, entry.currency) + '!');
+  }
+
   function celebrate(entry) {
     fireConfetti();
     showCelebrationToast(entry);
+  }
+
+  // Scroll-triggered welcome celebration — fires once per page visit, the
+  // first time this section scrolls into view. Independent of live gifts.
+  function celebrateScrollIntoView() {
+    fireConfetti();
+    showToastMessage('🎉 Welcome to our Support Base — thank you for being here!');
+  }
+
+  let hasCelebratedOnScroll = false;
+  const supportSection = document.getElementById('support-base-section');
+  if (supportSection && 'IntersectionObserver' in window) {
+    const scrollObserver = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting && !hasCelebratedOnScroll) {
+          hasCelebratedOnScroll = true;
+          celebrateScrollIntoView();
+          scrollObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.35 });
+    scrollObserver.observe(supportSection);
   }
 
   function rowHtml(entry) {
