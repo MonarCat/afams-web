@@ -170,6 +170,10 @@
   </div>
 </section>
 
+<!-- Celebration layer: confetti burst + toast, fired on live new gifts -->
+<canvas id="confetti-canvas" style="position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:9998;"></canvas>
+<div id="celebration-toast" style="position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-20px); opacity:0; transition:opacity 0.4s ease, transform 0.4s ease; background:var(--g-darkest); color:#fff; padding:12px 22px; border-radius:999px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.92rem; box-shadow:0 8px 24px rgba(0,0,0,0.25); z-index:9999; white-space:nowrap; pointer-events:none;"></div>
+
 <script type="module">
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -185,6 +189,96 @@
     return symbol + num;
   }
 
+  // ── Celebration: confetti burst + name toast, fired only on live new gifts ──
+  const confettiCanvas = document.getElementById('confetti-canvas');
+  const confettiCtx = confettiCanvas ? confettiCanvas.getContext('2d') : null;
+  const CONFETTI_COLORS = ['#155D27', '#2D6A4F', '#B8860B', '#D4A017', '#F0C040', '#ffffff'];
+  const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resizeConfettiCanvas() {
+    if (!confettiCanvas) return;
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+  resizeConfettiCanvas();
+  window.addEventListener('resize', resizeConfettiCanvas);
+
+  function fireConfetti() {
+    if (!confettiCtx || prefersReducedMotion) return;
+    const particles = [];
+    const count = 90;
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * confettiCanvas.width,
+        y: -20 - Math.random() * 100,
+        vx: (Math.random() - 0.5) * 3,
+        vy: 2 + Math.random() * 3,
+        size: 5 + Math.random() * 6,
+        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+        rotation: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 10,
+        shape: Math.random() < 0.5 ? 'rect' : 'circle',
+        life: 1,
+      });
+    }
+
+    let frame = 0;
+    const maxFrames = 240; // ~4s at 60fps
+    function tick() {
+      frame++;
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      let anyAlive = false;
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.03; // gravity
+        p.rotation += p.vr;
+        if (frame > maxFrames * 0.6) p.life -= 0.03;
+        if (p.life <= 0 || p.y > confettiCanvas.height + 30) return;
+        anyAlive = true;
+        confettiCtx.save();
+        confettiCtx.globalAlpha = Math.max(p.life, 0);
+        confettiCtx.translate(p.x, p.y);
+        confettiCtx.rotate((p.rotation * Math.PI) / 180);
+        confettiCtx.fillStyle = p.color;
+        if (p.shape === 'rect') {
+          confettiCtx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.6);
+        } else {
+          confettiCtx.beginPath();
+          confettiCtx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          confettiCtx.fill();
+        }
+        confettiCtx.restore();
+      });
+      if (anyAlive && frame < maxFrames) {
+        requestAnimationFrame(tick);
+      } else {
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  let toastTimer = null;
+  function showCelebrationToast(entry) {
+    const toast = document.getElementById('celebration-toast');
+    if (!toast) return;
+    const name = entry.is_anonymous ? 'A supporter' : entry.display_name;
+    toast.textContent = '🎉 ' + name + ' just joined the Support Base — ' + formatAmount(entry.amount, entry.currency) + '!';
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(-20px)';
+    }, 4200);
+  }
+
+  function celebrate(entry) {
+    fireConfetti();
+    showCelebrationToast(entry);
+  }
+
   function rowHtml(entry) {
     const name = entry.is_anonymous ? 'Anonymous' : entry.display_name;
     return `<div style="display:flex; justify-content:space-between; padding:14px 20px; border-bottom:1px solid var(--g-soft); font-size:0.94rem; font-family:'Inter',sans-serif;">
@@ -193,9 +287,10 @@
     </div>`;
   }
 
-  function prependRow(entry) {
+  function prependRow(entry, isLive) {
     if (listEl.dataset.empty === 'true') { listEl.innerHTML = ''; listEl.dataset.empty = 'false'; }
     listEl.insertAdjacentHTML('afterbegin', rowHtml(entry));
+    if (isLive) celebrate(entry);
   }
 
   async function loadInitial() {
@@ -223,7 +318,7 @@
   supabase
     .channel('support_base_changes')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_base' }, (payload) => {
-      prependRow(payload.new);
+      prependRow(payload.new, true);
     })
     .subscribe();
 </script>
