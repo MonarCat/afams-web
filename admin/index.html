@@ -6,6 +6,14 @@
   <title>Afams LTD — Admin</title>
   <meta name="robots" content="noindex, nofollow" />
 
+  <!-- PWA: installable as "Afams POS" (Sunmi / any Android Chrome) -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#2D6A4F" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Afams POS" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+
   <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
@@ -1040,6 +1048,199 @@
       .modal-actions { flex-direction: column; }
       .modal-actions > * { width: 100%; }
     }
+
+    /* ══════════════════════════════════════════════════════════════
+       MOBILE NAV — the sidebar is hidden under 768px, so handhelds
+       (Sunmi V2 Pro) get a compact tab strip instead.
+    ══════════════════════════════════════════════════════════════ */
+    .mobile-nav { display: none; }
+    @media (max-width: 768px) {
+      .mobile-nav {
+        display: flex;
+        gap: 0.4rem;
+        overflow-x: auto;
+        padding: 0.5rem 0.75rem;
+        background: var(--bg-sidebar);
+        position: sticky;
+        top: 60px;
+        z-index: 150;
+        scrollbar-width: none;
+      }
+      .mobile-nav::-webkit-scrollbar { display: none; }
+      .mobile-nav button {
+        flex: 0 0 auto;
+        border: none;
+        border-radius: 999px;
+        padding: 0.5rem 0.95rem;
+        min-height: 40px;
+        background: var(--sidebar-hover-bg);
+        color: var(--sidebar-muted);
+        font-size: 0.84rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .mobile-nav button.active { background: var(--sidebar-active-bg); color: var(--sidebar-text); }
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       SHOP (POS) — in-store sales. Touch-first: 44px+ targets.
+    ══════════════════════════════════════════════════════════════ */
+    #panel-shop .header-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    @media (max-width: 768px) {
+      #panel-shop .header-actions { width: 100%; flex-wrap: nowrap; }
+      #panel-shop .header-actions .filter-select { flex: 1; min-width: 0; min-height: 44px; }
+      #panel-shop .header-actions .btn-util { min-height: 44px; }
+      /* Toasts at the bottom would sit on top of Checkout / Print on a handheld. */
+      #toast { bottom: auto; top: 118px; left: 1rem; right: 1rem; text-align: center; }
+    }
+    .pos-offline {
+      background: #FEF3C7; color: #92400E; border: 1px solid #F59E0B;
+      border-radius: 10px; padding: 0.6rem 0.9rem; margin-bottom: 1rem;
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .pos-layout { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: start; }
+    @media (min-width: 900px) { .pos-layout { grid-template-columns: 1fr 360px; } }
+
+    .pos-search { width: 100%; min-height: 46px; font-size: 1rem; margin-bottom: 0.75rem; }
+
+    .pos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+    @media (min-width: 560px)  { .pos-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1200px) { .pos-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .pos-tile {
+      position: relative; text-align: left; cursor: pointer;
+      background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 0.8rem 0.85rem; min-height: 96px;
+      display: flex; flex-direction: column; justify-content: space-between; gap: 0.4rem;
+      color: var(--text-primary); font-family: inherit;
+      box-shadow: var(--shadow); transition: transform 0.08s, border-color 0.15s;
+    }
+    .pos-tile:active { transform: scale(0.97); }
+    .pos-tile:hover { border-color: var(--accent); }
+    .pos-tile[disabled] { opacity: 0.5; cursor: not-allowed; }
+    .pos-tile-name { font-weight: 600; font-size: 0.9rem; line-height: 1.25; }
+    .pos-tile-meta { font-size: 0.72rem; color: var(--text-muted); }
+    .pos-tile-price { font-weight: 700; font-size: 1rem; color: var(--accent); }
+    .pos-tile-stock { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); }
+    .pos-tile-stock.low { color: #B45309; }
+    .pos-tile-stock.out { color: #B91C1C; }
+    .pos-tile-badge {
+      position: absolute; top: -7px; right: -7px; min-width: 24px; height: 24px; padding: 0 6px;
+      border-radius: 999px; background: var(--accent); color: #fff;
+      font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    }
+    .pos-empty { grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem 1rem; font-size: 0.9rem; }
+
+    /* Cart: right-hand column on wide screens, bottom sheet on handhelds */
+    .pos-cart {
+      background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 14px;
+      box-shadow: var(--shadow); display: flex; flex-direction: column; overflow: hidden;
+    }
+    @media (min-width: 900px) { .pos-cart { position: sticky; top: 76px; max-height: calc(100vh - 100px); } }
+    @media (max-width: 899px) {
+      .pos-cart {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 400;
+        border-radius: 16px 16px 0 0; max-height: 82vh;
+        transform: translateY(105%); transition: transform 0.25s ease;
+      }
+      .pos-cart.open { transform: translateY(0); box-shadow: 0 -8px 30px rgba(0,0,0,0.25); }
+    }
+    .pos-cart-head { display: flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); }
+    .pos-cart-head strong { flex: 1; font-size: 1rem; }
+    .pos-cart-close { display: none; border: none; background: none; font-size: 1.2rem; color: var(--text-muted); min-width: 40px; min-height: 40px; }
+    @media (max-width: 899px) { .pos-cart-close { display: block; } }
+    .pos-cart-lines { overflow-y: auto; padding: 0.4rem 1rem; flex: 1; min-height: 80px; }
+    .pos-line { display: grid; grid-template-columns: 1fr auto; gap: 0.35rem 0.6rem; padding: 0.7rem 0; border-bottom: 1px dashed var(--border); }
+    .pos-line:last-child { border-bottom: none; }
+    .pos-line-name { font-weight: 600; font-size: 0.9rem; }
+    .pos-line-sub { font-size: 0.76rem; color: var(--text-muted); }
+    .pos-line-total { font-weight: 700; text-align: right; font-size: 0.92rem; }
+    .pos-line-ctl { grid-column: 1 / -1; display: flex; align-items: center; gap: 0.4rem; }
+    .pos-step {
+      width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid var(--border);
+      background: var(--bg-card); color: var(--text-primary); font-size: 1.3rem; font-weight: 600; line-height: 1;
+    }
+    .pos-step:active { background: var(--table-header); }
+    .pos-qty {
+      width: 64px; height: 44px; text-align: center; font-size: 1.05rem; font-weight: 700; font-family: inherit;
+      border: 1.5px solid var(--input-border); border-radius: 10px; background: var(--input-bg); color: var(--text-primary);
+    }
+    .pos-rm { margin-left: auto; border: none; background: none; color: #B91C1C; font-size: 0.8rem; font-weight: 600; min-height: 44px; padding: 0 0.5rem; }
+    .pos-cart-foot { padding: 0.9rem 1rem 1rem; border-top: 1px solid var(--border); display: grid; gap: 0.7rem; }
+    .pos-total-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.95rem; }
+    .pos-total-row strong { font-size: 1.5rem; font-family: 'Playfair Display', serif; color: var(--accent); }
+    .pos-cart-foot .btn-primary { min-height: 52px; font-size: 1.05rem; }
+
+    .pos-cartbar {
+      display: none; position: fixed; left: 0.75rem; right: 0.75rem; bottom: 0.75rem; z-index: 300;
+      background: var(--accent); color: #fff; border: none; border-radius: 14px; min-height: 56px;
+      padding: 0.6rem 1.1rem; font-family: inherit; font-size: 1rem; font-weight: 700;
+      align-items: center; justify-content: space-between; box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    @media (max-width: 899px) { .pos-cartbar.has-items { display: flex; } .panel#panel-shop { padding-bottom: 5rem; } }
+
+    .pos-today { margin-top: 1.75rem; }
+    .pos-today h3 { font-size: 1rem; margin: 0 0 0.6rem; display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+    .pos-today h3 small { font-weight: 500; color: var(--text-muted); font-size: 0.8rem; }
+    .pos-sale-row {
+      display: grid; grid-template-columns: 1fr auto auto; gap: 0.6rem; align-items: center;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.6rem 0.8rem; margin-bottom: 0.45rem; font-size: 0.85rem;
+    }
+    .pos-sale-row .sub { color: var(--text-muted); font-size: 0.74rem; }
+
+    /* Checkout sheet */
+    .pos-sheet-overlay {
+      position: fixed; inset: 0; z-index: 1000; background: var(--modal-overlay);
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    .pos-sheet-overlay[hidden] { display: none; }
+    .pos-sheet {
+      width: 100%; max-width: 480px; background: var(--bg-card); color: var(--text-primary);
+      border-radius: 18px 18px 0 0; padding: 1.1rem 1.1rem 1.3rem; max-height: 92vh; overflow-y: auto;
+    }
+    @media (min-width: 600px) { .pos-sheet-overlay { align-items: center; } .pos-sheet { border-radius: 18px; } }
+    .pos-sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; gap: 0.5rem; }
+    .pos-sheet-head h3 { margin: 0; font-size: 1.05rem; }
+    .pos-sheet-x { border: none; background: none; font-size: 1.3rem; color: var(--text-muted); min-width: 44px; min-height: 44px; }
+    .pos-amount { font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 700; color: var(--accent); text-align: center; margin: 0.2rem 0 0.9rem; }
+    .pos-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; margin-bottom: 1rem; }
+    .pos-seg button {
+      min-height: 48px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg-card);
+      color: var(--text-primary); font-family: inherit; font-weight: 600; font-size: 0.88rem;
+    }
+    .pos-seg button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .pos-field { display: block; margin-bottom: 0.8rem; }
+    .pos-field span { display: block; font-size: 0.76rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .pos-field input {
+      width: 100%; min-height: 52px; font-size: 1.15rem; font-family: inherit; padding: 0 0.9rem;
+      border: 1.5px solid var(--input-border); border-radius: 10px; background: var(--input-bg); color: var(--text-primary); outline: none;
+    }
+    .pos-field input:focus { border-color: var(--input-focus); box-shadow: 0 0 0 3px rgba(45,106,79,0.12); }
+    .pos-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem; }
+    .pos-chips button { min-height: 44px; padding: 0 0.9rem; border-radius: 999px; border: 1.5px solid var(--border); background: var(--bg-card); color: var(--text-primary); font-family: inherit; font-weight: 600; }
+    .pos-change { text-align: center; font-size: 1rem; margin-bottom: 0.9rem; color: var(--text-muted); }
+    .pos-change strong { color: var(--text-primary); font-size: 1.25rem; }
+    .pos-err { background: #FEE2E2; color: #991B1B; border-radius: 10px; padding: 0.6rem 0.8rem; font-size: 0.86rem; margin-bottom: 0.8rem; }
+    .pos-note { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin: 0.6rem 0 0; }
+    .pos-actions { display: grid; gap: 0.5rem; margin-top: 0.4rem; }
+    .pos-actions .btn-primary { min-height: 54px; font-size: 1.05rem; }
+    .pos-btn-sec {
+      min-height: 50px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--bg-card);
+      color: var(--text-primary); font-family: inherit; font-weight: 600; font-size: 0.95rem;
+    }
+    .pos-center { text-align: center; padding: 0.4rem 0 0.2rem; }
+    .pos-spin {
+      width: 54px; height: 54px; margin: 0.4rem auto 1rem; border-radius: 50%;
+      border: 5px solid var(--border); border-top-color: var(--accent); animation: pos-rot 0.9s linear infinite;
+    }
+    @keyframes pos-rot { to { transform: rotate(360deg); } }
+    .pos-count { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 0.3rem 0; }
+    .pos-tick {
+      width: 64px; height: 64px; border-radius: 50%; background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0.2rem auto 0.8rem;
+    }
+    .pos-warn { background: #FEF3C7; color: #92400E; border-radius: 10px; padding: 0.6rem 0.8rem; font-size: 0.82rem; margin: 0.6rem 0; text-align: left; }
   </style>
 </head>
 <body>
@@ -1101,6 +1302,15 @@
     </div>
   </header>
 
+  <!-- Mobile nav (sidebar is hidden on handhelds) -->
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Admin navigation">
+    <button type="button" data-panel="shop"      onclick="showPanel('shop')">🛒 Shop</button>
+    <button type="button" data-panel="orders"    onclick="showPanel('orders')">📦 Orders</button>
+    <button type="button" data-panel="products"  onclick="showPanel('products')">🌱 Stock</button>
+    <button type="button" data-panel="customers" onclick="showPanel('customers')">👤 Customers</button>
+    <button type="button" data-panel="analytics" onclick="showPanel('analytics')">📈 Analytics</button>
+  </nav>
+
   <!-- Layout -->
   <div class="app-layout">
 
@@ -1108,6 +1318,9 @@
     <nav class="sidebar" aria-label="Admin navigation">
       <div class="sidebar-section">
         <div class="sidebar-section-label">Operations</div>
+        <button class="sidebar-item" onclick="showPanel('shop')" id="nav-shop">
+          <span class="icon">🛒</span> Shop (POS)
+        </button>
         <button class="sidebar-item active" onclick="showPanel('orders')" id="nav-orders">
           <span class="icon">📦</span> Orders
           <span class="sidebar-badge" id="pending-count" style="display:none">0</span>
@@ -1449,6 +1662,60 @@
         </div>
       </div>
 
+      <!-- ═══════════ SHOP (POS) PANEL ═══════════ -->
+      <div class="panel" id="panel-shop">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Shop</div>
+            <div class="page-subtitle">In-store sales &mdash; prompt the customer's phone or take cash, then print the receipt</div>
+          </div>
+          <div class="header-actions">
+            <select id="pos-printer" class="filter-select" onchange="posSetPrinter(this.value)" title="How receipts are printed" aria-label="Receipt printing method">
+              <option value="browser">Print: browser dialog</option>
+              <option value="rawbt">Print: Sunmi via RawBT</option>
+            </select>
+            <button class="btn-util" onclick="posReload()">&#8635; Refresh</button>
+          </div>
+        </div>
+
+        <div class="pos-offline" id="pos-offline" hidden>You're offline &mdash; sales need a connection.</div>
+
+        <div class="pos-layout">
+          <section class="pos-catalog" aria-label="Products">
+            <input id="pos-search" class="search-input pos-search" type="search" placeholder="Search product or SKU…" autocomplete="off" oninput="posRenderProducts()" />
+            <div class="pos-grid" id="pos-grid"><div class="pos-empty">Loading products…</div></div>
+          </section>
+
+          <aside class="pos-cart" id="pos-cart" aria-label="Current sale">
+            <div class="pos-cart-head">
+              <strong>Current sale</strong>
+              <button class="btn-util" onclick="posClearCart()">Clear</button>
+              <button class="pos-cart-close" onclick="posToggleCart(false)" aria-label="Close cart">&#10005;</button>
+            </div>
+            <div class="pos-cart-lines" id="pos-cart-lines"></div>
+            <div class="pos-cart-foot">
+              <div class="pos-total-row"><span>Total</span><strong id="pos-total">KES 0</strong></div>
+              <button class="btn-primary" id="pos-checkout-btn" onclick="posOpenCheckout()" disabled>Checkout</button>
+            </div>
+          </aside>
+        </div>
+
+        <button class="pos-cartbar" id="pos-cartbar" onclick="posToggleCart(true)">
+          <span id="pos-cartbar-count">0 items</span>
+          <span id="pos-cartbar-total">KES 0 &rsaquo;</span>
+        </button>
+
+        <div class="pos-today">
+          <h3>Today's shop sales <small id="pos-today-sum"></small></h3>
+          <div id="pos-today-list"><div class="pos-empty">No shop sales yet today.</div></div>
+        </div>
+
+        <!-- Checkout sheet (content rendered by JS) -->
+        <div class="pos-sheet-overlay" id="pos-sheet" hidden>
+          <div class="pos-sheet" id="pos-sheet-body" role="dialog" aria-modal="true" aria-label="Checkout"></div>
+        </div>
+      </div>
+
       <!-- ═══════════ PRODUCTS PANEL ═══════════ -->
       <div class="panel" id="panel-products">
         <div class="page-header">
@@ -1740,6 +2007,7 @@
 <!-- ══════════════════════════════════════════════════════════════
      JAVASCRIPT
 ══════════════════════════════════════════════════════════════ -->
+<script src="../assets/js/pos-print.js"></script>
 <script>
 // ════════════════════════════════════════════════════
 // CONFIGURATION
@@ -2046,7 +2314,8 @@ async function startApp(user) {
 
   await loadOrders();
   setupRealtimeSubscription();
-  showPanel('orders');
+  // The installed "Afams POS" app launches at /admin/#shop — go straight to the till.
+  showPanel(location.hash === '#shop' ? 'shop' : 'orders');
 }
 
 window.addEventListener('DOMContentLoaded', async function () {
@@ -2072,7 +2341,11 @@ function showPanel(name) {
   const nav   = document.getElementById('nav-' + name);
   if (panel) panel.classList.add('active');
   if (nav)   nav.classList.add('active');
+  document.querySelectorAll('#mobile-nav button').forEach(function (b) {
+    b.classList.toggle('active', b.getAttribute('data-panel') === name);
+  });
 
+  if (name === 'shop')         posInit();
   if (name === 'customers')    loadCustomers();
   if (name === 'analytics')    loadAnalytics();
   if (name === 'subscribers')  loadSubscribers();
@@ -4514,6 +4787,449 @@ async function sendEmailViaBrevo() {
   }
   btn.disabled    = false;
   btn.textContent = '✉️ Send via Brevo';
+}
+
+// ════════════════════════════════════════════════════
+// SHOP (POS) — in-store sales
+// The browser only ever sends SKUs + quantities. Prices, stock checks and the
+// total are computed by the `pos-charge` edge function, and a receipt can only
+// be printed once the server confirms the payment (never on the client's say-so).
+// ════════════════════════════════════════════════════
+var POS = {
+  products: [], loaded: false, cart: {},
+  step: 'pay',                       // pay | wait | timeout | done | fail
+  method: 'mpesa',                   // mpesa | airtel | cash
+  phone: '', email: '', tendered: '',
+  sale: null,                        // { reference, total } while a prompt is out
+  display: '', deadline: 0, pollTimer: null, tickTimer: null,
+  receipt: null, error: '', busy: false, wakeLock: null,
+  printer: 'browser', todaySales: []
+};
+var POS_METHODS = { mpesa: 'M-Pesa', airtel: 'Airtel Money', cash: 'Cash' };
+
+function posMoney(n) { return 'KES ' + Number(n || 0).toLocaleString('en-KE'); }
+function posFind(sku) {
+  for (var i = 0; i < POS.products.length; i++) if (POS.products[i].sku === sku) return POS.products[i];
+  return null;
+}
+function posCartCount() {
+  var n = 0; Object.keys(POS.cart).forEach(function (k) { n += POS.cart[k]; }); return n;
+}
+function posCartTotal() {
+  var t = 0;
+  Object.keys(POS.cart).forEach(function (sku) { var p = posFind(sku); if (p) t += (Number(p.unit_price) || 0) * POS.cart[sku]; });
+  return t;
+}
+function posItemsPayload() {
+  return Object.keys(POS.cart).map(function (sku) { return { sku: sku, qty: POS.cart[sku] }; });
+}
+
+function posInit() {
+  if (!posInit.bound) { posInit.bound = true; posBind(); }
+  posRestorePrefs();
+  posUpdateOnline();
+  if (!POS.loaded) posLoadProducts();
+  posLoadToday();
+}
+
+function posBind() {
+  document.getElementById('pos-grid').addEventListener('click', function (e) {
+    var t = e.target.closest('[data-sku]'); if (t && !t.disabled) posAdd(t.getAttribute('data-sku'));
+  });
+  var cart = document.getElementById('pos-cart-lines');
+  cart.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]'); if (!b) return;
+    var sku = b.getAttribute('data-sku'), cur = POS.cart[sku] || 0, act = b.getAttribute('data-act');
+    if (act === 'inc') posSetQty(sku, cur + 1);
+    else if (act === 'dec') posSetQty(sku, cur - 1);
+    else if (act === 'rm') posSetQty(sku, 0);
+  });
+  cart.addEventListener('change', function (e) {
+    var i = e.target.closest('input[data-sku]'); if (i) posSetQty(i.getAttribute('data-sku'), parseInt(i.value, 10));
+  });
+  var sheet = document.getElementById('pos-sheet-body');
+  sheet.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+    posSheetAction(b.getAttribute('data-act'), b.getAttribute('data-v'));
+  });
+  sheet.addEventListener('input', function (e) {
+    var k = e.target.getAttribute && e.target.getAttribute('data-bind'); if (!k) return;
+    POS[k] = e.target.value;
+    if (k === 'tendered') posUpdateChange();
+  });
+  sheet.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.getAttribute && e.target.getAttribute('data-bind')) { e.preventDefault(); posPay(); }
+  });
+  document.getElementById('pos-today-list').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-reprint]'); if (!b) return;
+    var s = POS.todaySales[parseInt(b.getAttribute('data-reprint'), 10)]; if (s) posPrintReceipt(posReceiptFromOrder(s));
+  });
+  window.addEventListener('online', posUpdateOnline);
+  window.addEventListener('offline', posUpdateOnline);
+}
+
+function posRestorePrefs() {
+  try { var p = localStorage.getItem('afams_pos_printer'); if (p === 'rawbt' || p === 'browser') POS.printer = p; } catch (e) {}
+  var sel = document.getElementById('pos-printer'); if (sel) sel.value = POS.printer;
+}
+function posSetPrinter(v) {
+  POS.printer = (v === 'rawbt') ? 'rawbt' : 'browser';
+  try { localStorage.setItem('afams_pos_printer', POS.printer); } catch (e) {}
+}
+function posUpdateOnline() {
+  var el = document.getElementById('pos-offline'); if (el) el.hidden = navigator.onLine;
+}
+
+// ── Catalogue ──────────────────────────────────────
+async function posLoadProducts() {
+  var res = await sb.from('products')
+    .select('sku, name, unit_price, stock_quantity, size_label, product_line, sort_order')
+    .eq('active', true)
+    .order('sort_order', { ascending: true })
+    .order('name', { ascending: true });
+  if (res.error) {
+    document.getElementById('pos-grid').innerHTML = '<div class="pos-empty">Could not load products: ' + escapeHtml(res.error.message) + '</div>';
+    return;
+  }
+  POS.products = res.data || [];
+  POS.loaded = true;
+  // Keep the open sale consistent with fresh stock.
+  Object.keys(POS.cart).forEach(function (sku) {
+    var p = posFind(sku);
+    if (!p || p.stock_quantity <= 0) delete POS.cart[sku];
+    else if (POS.cart[sku] > p.stock_quantity) POS.cart[sku] = p.stock_quantity;
+  });
+  posRenderProducts();
+  posRenderCart();
+}
+function posReload() {
+  if (!document.getElementById('pos-sheet').hidden) return;
+  posLoadProducts(); posLoadToday();
+}
+
+function posRenderProducts() {
+  var q = (document.getElementById('pos-search').value || '').trim().toLowerCase();
+  var list = POS.products.filter(function (p) {
+    return !q || (p.name + ' ' + p.sku + ' ' + (p.product_line || '')).toLowerCase().indexOf(q) !== -1;
+  });
+  var grid = document.getElementById('pos-grid');
+  if (!list.length) { grid.innerHTML = '<div class="pos-empty">' + (POS.loaded ? 'No products match.' : 'Loading products…') + '</div>'; return; }
+  grid.innerHTML = list.map(function (p) {
+    var inCart = POS.cart[p.sku] || 0, stock = Number(p.stock_quantity) || 0;
+    var cls = stock <= 0 ? 'out' : (stock <= 3 ? 'low' : '');
+    var txt = stock <= 0 ? 'Out of stock' : (stock <= 3 ? 'Only ' + stock + ' left' : stock + ' in stock');
+    return '<button type="button" class="pos-tile" data-sku="' + escapeHtml(p.sku) + '"' + (stock <= 0 ? ' disabled' : '') + '>'
+      + (inCart ? '<span class="pos-tile-badge">' + inCart + '</span>' : '')
+      + '<div><div class="pos-tile-name">' + escapeHtml(p.name) + '</div>'
+      + (p.size_label ? '<div class="pos-tile-meta">' + escapeHtml(p.size_label) + '</div>' : '') + '</div>'
+      + '<div><div class="pos-tile-price">' + posMoney(p.unit_price) + '</div>'
+      + '<div class="pos-tile-stock ' + cls + '">' + txt + '</div></div></button>';
+  }).join('');
+}
+
+// ── Cart ───────────────────────────────────────────
+function posAdd(sku) { posSetQty(sku, (POS.cart[sku] || 0) + 1); try { navigator.vibrate && navigator.vibrate(15); } catch (e) {} }
+
+function posSetQty(sku, qty) {
+  var p = posFind(sku); if (!p) return;
+  if (!(qty >= 1)) { delete POS.cart[sku]; }
+  else {
+    var stock = Number(p.stock_quantity) || 0;
+    if (qty > stock) { qty = stock; showToast('Only ' + stock + ' of ' + p.name + ' in stock', 'error'); }
+    if (qty >= 1) POS.cart[sku] = Math.min(qty, 99); else delete POS.cart[sku];
+  }
+  posRenderCart(); posRenderProducts();
+}
+
+function posRenderCart() {
+  var skus = Object.keys(POS.cart), box = document.getElementById('pos-cart-lines');
+  box.innerHTML = skus.length ? skus.map(function (sku) {
+    var p = posFind(sku); if (!p) return '';
+    var q = POS.cart[sku];
+    return '<div class="pos-line"><div><div class="pos-line-name">' + escapeHtml(p.name) + '</div>'
+      + '<div class="pos-line-sub">' + posMoney(p.unit_price) + ' each</div></div>'
+      + '<div class="pos-line-total">' + posMoney(p.unit_price * q) + '</div>'
+      + '<div class="pos-line-ctl">'
+      + '<button type="button" class="pos-step" data-act="dec" data-sku="' + escapeHtml(sku) + '" aria-label="Fewer">&minus;</button>'
+      + '<input class="pos-qty" type="number" inputmode="numeric" min="1" max="99" value="' + q + '" data-sku="' + escapeHtml(sku) + '" aria-label="Quantity" />'
+      + '<button type="button" class="pos-step" data-act="inc" data-sku="' + escapeHtml(sku) + '" aria-label="More">+</button>'
+      + '<button type="button" class="pos-rm" data-act="rm" data-sku="' + escapeHtml(sku) + '">Remove</button>'
+      + '</div></div>';
+  }).join('') : '<div class="pos-empty">Tap a product to start a sale.</div>';
+
+  var n = posCartCount(), total = posCartTotal();
+  document.getElementById('pos-total').textContent = posMoney(total);
+  document.getElementById('pos-checkout-btn').disabled = !n;
+  var bar = document.getElementById('pos-cartbar');
+  bar.classList.toggle('has-items', n > 0);
+  document.getElementById('pos-cartbar-count').textContent = n + (n === 1 ? ' item' : ' items');
+  document.getElementById('pos-cartbar-total').innerHTML = posMoney(total) + ' &rsaquo;';
+  if (!n) posToggleCart(false);
+}
+function posToggleCart(open) { document.getElementById('pos-cart').classList.toggle('open', !!open); }
+function posClearCart() {
+  if (!posCartCount()) return;
+  if (!confirm('Clear this sale?')) return;
+  POS.cart = {}; posRenderCart(); posRenderProducts();
+}
+
+// ── Checkout sheet ─────────────────────────────────
+function posOpenCheckout() {
+  if (!posCartCount()) return;
+  if (!navigator.onLine) { showToast("You're offline — can't take a sale right now.", 'error'); return; }
+  POS.step = 'pay'; POS.error = ''; POS.sale = null; POS.busy = false;
+  POS.method = 'mpesa';                 // every new sale starts on the usual mobile-money prompt
+  posToggleCart(false);
+  document.getElementById('pos-sheet').hidden = false;
+  posRenderSheet();
+}
+function posCloseSheet() {
+  posStopWait();
+  document.getElementById('pos-sheet').hidden = true;
+}
+
+function posSheetHead(title, closable) {
+  return '<div class="pos-sheet-head"><h3>' + escapeHtml(title) + '</h3>'
+    + (closable ? '<button type="button" class="pos-sheet-x" data-act="close" aria-label="Close">&#10005;</button>' : '') + '</div>';
+}
+
+function posRenderSheet() {
+  var el = document.getElementById('pos-sheet-body'), h = '', total = POS.sale ? POS.sale.total : posCartTotal();
+
+  if (POS.step === 'pay') {
+    var cash = POS.method === 'cash';
+    h += posSheetHead('Checkout', true) + '<div class="pos-amount">' + posMoney(total) + '</div>';
+    h += '<div class="pos-seg">' + ['mpesa', 'airtel', 'cash'].map(function (m) {
+      return '<button type="button" data-act="method" data-v="' + m + '" class="' + (POS.method === m ? 'on' : '') + '">' + POS_METHODS[m] + '</button>';
+    }).join('') + '</div>';
+    if (POS.error) h += '<div class="pos-err">' + escapeHtml(POS.error) + '</div>';
+    if (!cash) {
+      h += '<label class="pos-field"><span>Customer phone</span><input id="pos-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="07XX XXX XXX" data-bind="phone" value="' + escapeHtml(POS.phone) + '" /></label>'
+        + '<label class="pos-field"><span>Customer email (optional)</span><input type="email" inputmode="email" autocomplete="off" placeholder="for a Paystack receipt" data-bind="email" value="' + escapeHtml(POS.email) + '" /></label>'
+        + '<div class="pos-actions"><button type="button" class="btn-primary" data-act="pay"' + (POS.busy ? ' disabled' : '') + '>' + (POS.busy ? 'Sending prompt…' : 'Send payment prompt') + '</button></div>'
+        + '<p class="pos-note">The customer gets a ' + POS_METHODS[POS.method] + ' prompt and enters their PIN.</p>';
+    } else {
+      var chips = [total, Math.ceil(total / 100) * 100, Math.ceil(total / 500) * 500, Math.ceil(total / 1000) * 1000]
+        .filter(function (v, i, a) { return a.indexOf(v) === i; });
+      h += '<div class="pos-chips">' + chips.map(function (v, i) {
+        return '<button type="button" data-act="chip" data-v="' + v + '">' + (i === 0 ? 'Exact ' : '') + posMoney(v) + '</button>';
+      }).join('') + '</div>'
+        + '<label class="pos-field"><span>Cash received (KES)</span><input id="pos-tendered" type="number" inputmode="numeric" min="0" placeholder="0" data-bind="tendered" value="' + escapeHtml(POS.tendered) + '" /></label>'
+        + '<div class="pos-change" id="pos-change"></div>'
+        + '<div class="pos-actions"><button type="button" class="btn-primary" data-act="pay"' + (POS.busy ? ' disabled' : '') + '>' + (POS.busy ? 'Recording…' : 'Record cash sale') + '</button></div>';
+    }
+  } else if (POS.step === 'wait' || POS.step === 'timeout') {
+    var waiting = POS.step === 'wait';
+    h += posSheetHead(waiting ? 'Waiting for payment' : 'No response yet', false);
+    h += '<div class="pos-center">' + (waiting ? '<div class="pos-spin"></div>' : '')
+      + '<div class="pos-amount" style="margin-bottom:.3rem">' + posMoney(total) + '</div>'
+      + '<div style="font-size:.92rem">' + escapeHtml(POS.display || 'Ask the customer to enter their PIN.') + '</div>'
+      + '<div style="font-size:.82rem;color:var(--text-muted);margin-top:.2rem">' + escapeHtml(POS_METHODS[POS.method]) + ' · ' + escapeHtml(POS.phone) + '</div>'
+      + (waiting ? '<div class="pos-count" id="pos-count">3:00</div>'
+        : '<div class="pos-warn">The prompt may have expired or the customer may still be entering their PIN. If they approve after you cancel, the sale is still recorded under Orders.</div>')
+      + '</div><div class="pos-actions">'
+      + (waiting ? '' : '<button type="button" class="btn-primary" data-act="keep">Keep waiting</button>')
+      + '<button type="button" class="pos-btn-sec" data-act="cancel">Cancel sale</button></div>';
+  } else if (POS.step === 'done') {
+    var r = POS.receipt || {};
+    h += '<div class="pos-center"><div class="pos-tick">&#10003;</div>'
+      + '<div style="font-weight:700;font-size:1.05rem">Payment received</div>'
+      + '<div class="pos-amount" style="margin:.2rem 0">' + posMoney(r.total) + '</div>'
+      + '<div style="font-size:.85rem;color:var(--text-muted)">' + escapeHtml(r.method || '') + ' · ' + escapeHtml(r.order_number || '') + '</div>'
+      + (r.change != null ? '<div class="pos-change" style="margin-top:.7rem">Change to give: <strong>' + posMoney(r.change) + '</strong></div>' : '')
+      + '</div><div class="pos-actions" style="margin-top:1rem">'
+      + '<button type="button" class="btn-primary" data-act="print">🖨 Print receipt</button>'
+      + '<button type="button" class="pos-btn-sec" data-act="newsale">New sale</button></div>';
+  } else if (POS.step === 'fail') {
+    h += posSheetHead('Payment not completed', false)
+      + '<div class="pos-err">' + escapeHtml(POS.error || 'The payment did not go through.') + '</div>'
+      + '<div class="pos-actions"><button type="button" class="btn-primary" data-act="retry">Try again</button>'
+      + '<button type="button" class="pos-btn-sec" data-act="close">Close</button></div>';
+  }
+
+  el.innerHTML = h;
+  if (POS.step === 'pay') {
+    posUpdateChange();
+    var f = document.getElementById(POS.method === 'cash' ? 'pos-tendered' : 'pos-phone');
+    if (f && !POS.error) setTimeout(function () { try { f.focus(); } catch (e) {} }, 60);
+  }
+  if (POS.step === 'wait') posTick();
+}
+
+function posUpdateChange() {
+  var el = document.getElementById('pos-change'); if (!el) return;
+  var t = parseInt(POS.tendered, 10), total = posCartTotal();
+  el.innerHTML = (t >= total && total > 0) ? 'Change: <strong>' + posMoney(t - total) + '</strong>'
+    : (t > 0 ? 'Short by <strong>' + posMoney(total - t) + '</strong>' : '');
+}
+
+function posSheetAction(act, v) {
+  if (act === 'method') { POS.method = v; POS.error = ''; posRenderSheet(); }
+  else if (act === 'chip') { POS.tendered = String(v); posRenderSheet(); }
+  else if (act === 'pay') posPay();
+  else if (act === 'cancel') posCancel();
+  else if (act === 'keep') { POS.deadline = Date.now() + 60000; POS.step = 'wait'; posRenderSheet(); posStartPolling(); }
+  else if (act === 'retry') { POS.step = 'pay'; POS.error = ''; POS.sale = null; posRenderSheet(); }
+  else if (act === 'print') posPrintReceipt(POS.receipt);
+  else if (act === 'newsale') posNewSale();
+  else if (act === 'close') posCloseSheet();
+}
+
+// ── Talking to the server ──────────────────────────
+async function posCall(body) {
+  var res = await sb.functions.invoke('pos-charge', { body: body });
+  if (res.error) {
+    var msg = res.error.message || 'Request failed';
+    try { var j = await res.error.context.json(); if (j && j.error) msg = j.error; } catch (e) {}
+    return { error: msg };
+  }
+  return { data: res.data };
+}
+
+async function posPay() {
+  if (POS.busy) return;
+  if (!navigator.onLine) { POS.error = "You're offline — try again when the connection is back."; posRenderSheet(); return; }
+  var items = posItemsPayload(); if (!items.length) return;
+  POS.error = '';
+
+  if (POS.method === 'cash') {
+    var tendered = parseInt(POS.tendered, 10);
+    if (!(tendered >= posCartTotal())) { POS.error = 'Cash received is less than the total.'; posRenderSheet(); return; }
+    POS.busy = true; posRenderSheet();
+    var c = await posCall({ action: 'cash', items: items, tendered: tendered });
+    POS.busy = false;
+    if (c.error || !c.data || !c.data.receipt) { POS.error = c.error || 'Could not record the sale.'; posRenderSheet(); return; }
+    posShowSuccess(c.data.receipt);
+    return;
+  }
+
+  if (String(POS.phone).replace(/\D/g, '').length < 9) { POS.error = "Enter the customer's mobile number."; posRenderSheet(); return; }
+  POS.busy = true; posRenderSheet();
+  var r = await posCall({ action: 'charge', items: items, method: POS.method, phone: POS.phone, email: POS.email });
+  POS.busy = false;
+  if (r.error || !r.data || !r.data.reference) { POS.error = r.error || 'Could not send the payment prompt.'; posRenderSheet(); return; }
+  POS.sale = { reference: r.data.reference, total: r.data.total };
+  POS.display = r.data.display_text || '';
+  POS.deadline = Date.now() + ((r.data.expires_in || 180) * 1000);
+  POS.step = 'wait';
+  posAcquireWakeLock();
+  posRenderSheet();
+  posStartPolling();
+}
+
+function posStartPolling() {
+  posStopTimers();
+  POS.tickTimer = setInterval(posTick, 1000);
+  var loop = function () {
+    POS.pollTimer = setTimeout(async function () {
+      if (POS.step !== 'wait' || !POS.sale) return;
+      var r = await posCall({ action: 'status', reference: POS.sale.reference });
+      if (POS.step !== 'wait') return;            // cancelled / resolved meanwhile
+      var d = r.data;                             // network blips: r.error → just keep polling
+      if (d && d.status === 'success' && d.receipt) { posShowSuccess(d.receipt); return; }
+      if (d && (d.status === 'failed' || d.status === 'cancelled')) { posShowFail(d.reason); return; }
+      if (Date.now() > POS.deadline + 15000) { posStopTimers(); POS.step = 'timeout'; posRenderSheet(); return; }
+      loop();
+    }, 3000);
+  };
+  loop();
+}
+function posTick() {
+  var el = document.getElementById('pos-count'); if (!el) return;
+  var s = Math.max(0, Math.round((POS.deadline - Date.now()) / 1000));
+  el.textContent = Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+}
+function posStopTimers() {
+  if (POS.pollTimer) { clearTimeout(POS.pollTimer); POS.pollTimer = null; }
+  if (POS.tickTimer) { clearInterval(POS.tickTimer); POS.tickTimer = null; }
+}
+function posStopWait() {
+  posStopTimers();
+  try { if (POS.wakeLock) { POS.wakeLock.release(); POS.wakeLock = null; } } catch (e) {}
+}
+async function posAcquireWakeLock() {
+  try { if (navigator.wakeLock) POS.wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+}
+
+async function posCancel() {
+  var ref = POS.sale && POS.sale.reference;
+  posStopWait();
+  if (ref) { try { await posCall({ action: 'cancel', reference: ref }); } catch (e) {} }
+  POS.sale = null; POS.step = 'pay'; POS.error = '';
+  posRenderSheet();
+}
+
+function posShowSuccess(receipt) {
+  posStopWait();
+  POS.receipt = receipt; POS.step = 'done'; POS.sale = null;
+  POS.cart = {}; POS.phone = ''; POS.email = ''; POS.tendered = '';
+  posRenderCart(); posRenderSheet();
+  posLoadProducts(); posLoadToday();               // fresh stock + today's list
+  try { navigator.vibrate && navigator.vibrate([120, 60, 120]); } catch (e) {}
+}
+function posShowFail(reason) {
+  posStopWait();
+  POS.step = 'fail'; POS.error = reason || 'The payment did not go through.'; POS.sale = null;
+  posRenderSheet();
+}
+function posNewSale() {
+  posCloseSheet();
+  POS.step = 'pay'; POS.receipt = null; POS.error = '';
+  document.getElementById('pos-search').value = '';
+  posRenderProducts();
+}
+
+// ── Receipts ───────────────────────────────────────
+function posPrintReceipt(r) {
+  if (!r) return;
+  if (!window.PosPrint) { showToast('Receipt printer module did not load — refresh the page.', 'error'); return; }
+  try {
+    PosPrint.print({
+      id: r.order_number, date: r.date, cashier: r.cashier, method: r.method,
+      items: (r.items || []).map(function (i) { return { name: i.name, qty: i.qty, price: i.price }; }),
+      paid: r.tendered != null ? r.tendered : undefined
+    }, { method: POS.printer });
+  } catch (e) { showToast('Could not print: ' + e.message, 'error'); }
+}
+
+function posReceiptFromOrder(o) {
+  var label = (String(o.notes || '').split('·')[1] || '').trim() || o.payment_method || '';
+  var items = Array.isArray(o.items) ? o.items : [];
+  return {
+    order_number: o.order_number, date: o.created_at, method: label,
+    items: items.map(function (i) { return { name: i.name || i.product_name, qty: i.quantity || i.qty || 1, price: i.unit_price || i.price || 0 }; })
+  };
+}
+
+async function posLoadToday() {
+  var d = new Date(); d.setHours(0, 0, 0, 0);
+  var res = await sb.from('orders')
+    .select('id, order_number, created_at, total_amount, payment_method, notes, items')
+    .like('notes', 'POS in-store sale%')
+    .gte('created_at', d.toISOString())
+    .order('created_at', { ascending: false })
+    .limit(50);
+  var box = document.getElementById('pos-today-list'), sum = document.getElementById('pos-today-sum');
+  if (res.error) { box.innerHTML = '<div class="pos-empty">Could not load today\'s sales.</div>'; return; }
+  POS.todaySales = res.data || [];
+  if (!POS.todaySales.length) { box.innerHTML = '<div class="pos-empty">No shop sales yet today.</div>'; sum.textContent = ''; return; }
+  var total = 0;
+  box.innerHTML = POS.todaySales.map(function (o, i) {
+    total += Number(o.total_amount) || 0;
+    var label = (String(o.notes || '').split('·')[1] || '').trim();
+    return '<div class="pos-sale-row"><div><strong>' + escapeHtml(o.order_number || '') + '</strong>'
+      + '<div class="sub">' + escapeHtml(new Date(o.created_at).toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit' })) + (label ? ' · ' + escapeHtml(label) : '') + '</div></div>'
+      + '<strong>' + posMoney(o.total_amount) + '</strong>'
+      + '<button type="button" class="action-btn" data-reprint="' + i + '">Reprint</button></div>';
+  }).join('');
+  sum.textContent = POS.todaySales.length + (POS.todaySales.length === 1 ? ' sale' : ' sales') + ' · ' + posMoney(total);
+}
+
+// Installable "Afams POS" app: register the service worker (shell caching only — see sw.js).
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function () {});
+  });
 }
 </script>
 </body>
