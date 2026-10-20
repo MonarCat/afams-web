@@ -5014,9 +5014,10 @@ function posRenderSheet() {
       h += '<div class="pos-chips">' + chips.map(function (v, i) {
         return '<button type="button" data-act="chip" data-v="' + v + '">' + (i === 0 ? 'Exact ' : '') + posMoney(v) + '</button>';
       }).join('') + '</div>'
-        + '<label class="pos-field"><span>Cash received (KES)</span><input id="pos-tendered" type="number" inputmode="numeric" min="0" placeholder="0" data-bind="tendered" value="' + escapeHtml(POS.tendered) + '" /></label>'
+        + '<label class="pos-field"><span>Cash received (KES)</span><input id="pos-tendered" type="number" inputmode="numeric" min="0" placeholder="' + total + '" data-bind="tendered" value="' + escapeHtml(POS.tendered) + '" /></label>'
         + '<div class="pos-change" id="pos-change"></div>'
-        + '<div class="pos-actions"><button type="button" class="btn-primary" data-act="pay"' + (POS.busy ? ' disabled' : '') + '>' + (POS.busy ? 'Recording…' : 'Record cash sale') + '</button></div>';
+        + '<div class="pos-actions"><button type="button" class="btn-primary" data-act="pay"' + (POS.busy ? ' disabled' : '') + '>' + (POS.busy ? 'Recording…' : 'Confirm cash received') + '</button></div>'
+        + '<p class="pos-note">No payment prompt is sent. You confirm the cash in hand and the sale is recorded straight away. Leave the amount blank if the customer paid exactly.</p>';
     }
   } else if (POS.step === 'wait' || POS.step === 'timeout') {
     var waiting = POS.step === 'wait';
@@ -5033,7 +5034,7 @@ function posRenderSheet() {
   } else if (POS.step === 'done') {
     var r = POS.receipt || {};
     h += '<div class="pos-center"><div class="pos-tick">&#10003;</div>'
-      + '<div style="font-weight:700;font-size:1.05rem">Payment received</div>'
+      + '<div style="font-weight:700;font-size:1.05rem">' + (r.method === 'Cash' ? 'Cash sale recorded' : 'Payment received') + '</div>'
       + '<div class="pos-amount" style="margin:.2rem 0">' + posMoney(r.total) + '</div>'
       + '<div style="font-size:.85rem;color:var(--text-muted)">' + escapeHtml(r.method || '') + ' · ' + escapeHtml(r.order_number || '') + '</div>'
       + (r.change != null ? '<div class="pos-change" style="margin-top:.7rem">Change to give: <strong>' + posMoney(r.change) + '</strong></div>' : '')
@@ -5060,7 +5061,8 @@ function posUpdateChange() {
   var el = document.getElementById('pos-change'); if (!el) return;
   var t = parseInt(POS.tendered, 10), total = posCartTotal();
   el.innerHTML = (t >= total && total > 0) ? 'Change: <strong>' + posMoney(t - total) + '</strong>'
-    : (t > 0 ? 'Short by <strong>' + posMoney(total - t) + '</strong>' : '');
+    : (t > 0 ? 'Short by <strong>' + posMoney(total - t) + '</strong>'
+    : (total > 0 ? 'Exact amount &mdash; no change' : ''));
 }
 
 function posSheetAction(act, v) {
@@ -5093,7 +5095,7 @@ async function posPay() {
   POS.error = '';
 
   if (POS.method === 'cash') {
-    var tendered = parseInt(POS.tendered, 10);
+    var tendered = String(POS.tendered).trim() === '' ? posCartTotal() : parseInt(POS.tendered, 10);
     if (!(tendered >= posCartTotal())) { POS.error = 'Cash received is less than the total.'; posRenderSheet(); return; }
     POS.busy = true; posRenderSheet();
     var c = await posCall({ action: 'cash', items: items, tendered: tendered });
