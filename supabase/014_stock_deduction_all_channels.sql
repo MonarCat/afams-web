@@ -3,7 +3,7 @@
 -- Migration: 014_stock_deduction_all_channels.sql
 --
 -- Run with Supabase `execute_sql` (never apply_migration) — see repo conventions.
---   STATUS: written and committed, NOT yet applied to the live database (apply via execute_sql after the T1-T7 rollback test passes).
+--   STATUS: APPLIED to the live database on 2026-10-20 (rollback test T1-T7 passed first). Supersedes the private stock loop in 013_pos_sales.sql.
 --
 -- Problem this fixes
 --   * The old deduct_stock_after_order() read item keys `sku` / `quantity`, but the
